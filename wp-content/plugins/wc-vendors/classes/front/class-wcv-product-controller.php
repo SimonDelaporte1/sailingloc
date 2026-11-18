@@ -986,7 +986,7 @@ class WCV_Product_Controller {
 
         global $wpdb;
 
-            $product_type = 'simple';
+        $product_type = $_POST['product-type']; //'simple';
         if ( isset( $product_type ) ) {
 
             $classname = \WC_Product_Factory::get_classname_from_product_type( sanitize_text_field( wp_unslash($product_type) ) );

@@ -906,6 +906,7 @@ class WCV_Product_Form {
                             'data-clean-text' => __( 'Clear', 'wc-vendors' ),
                             'data-of-text'    => __( ' of ', 'wc-vendors' ),
                         ),
+                        
                         //'wrapper_start'       => '<div class="wcv-cols-group wcv-horizontal-gutters"><div class="all-50 sale_price_dates_fields">',
                         //'wrapper_end'         => '</div>',
                         //'input_wrapper_class' => 'wcv-datepicker-wrapper wcv-flex',

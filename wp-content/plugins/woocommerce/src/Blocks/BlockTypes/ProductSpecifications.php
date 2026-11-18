@@ -136,7 +136,7 @@ class ProductSpecifications extends AbstractBlock {
 							</th>
 							<?php if ( $product_attribute_key == 'attribute_pa_date-debut' || $product_attribute_key == 'attribute_pa_date-fin'	 ) : ?>
 								<td class="wp-block-product-specifications-item__value" data-wp-interactive="woocommerce/products">
-									<input type="text" class="wcv-datepicker flatpickr-input active">
+									<input type="text" class="wcv-datepicker wcv-init-picker">
 								</td>
 							<?php elseif ( $is_interactive && isset( $product_attribute['api_field'] ) ) : ?>
 								<td class="wp-block-product-specifications-item__value" data-wp-interactive="woocommerce/products" data-wp-text="state.productInContext.<?php echo esc_attr( $product_attribute['api_field'] ); ?>">

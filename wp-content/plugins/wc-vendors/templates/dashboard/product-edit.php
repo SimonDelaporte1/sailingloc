@@ -81,7 +81,7 @@ $post_status               = ( isset( $product ) && null !== $product ) ? $post_
 
     <div style="height: 1px;background: #D5D4DC; margin-top:20px; margin-bottom:60px;" class="wcv_desktop"></div>
     <div style="margin:40px 0;" class="wcv_mobile"></div>
-<!--
+
     <div class="all-100">
         <?php do_action( 'wcv_before_product_type', $object_id ); ?>
         <div class="wcv-product-type wcv-gap-bottom">
@@ -89,7 +89,7 @@ $post_status               = ( isset( $product ) && null !== $product ) ? $post_
         </div>
         <?php do_action( 'wcv_after_product_type', $object_id ); ?>
     </div>
--->
+
     
     <div class="all-100">
         <div class="wcv-accordions top" data-prevent-url-change="true" id="product-meta-accordion" data-type="">
@@ -127,7 +127,6 @@ $post_status               = ( isset( $product ) && null !== $product ) ? $post_
                     <?php WCV_Product_Form::tax( $object_id ); ?>
                 </div>
                 <?php endif; ?>
-
                 <div class="show_if_simple show_if_variable">
                     <?php do_action( 'wcvendors_after_tax_field', $object_id ); ?>
                 </div>
@@ -140,7 +139,8 @@ $post_status               = ( isset( $product ) && null !== $product ) ? $post_
 
             <?php do_action( 'wcv_before_inventory_tab', $object_id ); ?>
 
-<!-- Inventory 
+<!-- Inventory
+
             <div class="wcv-product-inventory inventory_product_data tabs-content hide-all" id="inventory">
 
                 <?php WCV_Product_Form::sku( $object_id ); ?>
