@@ -1,0 +1,452 @@
+=== WooCommerce Tax (formerly WooCommerce Shipping & Tax) ===
+Contributors: woocommerce, automattic, woothemes, allendav, kellychoffman, jkudish, jeffstieler, nabsul, robobot3000, danreylop, mikeyarce, shaunkuschel, orangesareorange, pauldechov, dappermountain, radogeorgiev, bor0, royho, cshultz88, bartoszbudzanowski, harriswong, ferdev, superdav42
+Tags: tax, vat, gst, woocommerce, payment
+Requires PHP: 7.4
+Requires at least: 7.0
+Requires Plugins: woocommerce
+Tested up to: 7.1
+WC requires at least: 11.1
+WC tested up to: 11.3
+Stable tag: 3.7.6
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+We’re here to help with tax rates: collect accurate sales tax, automatically.
+
+== Description ==
+
+Attention: Shipping features have moved to a new dedicated plugin. Download WooCommerce Shipping.
+
+Enable automated taxes
+That's it! Once you update your tax settings, your store will collect sales tax at checkout based on the store address in your WooCommerce Settings.
+
+Eliminate the need to even think about sales taxes for your store
+Automatically calculate how much sales tax should be collected for WooCommerce orders — by city, country, or state — at checkout.
+
+== Installation ==
+
+This section describes how to install the plugin and get it working.
+
+1. Install and activate WooCommerce if you haven't already done so
+2. Upload the plugin files to the `/wp-content/plugins/woocommerce-tax` directory, or install the plugin through the WordPress plugins screen directly.
+3. Activate the plugin through the 'Plugins' screen in WordPress
+4. Install, activate and connect to your WordPress.com account if you haven't already done so
+5. Enable automated taxes from WooCommerce > Settings > Tax (make sure "enable taxes" is checked in General settings first)
+
+== Frequently Asked Questions ==
+
+= Why is a WordPress.com account connection required? =
+
+A WordPress.com connection is required to securely access our tax APIs, and to avoid API abuse.
+
+= This works with WooCommerce, right? =
+
+Yep! We follow the L-2 policy, meaning if the latest version of WooCommerce is 8.7, we support back to WooCommerce version 8.5.
+
+= Are there Terms of Service? =
+
+Absolutely! You can read our Terms of Service [here](https://wordpress.com/tos).
+
+== External services ==
+
+This plugin relies on the following external services:
+
+1. WordPress.com connection:
+   - Description: The plugin makes requests to our own endpoints at WordPress.com (proxied via https://api.woocommerce.com) to fetch automated tax calculations.
+   - Website: https://wordpress.com/
+   - Terms of Service: https://wordpress.com/tos/
+   - Privacy Policy: https://automattic.com/privacy/
+
+2. Usage Tracking:
+   - Description: The plugin will send usage statistics to our own service, after the user has accepted our Terms of Service.
+   - Script: https://stats.wp.com/w.js
+   - Terms of Service: https://wordpress.com/tos/
+   - Privacy Policy: https://automattic.com/privacy/
+
+== Screenshots ==
+
+1. Enabling automated taxes
+2. Checking on the health of WooCommerce Tax
+
+== Changelog ==
+
+= 3.7.6 - 2026-11-11 =
+* Fix   - Update an order's tax when an edit through the REST API or the WooCommerce app changes only a line's tax class or a fee's tax status, while the order can still be edited. The order kept its old tax. When the app sends a line's product again after the product moved to another tax class, the line now follows the product. Once an order can no longer be edited (any status other than pending payment, on hold or a new draft), the tax already charged stays: re-sending a product leaves the line's class as it was, and a tax class or tax status sent in the request is saved with an order note saying the change is not used for tax. A line switched to another product or variation is taxed for its new tax class, as a newly added line would be. A Recalculate request for such an order no longer changes its tax, including an order that was charged none.
+* Fix   - Stop charging item tax on a product with the "Shipping only" tax status on orders placed through the checkout block. Checkout showed no item tax but the order charged it, so the order total came out higher than the total the customer saw. Shipping tax is unchanged.
+* Fix   - Stop charging shipping on the sign-up order of a WooCommerce Subscriptions product synced to a renewal date, when tax could not be looked up for the order, such as for a customer in a state where the store does not collect tax, or when the tax lookup fails. The first renewal charges that shipping, so the customer paid it twice.
+* Fix   - Tax a WooCommerce Subscriptions renewal by its own price, not the sign-up order's. For products whose tax depends on the price, such as clothing in New York, a renewal's tax can go up or down: a $50 clothing plan with a $100 sign-up fee renews with less tax, and a $150 plan with a $50 sign-up fee and a free trial renews with more.
+* Fix   - Keep the highest tax rate when lines in one checkout get different rates for the same address, such as clothing under $110 in Albany, New York, which has no state tax. The order's tax line showed 0% next to the tax it carried, later edits through the REST API or the WooCommerce app did not update the order's tax, and a failed tax lookup at that address right after that checkout could charge too little.
+* Tweak - WooCommerce 11.3 Compatibility.
+
+= 3.7.5 - 2026-11-03 =
+* Fix   - Stop taxing an item at another item's rate on orders that include a WooCommerce Subscriptions product, so the order charges the tax the checkout showed.
+* Fix   - When the tax service is down or slow, ask it once per page request instead of again each time the cart total updates, so checkout and phone order screens wait less during an outage.
+* Fix   - Charge shipping tax on a tax rate a lookup saves in place of a town's 0% "Manual Rate Nullified (Automated Taxes)" rate, for example when a special district tax starts, in states that tax shipping. The rate kept the 0% rate's Shipping setting, which is always off, so orders shipped to that town under-collected shipping tax.
+* Fix   - Keep the names of tax rates saved by automated taxes in the site's language when an order is recalculated by an admin who uses another language. The rates were renamed into the admin's language, and rates a later lookup no longer needed were not removed.
+* Fix   - Write one order note, not two or three, when an order edited through the REST API or the WooCommerce app has its tax updated. The note now says the tax rates already saved on the order were used, instead of the rates recorded when the order was placed, which is not true after an address change.
+* Fix   - Save the tax rates looked up for an order item under the item's own tax class. When a product had moved to another tax class after it was added to the order, recalculating or editing the order saved the rates under the product's new class, so other products in that class could be charged the wrong rate.
+
+= 3.7.4 - 2026-10-26 =
+* Add   - Let phone and manual order plugins get automated tax for carts they build in the dashboard, through the new woocommerce_services_calculate_admin_ajax_cart_tax filter. Before, these carts showed $0 tax for an address that had not been through checkout yet.
+* Fix   - When you click Recalculate on an order with a product variation that has its own tax class, save its tax rates under that tax class instead of the main product's, so the main product's tax rates are no longer overwritten.
+* Fix   - Remove the tax rates an earlier lookup saved for a town when the tax service now returns fewer rates for it, for example after a special district tax ends, so orders taxed from the saved rates are no longer charged the old rate on top.
+* Fix   - Stop automated tax lookups from overwriting a tax rate you set up for a list of ZIP codes, a ZIP code pattern such as 49*, or a whole city. The lookup changed its name and rate, so other addresses the rate covered could be charged the wrong tax or none.
+* Fix   - Remove the 0% "Manual Rate Nullified (Automated Taxes)" tax rate added for a town once the state-wide rate it stood beside is deleted or moved to another priority, so orders taxed from the saved rates no longer carry extra $0 tax lines.
+* Fix   - Keep an item that the tax service answered as tax-free at $0 tax when its quantity or price changes through the REST API or the WooCommerce app. It was charged the full tax rate of its tax class.
+* Fix   - Take a removed item's tax off the order when the item is removed through some REST API routes, custom code, or the Remove link in WooCommerce Subscriptions' My Account. The order kept the removed item's tax.
+* Fix   - Look up tax again when an order edited through the REST API or the WooCommerce app switches between local pickup and delivery, so pickup orders are taxed at the store address and delivered orders at the customer's address.
+* Fix   - Stop a negative fee, such as a discount added as a fee, from adding a second tax rate to items added to the order later through the REST API or the WooCommerce app.
+* Dev   - Apply the woocommerce_order_get_tax_location filter when looking up tax for orders edited through the REST API, as WooCommerce does.
+
+= 3.7.3 - 2026-10-14 =
+* Fix   - Stop charging tax on an item the tax service answered as tax-exempt, such as clothing under New York's price threshold, when another item in the same tax class is taxed. This affected orders placed at checkout and orders recalculated in the admin. The cart now also shows the tax the order charges when items in one tax class are taxed differently, including product variations and the same product added twice at different prices.
+
+= 3.7.2 - 2026-10-08 =
+* Fix   - Improve handling of shipping features on tax-only stores.
+* Fix   - Improve reliability during plugin updates.
+* Tweak - Changing shipping label account settings, including the selected credit card, now requires the Manage WooCommerce capability.
+
+= 3.7.1 - 2026-10-07 =
+* Add   - Check a US store address when it changes, and show a notice in the admin when its state or ZIP code looks wrong or is missing, since either can make automated taxes charge the wrong tax or none.
+* Fix   - Stop the classic checkout from jumping to the top of the page and taking focus away from the ZIP code field when an invalid ZIP code is entered, which could loop endlessly with address autocomplete enabled.
+* Fix   - Stop a store address with a missing or badly formatted ZIP code from blocking checkout with "ZIP Code is not formatted correctly." The order now goes through, but its tax is not looked up: it gets only the tax rates saved by earlier lookups for the same address, or no tax. A notice in the admin asks you to fix the ZIP code.
+* Fix   - Send the street with the address when you click Recalculate on an order that has no shipping address, so tax is not calculated from the ZIP code alone. Recalculate also no longer freezes when the city contains a double quote.
+* Fix   - Stop automated tax lookups from overwriting a tax rate you set up for a whole state with no ZIP code or city, which could leave in-person and mobile app orders with no tax.
+* Fix   - Recalculating an order in the admin now charges the tax rates returned by the tax service, as checkout does. Other tax rates you set up for the same address are no longer added on top.
+* Fix   - Update an order's tax when its items, quantities, fees, shipping or coupons change through the REST API or the WooCommerce app, using the tax rates recorded when the order was placed. Since 3.6.8 the tax stayed at its original amount after these edits, and each change is now recorded in an order note.
+* Fix   - Stop putting tax back on an order that was made VAT exempt after it was placed.
+* Fix   - Look up the tax for the new address when an order's address changes through the REST API or the WooCommerce app. If the tax service cannot answer, the order keeps its tax and a note says so.
+* Fix   - Calculate tax with WooCommerce Tax for orders created through the REST API, the WooCommerce app or point of sale, instead of using whatever tax rates happened to be stored for that area.
+* Fix   - Keep the TaxJar product tax code when recalculating an order in the admin for tax classes whose name has more than one word, such as "Reduced rate 12345", so the order is taxed the same as at checkout. Products in the built-in "Zero rate" class also stay tax-free when the order is recalculated.
+* Fix   - Unslash and sanitize request values in the label reports, settings, migration survey and tracking code, and stop using print_r in log messages.
+* Fix   - Require a nonce on the setup banner's Terms of Service and dismiss links, so they cannot be triggered by loading a crafted URL.
+* Fix   - Stop Recalculate and saving an order's items in the admin from logging a PHP notice for every item and saving an extra tax line with no name, which other plugins could see before it was removed again.
+* Fix   - Stop REST requests the site would refuse from writing to the WooCommerce Tax log, and stop REST errors from replacing the error notice shown to store managers. Request bodies are shortened and only logged when debug logging is on.
+* Fix   - Prevent a fatal error in the tax calculation when custom code creates the TaxJar integration without a store notices notifier.
+* Fix   - Prevent a rare fatal error when WooCommerce Tax registers its Store API data on incomplete WooCommerce installations.
+* Fix   - Stop store admins other than the Jetpack connection owner from accepting the WooCommerce Tax Terms of Service through the REST API or the banner shown after connecting.
+* Fix   - Check that the order exists, and that a shipping label belongs to it, before buying a label, getting rates, checking a label's status or refunding a label. Customs details are only saved to products on that order.
+* Tweak - Block direct access to the remaining class files and declare the license in the plugin header.
+* Tweak - Include composer.json in the plugin package.
+* Tweak - Bind the service IDs in the enabled services query with prepare() instead of escaping them by hand.
+* Tweak - WooCommerce 11.2 Compatibility.
+
+= 3.7.0 - 2026-09-22 =
+* Fix   - Prevent a fatal error that stopped WooCommerce Tax from being deactivated while WooCommerce was inactive.
+* Tweak - Update the bundled JavaScript libraries.
+* Tweak - Build the plugin's JavaScript on Node.js 24 and drop the wp-calypso submodule, keeping vendored copies of the modules it provided.
+* Tweak - Load every translatable string from the plugin's own text domain and add translator notes to strings with placeholders.
+
+= 3.6.16 - 2026-09-16 =
+* Tweak - Update the Jetpack Connection package to 9.1.2.
+
+= 3.6.15 - 2026-09-07 =
+* Add   - Prompt merchants to finish signing in to WordPress.com when the site is connected but no account is linked to it, so the missing step is named instead of hidden.
+* Fix   - Write the tax rate backup file as proper CSV, so cities and tax names containing a comma, a quote or an apostrophe are saved exactly as stored and no cell can be treated as a formula when the file is opened in a spreadsheet.
+* Fix   - Security update.
+* Tweak - Stop looking up the legacy DHL live rates inbox note on admin AJAX requests, which cannot display it.
+* Tweak - Update the bundled qs JavaScript library to a version that resolves a reported security advisory (CVE-2025-15284).
+
+= 3.6.14 - 2026-09-03 =
+* Fix   - Prevent a fatal error at checkout when a cart line's price is not numeric.
+* Tweak - Limit the WordPress.com connection banner to the Tax settings and Plugins pages, so it no longer appears on unrelated admin screens.
+* Tweak - Stop registering a redundant copy of the continents REST endpoint on requests that cannot reach it.
+* Tweak - WooCommerce 11.1 Compatibility.
+
+= 3.6.13 - 2026-08-24 =
+* Tweak - WordPress 7.1 Compatibility.
+
+= 3.6.12 - 2026-08-10 =
+* Fix   - Restore tax rate lookups for local pickup orders, which could return no rates at all.
+* Fix   - Preserve apostrophes in city and street when taxes are recalculated from the order edit screen.
+* Fix   - Prevent a fatal error during cart and checkout tax calculation when a customization supplies an invalid store address.
+* Fix   - Send the same values for empty address fields whether taxes are calculated at checkout or from the order edit screen.
+* Fix   - Ignore array-valued address fields when taxes are recalculated from the order edit screen.
+* Fix   - Prevent tax calculation from failing when the store address postcode holds more than one comma-separated value.
+* Fix   - Accept lower-case country and state codes from the woocommerce_taxjar_nexus_address filter.
+* Fix   - Fall back to the store address when a custom nexus address is incomplete instead of abandoning the calculation.
+* Fix   - Prevent unbounded growth of WooCommerce tax rate rows when the customer state contains a character WooCommerce strips before storing it, such as a period or an accented letter.
+* Fix   - Restore tax rates on the price display, shipping tax and coupon paths for addresses whose state was stored in a normalized form.
+* Fix   - Calculate tax correctly for carts mixing taxable and non-taxable products, so a non-taxable product no longer resets the standard tax rate to zero.
+* Tweak - Centralize TaxJar address handling in an internal value object. No change to tax calculation.
+* Tweak - Store tax rate rows against the postcode the rate was quoted for when the address postcode holds more than one comma-separated value.
+* Tweak - Reduce redundant TaxJar API calls by matching cached tax responses across the cart and order paths and ignoring irrelevant formatting differences.
+
+= 3.6.11 - 2026-08-05 =
+* Fix   - Prevent a fatal error during cart and checkout tax calculation when TaxJar returns an incomplete tax response.
+* Fix   - React 19 compatibility for store notices on the block cart and checkout.
+
+= 3.6.10 - 2026-07-27 =
+* Tweak - WooCommerce 11.0 Compatibility.
+
+= 3.6.9 - 2026-07-20 =
+* Fix   - Prevent a rare fatal error when the WooCommerce Store API cannot be initialized on incomplete installations.
+
+= 3.6.8 - 2026-07-15 =
+* Fix   - TaxJar tax lines wiped when REST API order update includes address change.
+* Fix   - Prevent fatal error on sites running WooCommerce versions without StoreApi support.
+* Fix   - Prevent unbounded growth of WooCommerce tax rate rows when checkout city contains a semicolon.
+
+= 3.6.7 - 2026-07-06 =
+* Fix   - Prevent fatal error on Atomic sites caused by incorrect path resolution when loading the API client class.
+
+= 3.6.6 - 2026-06-22 =
+* Tweak - WooCommerce 10.9 Compatibility.
+
+= 3.6.5 - 2026-06-08 =
+* Fix   - Prevent PHP "undefined variable" warning when WooCommerce Helper authentication data is unavailable.
+
+= 3.6.4 - 2026-06-01 =
+* Dev   - Update JS dependencies.
+
+= 3.6.3 - 2026-05-20 =
+* Tweak - WordPress 7.0 Compatibility.
+
+= 3.6.2 - 2026-05-18 =
+* Tweak - WooCommerce 10.8 Compatibility.
+
+= 3.6.1 - 2026-04-20 =
+* Fix   - Prevent informational tax logs from being written to debug.log when debug logging is disabled.
+
+= 3.6.0 - 2026-04-13 =
+* Add   - Prevent unauthenticated downloads of tax rate backup CSV files.
+* Tweak - WooCommerce 10.7 Compatibility.
+
+= 3.5.2 - 2026-04-06 =
+* Fix   - Correct nexus address handling for stores in CO, AZ, and OH (US) and QC (CA).
+
+= 3.5.1 - 2026-03-10 =
+* Fix   - Fix plugin translation files located in i18n/languages folder.
+* Tweak - Unify tax rate naming, use full jurisdictions for all tax rates.
+* Tweak - WooCommerce 10.6 Compatibility.
+
+= 3.5.0 - 2026-02-23 =
+* Add   - Add informational banner for non-connection-owner administrators when WooCommerce Tax Terms of Service have not been accepted, displaying the Jetpack connection owner's name.
+* Fix   - Fix missing Sift tracker script by inlining it instead of loading a non-distributed file.
+* Fix   - Fix zip file structure in GitHub workflow build process.
+* Fix   - Update Docker Compose version to 2.24.0 in E2E Tests GitHub workflow.
+
+= 3.4.1 - 2026-02-09 =
+* Add   - Itemized tax calculation for mixed carts with per-item tax locations.
+
+= 3.4.0 - 2026-02-03 =
+* Add   - Optimize Woo Tax API calls by restricting same-state tax checks.
+* Add   - Country validation for TaxJar requests.
+* Add   - Add woocommerce_tax_line_item_location filter for per-item tax location override.
+* Fix   - Prevent admin slowdown by making Sift configuration non-blocking.
+* Fix   - Prevent opted_out tracks event from being sent when user never opted in.
+* Tweak - WooCommerce 10.5 Compatibility.
+
+= 3.3.1 - 2026-01-12 =
+* Fix   - Normalize state and country codes to uppercase in TaxJar integration.
+
+= 3.3.0 - 2025-12-11 =
+* Add   - Add default nexus address.
+* Add   - Add woocommerce_taxjar_nexus_address filter.
+* Add   - Jurisdiction information to generated US tax rate names to improve tax analytics accuracy.
+* Tweak - Change default Retail Delivery Fee for Colorado to 28c.
+* Tweak - WordPress 6.9 and WooCommerce 10.4 Compatibility.
+
+= 3.2.3 - 2025-11-17 =
+* Fix   - Resolved issue where shipping features loaded despite the site being set to tax-only mode.
+
+= 3.2.2 - 2025-11-10 =
+* Add   - Allow round tax at subtotal level, instead of rounding per line.
+* Add   - Allow calculating taxes for VAT countries without providing ZIP.
+* Fix   - Taxes were incorrectly calculated using the store’s base address for Ohio.
+* Fix   - Display TaxJar error notices only after taxes are calculated.
+* Tweak - Log detection of potential incorrect California tax nexus in successful TaxJar API and cached responses.
+
+= 3.2.1 - 2025-11-03 =
+* Fix   - Exclude shipping-related admin components when shipping functionality is disabled.
+
+= 3.2.0 - 2025-10-14 =
+* Fix   - No tax calculated for multi-word state/counties.
+* Fix   - Incorrect tax rate saved in Woo Tax Table when Cart total is 0.
+* Fix   - Compatibility issue with plugins and themes that use woocommerce_find_rates filter.
+* Tweak - Update tax rate and tax nexus links.
+* Tweak - Unify tax rate saving to always save itemized tax rates.
+* Tweak - WooCommerce 10.3 Compatibility.
+
+= 3.1.1 - 2025-09-29 =
+* Fix   - Incorrect tax rate saved in Woo Tax Table when Cart total is 0.
+* Fix   - Compatibility issue with plugins and themes that use woocommerce_find_rates filter.
+
+= 3.1.0 - 2025-09-16 =
+* Add   - Increase cache time for address validation errors.
+* Tweak - WooCommerce 10.2 Compatibility.
+
+= 3.0.11 - 2025-09-08 =
+* Tweak - Bump jetpack autoloader version
+
+= 3.0.10 - 2025-09-02 =
+* Fix   - Corrected migration guide link in survey modal.
+
+= 3.0.9 - 2025-08-26 =
+* Add   - Migration survey to understand WooCommerce Shipping adoption blockers.
+
+= 3.0.8 - 2025-08-13 =
+* Fix   - Improves performance when WooCommerce Shipping is not active.
+* Fix   - Restore shipping label functionality for merchants with shipping features enabled.
+* Tweak - WooCommerce 10.1 Compatibility.
+
+= 3.0.7 - 2025-07-21 =
+* Fix   - Missing release files.
+
+= 3.0.6 - 2025-07-21 =
+* Add   - Support for Itemized tax rates.
+* Fix   - TaxJar error notices displaying incorrectly on block cart and checkout.
+
+= 3.0.5 - 2025-07-14 =
+* Tweak - WooCommerce 10.0 Compatibility.
+
+= 3.0.4 - 2025-06-30 =
+* Fix   - Corrected tax calculation for orders shipped within Arizona from stores based in Arizona.
+
+= 3.0.3 - 2025-06-12 =
+* Tweak - Update Org store screenshots.
+
+= 3.0.2 - 2025-06-02 =
+* Rename the plugin and updates the description in the Org store.
+
+= 3.0.1 - 2025-05-22 =
+* Fix   - Maintain label purchase functionality on iOS app for eligible installations.
+
+= 3.0.0 - 2025-05-08 =
+* Add   - Legacy site detection to maintain shipping functionality for existing installations.
+* Tweak - Improve tax tracking.
+
+= 2.8.9 - 2025-04-07 =
+* Tweak - WordPress 6.8 & WooCommerce 9.8 Compatibility.
+
+= 2.8.8 - 2025-03-03 =
+* Tweak - WooCommerce 9.7 Compatibility.
+
+= 2.8.7 - 2025-01-20 =
+* Add   - Option to apply US Colorado Retail Delivery Fee tax by using `wc_services_apply_us_co_retail_delivery_fee` filter.
+
+= 2.8.6 - 2025-01-06 =
+* Tweak - PHP 8.4 compatibility.
+
+= 2.8.5 - 2024-12-10 =
+* Fix   - Fixed an issue that prevented editing an order when automated tax is enabled.
+
+= 2.8.4 - 2024-12-09 =
+* Fix   - Support High-Performance Order Storage in shipping label reports.
+
+= 2.8.3 - 2024-10-29 =
+* Tweak - WordPress 6.7 Compatibility.
+
+= 2.8.2 - 2024-09-23 =
+* Fix   - Keep live rates enabled for eligible stores when WCS&T is active alongside WooCommerce Shipping.
+* Tweak - Hide shipping migration banner for all stores not eligible to buy shipping labels.
+* Tweak - Try WooCommerce Shipping modal copy.
+
+= 2.8.1 - 2024-09-09 =
+* Tweak - Hide migration banner for merchants still using legacy functionality.
+
+= 2.8.0 - 2024-09-03 =
+* Add - A new shipping migration experience from this plugin to the newly released WooCommerce Shipping plugin.
+
+= 2.7.0 - 2024-07-25 =
+* Add - Parallel compatibility with WooCommerce Shipping plugin.
+
+= 2.6.2 - 2024-07-16 =
+* Fix - Require HS Tariff number on customs form for EU destination countries.
+
+= 2.6.1 - 2024-07-02 =
+* Tweak - WooCommerce 9.0 and WordPress 6.6 compatibility.
+
+= 2.6.0 - 2024-06-04 =
+* Add - Logger for "Live Rates" feature on the front-end.
+
+= 2.5.7 - 2024-05-13 =
+* Add - wc_connect_shipment_item_quantity_threshold and wc_connect_max_shipments_if_quantity_exceeds_threshold filter hooks to be able to cap the number of shipment splits possible for an item with very large quantity.
+
+= 2.5.6 - 2024-05-06 =
+* Tweak - WooCommerce 8.8 compatibility.
+
+= 2.5.5 - 2024-04-29 =
+* Add - Prevent upcoming Woo Shipping and Woo Tax plugins from running in parallel with this plugin unless both are active, then they will take over for this plugin.
+
+= 2.5.4 - 2024-03-25 =
+* Tweak - WordPress 6.5 compatibility.
+
+= 2.5.3 - 2024-03-12 =
+* Fix - Colorado tax nexus workaround should only apply to Colorado from addresses.
+
+= 2.5.2 - 2024-03-04 =
+* Fix - Miscalculation tax from TaxJar and decided to use nexus address.
+
+= 2.5.1 - 2024-02-12 =
+* Fix - Cannot call constructor in classes/wc-api-dev/class-wc-rest-dev-data-continents-controller.php.
+
+= 2.5.0 - 2024-01-08 =
+* Add - Ability to keep connected to WordPress.com after Jetpack is uninstalled.
+* Fix - Deprecation notices for PHP 8.2.
+
+= 2.4.2 - 2023-11-30 =
+* Fix - When automated taxes are enabled, the order refund button will fail
+
+= 2.4.1 - 2023-11-28 =
+* Fix - Street address is not included when recalculating the tax in edit order page.
+
+= 2.4.0 - 2023-10-31 =
+* Add - Ability to connect to WordPress.com without the Jetpack plugin.
+* Fix - NUX banner display on Edit Order pages.
+
+= 2.3.7 - 2023-10-23 =
+* Add - Load Sift when printing a label.
+
+= 2.3.6 - 2023-10-10 =
+* Fix - Occasionally block user to checkout when using WooCommerce Blocks.
+* Fix - Fix notice error when shipping location(s) is disabled in WooCommerce settings.
+
+= 2.3.5 - 2023-09-20 =
+* Tweak - Move Jetpack Connection requirement to the top in FAQ.
+
+= 2.3.4 - 2023-09-05 =
+* Fix - Shipping label reports to display proper HTML.
+
+= 2.3.3 - 2023-08-22 =
+* Tweak - Update .org assets.
+
+= 2.3.2 - 2023-08-09 =
+* Add   - Added QIT tools for development.
+
+= 2.3.1 - 2023-07-17 =
+* Fix    - Fix notice error on the WooCommerce tax settings page.
+
+= 2.3.0 - 2023-07-11 =
+* Add   - Add USPS HAZMAT support.
+
+= 2.2.5 - 2023-05-23 =
+* Update - Security update.
+
+= 2.2.4 - 2023-03-14 =
+* Fix   - Incompatibility with Kadence WooCommerce Email Designer.
+
+= 2.2.3 - 2023-02-14 =
+* Fix   - Link correction on Automated taxes description text.
+
+= 2.2.2 - 2023-02-02 =
+* Fix   - Adjust checkout US zipcode validation to run only when exactly 5 or 10 digits are typed.
+
+= 2.2.1 - 2023-01-24 =
+* Fix   - Fix warning on checkout page apper if zipcode doesn't match selected state.
+
+= 2.2.0 - 2023-01-19 =
+* Add   - Add option to let user pick whether to save the last package & service or not.
+
+= 2.1.1 - 2023-01-02 =
+* Fix   - Save the selected package box and do not skip the package step.
+
+= 2.1.0 - 2022-11-30 =
+* Tweak - Catch malformed zipcode and display WC notice.
+
+= 2.0.0 - 2022-11-16 =
+* Add   - High-Performance Order Storage compatibility.
+* Add   - Add list of tax rate backup files for merchants to click and download.
+* Tweak - Transition version numbering from SemVer to WordPress versioning.
+
+[See changelog for all versions](https://raw.githubusercontent.com/Automattic/woocommerce-services/trunk/changelog.txt)

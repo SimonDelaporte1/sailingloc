@@ -1,0 +1,10 @@
+2026-11-13T09:06:57+00:00 DEBUG #3022 - [New Request] GET /wp-admin/admin.php @ 09:06:54.256
+2026-11-13T09:06:57+00:00 DEBUG #3022 - GET https://api.woocommerce.com/integrations/ppc/v1/customer/partners/K8SKZ36LQBWXJ/merchant-integrations/
+Response: Array
+(
+    [code] => 404
+    [message] => Not Found
+)
+
+Response Body: {"statusCode":404,"error":"Not Found","message":"Not Found"}
+2026-11-13T09:06:57+00:00 WARNING #3022 - [Erreur] Not Found CONTEXT: {"args":{"method":"GET","headers":{"Authorization":"Bearer token","Content-Type":"application/json"}},"response":{"headers":{},"body":"{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}","response":{"code":404,"message":"Not Found"},"cookies":[],"filename":null,"http_response":{"data":null,"headers":null,"status":null}}}

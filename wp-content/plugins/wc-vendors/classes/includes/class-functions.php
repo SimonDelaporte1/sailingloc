@@ -1,0 +1,1137 @@
+<?php
+
+/**
+ * WC Vendors Functions Class
+ *
+ * @version 2.6.5 - Fix security issues.
+ *
+ * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+ * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+ * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+ * @phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+ */
+
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+if ( ! class_exists( 'WCV_Dependencies' ) ) {
+    require_once 'class-dependencies.php';
+}
+
+/**
+ * WC Detection
+ * */
+if ( ! function_exists( 'wcv_is_woocommerce_activated' ) ) {
+    /**
+     * Check if WooCommerce is activated
+     */
+    function wcv_is_woocommerce_activated() {
+
+        return WCV_Dependencies::woocommerce_active_check();
+    }
+}
+
+if ( ! function_exists( 'wcv_get_user_role' ) ) {
+    /**
+     * Get user roole from user id
+     *
+     * @param int $user_id User ID.
+     */
+    function wcv_get_user_role( $user_id ) {
+
+        global $wp_roles;
+        $user  = new WP_User( $user_id );
+        $roles = $user->roles;
+        $role  = array_shift( $roles );
+
+        return ( $role && isset( $wp_roles->role_names[ $role ] ) ) ? $role : false;
+    }
+}
+
+if ( ! function_exists( 'wcv_get_select2_script_handle' ) ) {
+    /**
+     * Get the correct Select2 script handle based on WooCommerce version.
+     *
+     * WooCommerce 10.3.0+ deprecated the 'select2' handle in favor of 'wc-select2'.
+     * This function provides backward compatibility with older WooCommerce versions.
+     *
+     * @since 2.6.4
+     * @return string The Select2 script handle to use.
+     */
+    function wcv_get_select2_script_handle() {
+        // Check if WooCommerce is active and get version.
+        if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '10.3.0', '>=' ) ) {
+            return 'wc-select2';
+        }
+
+        return 'select2';
+    }
+}
+
+
+/**
+ * This function gets the vendor name used throughout the interface on the front and backend
+ *
+ * When a vendor ID is passed, that vendor's own label override is used if they have one
+ * set. Otherwise the global term is used. Admin screens always pass no vendor ID so that
+ * wp-admin keeps a single consistent term.
+ *
+ * The $vendor_singular and $vendor_plural arguments passed to the
+ * wcvendors_vendor_display_name filter are always the site wide option values, even when
+ * a per-vendor override is in effect. Compare against the returned label, not against
+ * those two arguments, when you need to know which term was used.
+ *
+ * @param boolean $singluar   Singular or not.
+ * @param boolean $upper_case Upper case or not.
+ * @param int     $vendor_id  Optional. Vendor to read the label override from. Default 0 for the global term.
+ *
+ * @since 2.7.2 Added the $vendor_id parameter and the per-vendor label override.
+ */
+function wcv_get_vendor_name( $singluar = true, $upper_case = true, $vendor_id = 0 ) {
+
+    $vendor_singular = get_option( 'wcvendors_vendor_singular', __( 'Vendor', 'wc-vendors' ) );
+    $vendor_plural   = get_option( 'wcvendors_vendor_plural', __( 'Vendors', 'wc-vendors' ) );
+
+    // Per-vendor overrides are admin entered free text, so they are never translated.
+    $vendor_label = wcv_get_vendor_label_override( $vendor_id, $singluar );
+
+    if ( '' === $vendor_label ) {
+        $vendor_label = $singluar ?
+            __( $vendor_singular, 'wc-vendors' ) : // phpcs:ignore
+            __( $vendor_plural, 'wc-vendors' ); // phpcs:ignore
+    }
+
+    $vendor_label = wcv_set_label_first_case( $vendor_label, $upper_case );
+
+    $vendor_label = apply_filters_deprecated(
+        'wcv_vendor_display_name',
+        array( $vendor_label, $vendor_singular, $vendor_plural, $singluar, $upper_case ),
+        '2.3.0',
+        'wcvendors_vendor_display_name'
+    );
+
+    return apply_filters(
+        'wcvendors_vendor_display_name',
+        $vendor_label,
+        $vendor_singular,
+        $vendor_plural,
+        $singluar,
+        $upper_case,
+        $vendor_id
+    );
+}
+
+if ( ! function_exists( 'wcv_get_vendor_label_override' ) ) {
+    /**
+     * Get a vendor's own label override.
+     *
+     * The stored meta is the source of truth, so this deliberately does not check the
+     * user's current role. The label has to survive a role transition: deny_vendor()
+     * removes the pending_vendor role before firing wcvendors_deny_vendor, so a role
+     * check here would drop the override from the denied email. Only an admin can set
+     * the meta, so a user who has one is one the store deliberately named.
+     *
+     * @param int     $vendor_id The vendor ID.
+     * @param boolean $singular  Singular or not.
+     *
+     * @since 2.7.2
+     *
+     * @return string The vendor's label, or an empty string when they have not set one.
+     */
+    function wcv_get_vendor_label_override( $vendor_id, $singular = true ) {
+
+        static $labels = array();
+
+        $vendor_id = absint( $vendor_id );
+
+        if ( 0 === $vendor_id ) {
+            return '';
+        }
+
+        $cache_key = $vendor_id . ':' . (int) $singular;
+
+        if ( isset( $labels[ $cache_key ] ) ) {
+            return $labels[ $cache_key ];
+        }
+
+        $meta_key = $singular ? 'wcv_vendor_label_singular' : 'wcv_vendor_label_plural';
+
+        $labels[ $cache_key ] = trim( (string) get_user_meta( $vendor_id, $meta_key, true ) );
+
+        return $labels[ $cache_key ];
+    }
+}
+
+if ( ! function_exists( 'wcv_set_label_first_case' ) ) {
+    /**
+     * Upper or lower case the first character of a vendor label.
+     *
+     * ucfirst() and lcfirst() operate on bytes, so they silently do nothing to a label
+     * that starts with a multibyte character. Custom vendor labels are often non English,
+     * so use the multibyte functions when they are available.
+     *
+     * @param string  $label      The label to change.
+     * @param boolean $upper_case Upper case the first character, otherwise lower case it.
+     *
+     * @since 2.7.2
+     *
+     * @return string The label with its first character cased.
+     */
+    function wcv_set_label_first_case( $label, $upper_case = true ) {
+
+        if ( '' === $label ) {
+            return $label;
+        }
+
+        if ( ! function_exists( 'mb_substr' ) ) {
+            return $upper_case ? ucfirst( $label ) : lcfirst( $label );
+        }
+
+        $first = mb_substr( $label, 0, 1 );
+        $first = $upper_case ? mb_strtoupper( $first ) : mb_strtolower( $first );
+
+        return $first . mb_substr( $label, 1 );
+    }
+}
+
+/**
+ * Output a single select page drop down.
+ *
+ * @param string $id    ID.
+ * @param string $value Value.
+ * @param string $css_class Class.
+ * @param string $css   CSS.
+ */
+function wcv_single_select_page( $id, $value, $css_class = '', $css = '' ) {
+
+    $dropdown_args = array(
+        'name'             => $id,
+        'id'               => $id,
+        'sort_column'      => 'menu_order',
+        'sort_order'       => 'ASC',
+        'show_option_none' => ' ',
+        'class'            => $css_class,
+        'echo'             => false,
+        'selected'         => $value,
+    );
+
+    $new_attributes  = ' data-placeholder="' . esc_attr__( 'Select a page&hellip;', 'wc-vendors' ) . '"';
+    $new_attributes .= ' style="' . esc_attr( $css ) . '" class="' . $css_class . '" id="';
+
+    echo wp_kses(
+        str_replace(
+            ' id=',
+            $new_attributes,
+            wp_dropdown_pages( $dropdown_args )
+        ),
+        wcv_allowed_html_tags()
+    );
+}
+
+/**
+ * Get the WC Vendors Screen ids.
+ *
+ * @return array
+ */
+function wcv_get_screen_ids() {
+
+    return apply_filters(
+        'wcv_get_screen_ids',
+        array(
+            'wc-vendors_page_wcv-settings',
+            'wc-vendors_page_wcv-commissions',
+            'wc-vendors_page_wcv-extensions',
+        )
+    );
+}
+
+/**
+ * Filterable navigation items classes for Vendor Dashboard.
+ *
+ * @param string $item_id Navigation item ID.
+ *
+ * @return string
+ */
+function wcv_get_dashboard_nav_item_classes( $item_id ) {
+
+    $classes = array( 'button' );
+
+    $classes = apply_filters_deprecated( 'wcv_dashboard_nav_item_classes', array( $classes, $item_id ), '2.3.0', 'wcvendors_dashboard_nav_item_classes' );
+    $classes = apply_filters( 'wcvendors_dashboard_nav_item_classes', $classes, $item_id );
+
+    return implode( ' ', array_map( 'sanitize_html_class', $classes ) );
+}
+
+if ( ! function_exists( 'wcv_vendor_drop_down_options' ) ) {
+    /**
+     * Generate a drop down with the vendor name based on the Dsiplay name setting used in the admin
+     *
+     * @param array $users     Users.
+     * @param int   $vendor_id Vendor ID.
+     * @since 2.1.10
+     * @return string
+     */
+    function wcv_vendor_drop_down_options( $users, $vendor_id ) {
+        $output = '';
+        foreach ( (array) $users as $user ) {
+            $shop_name    = WCV_Vendors::get_vendor_sold_by( $user->ID );
+            $display_name = empty( $shop_name ) ? $user->display_name : $shop_name;
+            $select       = selected( $user->ID, $vendor_id, false );
+            $output      .= "<option value='$user->ID' $select>$display_name</option>";
+        }
+        $output = apply_filters_deprecated( 'wcv_vendor_drop_down_options', array( $output ), '2.3.0', 'wcvendors_vendor_drop_down_options' );
+        return apply_filters( 'wcvendors_vendor_drop_down_options', $output );
+    }
+}
+
+
+/**
+ * Set the primary role of the specified user to vendor while retaining all other roles after
+ *
+ * @param WP_User|int $user The ID of the user or the user object.
+ * @param string      $role The role to set, default 'vendor'.
+ * @param bool        $use_custom_msg Whether to use the custom message.
+ * @param string      $custom_message Custom message for the email.
+ *
+ * @since 2.1.10
+ * @version 2.6.6 - Added use custom message and custom message parameters.
+ */
+
+if ( ! function_exists( 'wcv_set_primary_vendor_role' ) ) {
+    /**
+     * Set primary role to vendor.
+     *
+     * @param WP_User|int $user The ID of the user or the user object.
+     * @param string      $role The role to set, default 'vendor'.
+     * @param bool        $use_custom_msg Whether to use the custom message.
+     * @param string      $custom_message Custom message for the email.
+     * @return void
+     * @version 2.6.6 - Added use custom message and custom message parameters.
+     * @since   2.4.7 - Added default role and allow ID or WP_User object.
+     */
+    function wcv_set_primary_vendor_role( $user, $role = 'vendor', $use_custom_msg = false, $custom_message = '' ) {
+        if ( is_int( $user ) ) {
+            $user = get_user_by( 'id', $user );
+        }
+
+        // Get existing roles before manipulation.
+        $existing_roles = $user->roles;
+
+        // Check if the user already has the desired role as primary.
+        if ( ! empty( $existing_roles ) && $existing_roles[0] === $role ) {
+            return; // Role is already primary, no need to change anything.
+        }
+
+        // Use set_role to replace all roles with the primary role first.
+        // This method doesn't trigger add_user_role hook multiple times.
+        $user->set_role( $role );
+
+        // Re-add other roles (excluding the primary role we just set).
+        foreach ( $existing_roles as $existing_role ) {
+            if ( $existing_role !== $role ) {
+                $user->add_role( $existing_role );
+            }
+        }
+
+        do_action( 'wcvendors_set_primary_vendor_role', $user->ID, $role, $use_custom_msg, $custom_message );
+    }
+}
+
+if ( ! function_exists( 'wcv_is_show_reversed_order' ) ) {
+
+    /**
+     * Check show reversed order
+     *
+     * @since 2.4.0
+     * @return bool
+     */
+    function wcv_is_show_reversed_order() {
+
+        return wc_string_to_bool( get_option( 'wcvendors_dashboard_orders_show_reversed_orders', 'no' ) );
+    }
+}
+
+
+if ( ! function_exists( 'wcv_hpos_enabled' ) ) {
+    /**
+     * Check if WooCommerce Custom Orders Table is enabled.
+     *
+     * @return bool
+     * @version 2.4.8
+     * @since   2.4.8 - Added.
+     */
+    function wcv_hpos_enabled() {
+        return OrderUtil::custom_orders_table_usage_is_enabled();
+    }
+}
+
+if ( ! function_exists( 'wcv_cot_enabled' ) ) {
+    /**
+     * Check if custom order tables option is enabled
+     *
+     * @return boolean
+     * @version 2.4.8
+     * @since   2.4.8 - Added.
+     */
+    function wcv_cot_enabled() {
+        $cot_enabled = get_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION );
+        return wc_string_to_bool( $cot_enabled );
+    }
+}
+
+if ( ! function_exists( 'wcv_get_order' ) ) {
+    /**
+     * Get vendor order
+     *
+     * @param int|WC_Order_Vendor $order Order ID.
+     * @return WC_Order_Vendor
+     * @version 2.4.8
+     * @since   2.4.8
+     */
+    function wcv_get_order( $order ) {
+        if ( is_a( $order, WC_Order_Vendor::ORDER_TYPE ) ) {
+            return $order;
+        }
+
+        if ( is_a( $order, 'WC_Order' ) ) {
+            return new WC_Order_Vendor( $order->get_id() );
+        }
+
+        return new WC_Order_Vendor( $order );
+    }
+}
+
+if ( ! function_exists( 'wcv_allowed_html_tags' ) ) {
+    /**
+     * Allow specific HTML tags.
+     *
+     * To be used with wp_kses_post() or wp_kses() to allow additional HTML tags that are not allowed by default.
+     *
+     * @return array
+     * @version 2.4.8
+     * @since   2.4.8 -  Added
+     */
+    function wcv_allowed_html_tags() {
+        $html_allowed_tags   = wp_kses_allowed_html( 'post' );
+        $wcv_additional_tags = array(
+            'a'          => array(
+                'href'  => array(),
+                'title' => array(),
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'label'      => array(
+                'for'   => array(),
+                'class' => array(),
+                'id'    => array(),
+            ),
+            'div'        => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'br'         => array(),
+            'strong'     => array(
+                'class' => array(),
+            ),
+            'select'     => array(
+                'class' => array(),
+                'id'    => array(),
+                'name'  => array(),
+                'value' => array(),
+                'style' => array(),
+            ),
+            'option'     => array(
+                'value'    => array(),
+                'selected' => array(),
+            ),
+            'ul'         => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'ol'         => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'button'     => array(
+                'type'          => array(),
+                'class'         => array(),
+                'id'            => array(),
+                'name'          => array(),
+                'value'         => array(),
+                'aria-expanded' => array(),
+                'aria-haspopup' => array(),
+                'aria-label'    => array(),
+            ),
+            'form'       => array(
+                'action' => array(),
+                'method' => array(),
+                'class'  => array(),
+                'id'     => array(),
+            ),
+            'input'      => array(
+                'type'        => array(),
+                'name'        => array(),
+                'value'       => array(),
+                'class'       => array(),
+                'id'          => array(),
+                'placeholder' => array(),
+            ),
+            'span'       => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'small'      => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'img'        => array(
+                'src'    => array(),
+                'alt'    => array(),
+                'class'  => array(),
+                'id'     => array(),
+                'style'  => array(),
+                'width'  => array(),
+                'height' => array(),
+            ),
+            'svg'        => array(
+                'xmlns'   => array(),
+                'viewBox' => array(),
+                'class'   => array(),
+                'id'      => array(),
+            ),
+            'p'          => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'use'        => array(
+                'xlink:href' => array(),
+                'class'      => array(),
+            ),
+            'i'          => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'ins'        => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'li'         => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+            'blockquote' => array(
+                'class' => array(),
+                'id'    => array(),
+                'style' => array(),
+            ),
+        );
+        return apply_filters(
+            'wcvendors_allowed_html_tags',
+            wp_parse_args( $wcv_additional_tags, $html_allowed_tags )
+        );
+    }
+}
+
+if ( ! function_exists( 'wcv_get_vendor_orders' ) ) {
+    /**
+     * Get a list of vendor orders.
+     *
+     * @param array $args The arguments to pass to WP_Query.
+     * @return WC_Order_Vendor[]|array[WC_Order]
+     * @version 2.4.8
+     * @since   2.4.8 - Added.
+     */
+    function wcv_get_vendor_orders( $args = array() ) {
+        $args = wp_parse_args(
+            $args,
+            array(
+                'type'  => WC_Order_Vendor::ORDER_TYPE,
+                'limit' => -1,
+            )
+        );
+
+        $args = apply_filters(
+            'wcvendors_get_vendor_orders_args',
+            $args
+        );
+
+        $orders = wc_get_orders( $args );
+
+        $vendor_orders = array();
+
+        $return_vendor_orders = is_string( $args['type'] ) && WC_Order_Vendor::ORDER_TYPE === $args['type'];
+
+        if ( $return_vendor_orders ) {
+
+            foreach ( $orders as $vendor_order ) {
+                if ( 0 === $vendor_order->get_id() ) {
+                    continue;
+                }
+                $vendor_orders[] = wcv_get_order( $vendor_order->get_id() );
+            }
+        }
+
+        return apply_filters(
+            'wcvendors_get_vendor_orders',
+            $return_vendor_orders ? $vendor_orders : $orders,
+            $args
+        );
+    }
+}
+
+if ( ! function_exists( 'wcvendors_schedule_display_notice' ) ) {
+    /**
+     * Schedule notice
+     *
+     * @param string $notice_key The notice key.
+     * @param int    $days       The number of days to schedule the notice.
+     *
+     * @since 2.4.7
+     */
+    function wcvendors_schedule_display_notice( $notice_key, $days = 0 ) {
+        if ( ! class_exists( 'ActionScheduler' ) ) {
+            return;
+        }
+        require_once WCV_PLUGIN_DIR . 'classes/admin/class-wcv-admin-notices.php';
+        $action_key   = 'wcvendors_notice_scheduled_action';
+        $is_shown     = get_option( 'wcvendors_display_notice_' . $notice_key, 'no' );
+        $is_dismissed = get_option( 'wcvendors_dismissed_notice_' . $notice_key, 'no' );
+
+        if ( 'yes' === $is_shown || 'yes' === $is_dismissed ) {
+            return;
+        }
+
+        if ( as_next_scheduled_action( $action_key, array( $notice_key ), 'wcvendors' ) ) {
+            return;
+        }
+
+        $notices = (array) get_option( 'wcvendors_admin_notices', array() );
+        $notices = array_filter( $notices );
+
+        if ( ! in_array( $notice_key, $notices, true ) ) {
+            WCVendors_Admin_Notices::add_notice( $notice_key );
+        }
+
+        as_schedule_single_action( time() + ( DAY_IN_SECONDS * $days ), $action_key, array( $notice_key ), 'wcvendors', true );
+
+        $is_display = 0 === $days ? 'yes' : 'no';
+        update_option( 'wcvendors_display_notice_' . $notice_key, $is_display );
+    }
+}
+
+if ( ! function_exists( 'wcv_trigger_admin_notice' ) ) {
+    /**
+     * Trigger admin notice
+     *
+     * @param string $notice_key The notice key.
+     *
+     * @since 2.5.2
+     */
+    function wcv_trigger_admin_notice( $notice_key ) {
+        $notices = (array) get_option( 'wcvendors_admin_notices', array() );
+        $notices = array_filter( $notices );
+
+        $notice = in_array( $notice_key, $notices, true ) || in_array( $notice_key, array_keys( $notices ), true ) ? $notice_key : false;
+
+        if ( ! $notice ) {
+            return;
+        }
+
+        update_option( 'wcvendors_display_notice_' . $notice_key, 'yes' );
+    }
+}
+
+if ( ! function_exists( 'wcv_get_product_total_sales' ) ) {
+    /**
+     * Get total sales for a product by order status.
+     *
+     * @param array $product_ids The product IDs.
+     *
+     * @version 2.4.9
+     * @since   2.4.9 - Added.
+     * @return array
+     */
+    function wcv_get_product_total_sales( $product_ids ) {
+        global $wpdb;
+        $product_ids           = array_unique( array_map( 'absint', $product_ids ) );
+        $product_placeholders  = array_fill( 0, count( $product_ids ), '%d' );
+        $product_placeholders  = implode( ',', $product_placeholders );
+        $statuses              = apply_filters(
+            'wcvendors_get_product_total_sales_order_statuses',
+            array( 'paid', 'due' )
+        );
+        $statutes_placeholders = array_fill( 0, count( $statuses ), '%s' );
+        $statutes_placeholders = implode( ',', $statutes_placeholders );
+        $sql                   = "SELECT product_id, SUM( qty ) as qty FROM {$wpdb->prefix}pv_commission
+        WHERE product_id IN ($product_placeholders) AND status IN ($statutes_placeholders)
+        GROUP BY product_id";
+
+        $results = $wpdb->get_results( $wpdb->prepare( $sql, array_merge( $product_ids, $statuses ) ) ); // phpcs:ignore
+
+        $product_sales = array();
+        foreach ( $results as $result ) {
+            $product_id = $result->product_id;
+            $qty        = $result->qty;
+            if ( ! isset( $product_sales[ $product_id ] ) ) {
+                $product_sales[ $product_id ] = 0;
+            }
+            $product_sales[ $product_id ] += $qty;
+        }
+
+        return $product_sales;
+    }
+}
+
+if ( ! function_exists( 'wcvendors_add_vendor_status_meta_key' ) ) {
+
+    /**
+     * Add _vendors_status as user meta for vendor and pending vendor users
+     *
+     * @since 2.4.8
+     * @version 2.4.9.2
+     * @return void
+     */
+    function wcvendors_add_vendor_status_meta_key() {
+
+        $users = get_users(
+            array(
+                'role__in'   => array( 'vendor', 'pending_vendor' ),
+                'number'     => apply_filters( 'wcvendors_sync_vendor_status_limit', 100 ),
+                'fields'     => 'ID',
+                'meta_query' => array(
+                    'relation' => 'OR',
+                    array(
+                        'key'     => '_wcv_vendor_status',
+                        'compare' => 'NOT EXISTS',
+                    ),
+                    array(
+                        'key'     => '_wcv_vendor_status',
+                        'value'   => '',
+                        'compare' => '=',
+                    ),
+                ),
+            )
+        );
+
+        if ( empty( $users ) ) {
+            return;
+        }
+
+        foreach ( $users as $user_id ) {
+            if ( wc_user_has_role( $user_id, 'vendor' ) ) {
+                update_user_meta( $user_id, '_wcv_vendor_status', 'active' );
+            } else {
+                update_user_meta( $user_id, '_wcv_vendor_status', 'inactive' );
+            }
+        }
+
+        wp_schedule_single_event( time() + 5, 'wcvendors_sync_vendor_status' );
+    }
+}
+
+
+if ( ! function_exists( 'escape_array_for_in_operator' ) ) {
+    /**
+     * Escape an array of values for use in the IN operator of wpdb->prepare.
+     *
+     * @param array $values The array of values to escape.
+     * @return string The escaped values formatted for the IN operator.
+     * @param bool  $wrap_in_brackets Whether to wrap the escaped values in brackets.
+     *
+     * @since 2.5.1
+     * @version 2.5.1
+     */
+    function escape_array_for_in_operator( $values, $wrap_in_brackets = false ) {
+        global $wpdb;
+        $escaped_values = array();
+        foreach ( $values as $value ) {
+            $type = gettype( $value );
+            switch ( $type ) {
+                case 'integer':
+                    $escaped_values[] = $wpdb->prepare( '%d', $value );
+                    break;
+                case 'string':
+                    $escaped_values[] = $wpdb->prepare( '%s', $value );
+                    break;
+                default:
+                    $escaped_values[] = $wpdb->prepare( '%s', $value );
+                    break;
+            }
+        }
+        $formatted_values = implode( ', ', $escaped_values );
+        if ( $wrap_in_brackets ) {
+            $formatted_values = '(' . $formatted_values . ')';
+        }
+        return $formatted_values;
+    }
+}
+
+if ( ! function_exists( 'wcv_deprecated_action' ) ) {
+    /**
+     * Trigger a deprecated action.
+     *
+     * @param string $old_hook Function that was called.
+     * @param string $version  Version that function was deprecated in.
+     * @param string $replacement Optional. Function that should have been called.
+     * @param mixed  ...$args  Additional arguments to pass to the hooks.
+     *
+     * @since 2.5.1
+     * @version 2.5.1
+     */
+    function wcv_deprecated_action( $old_hook, $version, $replacement, ...$args ) {
+        if ( wp_doing_ajax() ) {
+            return;
+        }
+        do_action_deprecated( $old_hook, $args, $version, $replacement );
+        do_action( $replacement, ...$args );
+    }
+}
+
+
+if ( ! function_exists( 'wcv_deprecated_filter' ) ) {
+    /**
+     * Trigger a deprecated filter.
+     *
+     * @param string $old_hook Function that was called.
+     * @param string $version  Version that function was deprecated in.
+     * @param string $replacement Optional. Function that should have been called.
+     * @param mixed  $value    Value to return.
+     * @param mixed  ...$args  Additional arguments to pass to the hooks.
+     *
+     * @since 2.5.1
+     * @version 2.5.1
+     */
+    function wcv_deprecated_filter( $old_hook, $version, $replacement, $value, ...$args ) {
+        if ( wp_doing_ajax() ) {
+            return $value;
+        }
+        $value = apply_filters_deprecated( $old_hook, array( $value, ...$args ), $version, $replacement );
+        return apply_filters( $replacement, $value, ...$args );
+    }
+}
+
+if ( ! function_exists( 'maybe_load_new_dashboard' ) ) {
+    /**
+     * Check if Pro version is larger than 1.9.1
+     */
+    function maybe_load_new_dashboard() {
+        $maybe_load_new_dashboard = true;
+        $wcv_path                 = WP_PLUGIN_DIR . '/wc-vendors-pro';
+        $legacy_path              = $wcv_path . '/legacy/class-wcvendors-pro.php';
+        $active_plugins           = get_option( 'active_plugins' );
+        $is_pro_active            = in_array( 'wc-vendors-pro/wcvendors-pro.php', $active_plugins, true );
+
+        if ( $is_pro_active && ! file_exists( $legacy_path ) ) {
+            $maybe_load_new_dashboard = false;
+        }
+        return $maybe_load_new_dashboard;
+    }
+}
+
+
+if ( ! function_exists( 'wcv_normalize_hidden_product_types' ) ) {
+    /**
+     * Normalize a stored hidden product types value into a list of product type slugs.
+     *
+     * Installs upgraded from WC Vendors 1.x can hold a scalar string or a legacy
+     * `type => 0|1` map, because wcv_migrate_settings() copied the 1.x value across
+     * without normalising it. Both shapes break the array operations callers perform.
+     *
+     * A legacy map is discarded rather than converted: its values (0/1) never matched a
+     * product type slug, so those sites have effectively been hiding nothing, and turning
+     * the map back into a list would silently start hiding types on a live store.
+     *
+     * @since 2.7.2
+     *
+     * @param mixed $value The stored value.
+     *
+     * @return array List of product type slugs.
+     */
+    function wcv_normalize_hidden_product_types( $value ) {
+        if ( ! is_array( $value ) ) {
+            return array();
+        }
+
+        // A legacy 1.x map is keyed by product type; a valid value is a plain list.
+        if ( array_values( $value ) !== $value ) {
+            return array();
+        }
+
+        return array_values( array_filter( $value, 'is_string' ) );
+    }
+}
+
+if ( ! function_exists( 'wcv_get_hidden_product_types' ) ) {
+    /**
+     * Get the product types hidden from vendors.
+     *
+     * @since 2.7.2
+     *
+     * @return array List of product type slugs.
+     */
+    function wcv_get_hidden_product_types() {
+        return wcv_normalize_hidden_product_types( get_option( 'wcvendors_capability_product_types', array() ) );
+    }
+}
+
+if ( ! function_exists( 'wcv_is_all_product_types_hidden' ) ) {
+    /**
+     * Check if all product types are hidden.
+     *
+     * @return bool
+     */
+    function wcv_is_all_product_types_hidden() {
+        $hidden_product_types = wcv_get_hidden_product_types();
+        $wc_product_types     = array_keys( wc_get_product_types() );
+        return empty( array_diff( $wc_product_types, $hidden_product_types ) );
+    }
+}
+
+if ( ! function_exists( 'wcv_approve_vendor' ) ) {
+    /**
+     * Approve a pending vendor.
+     *
+     * Promotes the pending vendor to the vendor role and marks the account
+     * active. Shared by the admin screen and the REST API.
+     *
+     * @since 2.7.3
+     *
+     * @param int    $vendor_id      Vendor user ID.
+     * @param string $custom_message Custom notification message.
+     * @param bool   $use_custom_msg Whether to use a custom notification message.
+     * @return true|WP_Error True on success, WP_Error when the user is missing or not pending.
+     */
+    function wcv_approve_vendor( $vendor_id, $custom_message = '', $use_custom_msg = false ) {
+        $vendor = new WP_User( (int) $vendor_id );
+
+        if ( ! $vendor->exists() ) {
+            return new WP_Error(
+                'wcv_vendor_not_found',
+                __( 'Vendor not found.', 'wc-vendors' )
+            );
+        }
+
+        if ( ! in_array( 'pending_vendor', (array) $vendor->roles, true ) ) {
+            return new WP_Error(
+                'wcv_vendor_not_pending',
+                __( 'Vendor cannot be approved. Please make sure the vendor is pending.', 'wc-vendors' )
+            );
+        }
+
+        $vendor->remove_role( 'pending_vendor' );
+        wcv_set_primary_vendor_role( (int) $vendor_id, 'vendor', $use_custom_msg, $custom_message );
+        update_user_meta( (int) $vendor_id, '_wcv_vendor_status', 'active' );
+
+        do_action( 'wcvendors_approve_vendor', $vendor );
+
+        return true;
+    }
+}
+
+if ( ! function_exists( 'wcv_deny_vendor' ) ) {
+    /**
+     * Deny a pending vendor.
+     *
+     * Removes the pending vendor role and clears the vendor status. Shared by
+     * the admin screen and the REST API.
+     *
+     * @since 2.7.3
+     *
+     * @param int    $vendor_id      Vendor user ID.
+     * @param string $custom_message Custom notification message.
+     * @param bool   $use_custom_msg Whether to use a custom notification message.
+     * @return true|WP_Error True on success, WP_Error when the user is missing or not pending.
+     */
+    function wcv_deny_vendor( $vendor_id, $custom_message = '', $use_custom_msg = false ) {
+        $vendor = new WP_User( (int) $vendor_id );
+
+        if ( ! $vendor->exists() ) {
+            return new WP_Error(
+                'wcv_vendor_not_found',
+                __( 'Vendor not found.', 'wc-vendors' )
+            );
+        }
+
+        if ( ! in_array( 'pending_vendor', (array) $vendor->roles, true ) ) {
+            return new WP_Error(
+                'wcv_vendor_not_pending',
+                __( 'Vendor cannot be denied. Please make sure the vendor is pending.', 'wc-vendors' )
+            );
+        }
+
+        $role = apply_filters( 'wcvendors_denied_vendor_role', get_option( 'default_role', 'subscriber' ) );
+
+        $vendor->remove_role( 'pending_vendor' );
+
+        // Only add the default role if the user has no other roles.
+        if ( empty( $vendor->roles ) ) {
+            $vendor->add_role( $role );
+        }
+
+        delete_user_meta( (int) $vendor_id, '_wcv_vendor_status' );
+
+        do_action( 'wcvendors_deny_vendor', $vendor, $use_custom_msg, $custom_message );
+
+        return true;
+    }
+}
+
+if ( ! function_exists( 'wcv_activate_vendor' ) ) {
+    /**
+     * Activate a vendor.
+     *
+     * Marks the vendor account active. Shared by the admin screen and the REST API.
+     *
+     * @since 2.7.3
+     *
+     * @param int $vendor_id Vendor user ID.
+     * @return true|WP_Error True on success, WP_Error when the vendor is missing, already active, or the save fails.
+     */
+    function wcv_activate_vendor( $vendor_id ) {
+        return wcv_set_vendor_status( $vendor_id, 'active' );
+    }
+}
+
+if ( ! function_exists( 'wcv_deactivate_vendor' ) ) {
+    /**
+     * Deactivate a vendor.
+     *
+     * Marks the vendor account inactive. Shared by the admin screen and the REST API.
+     *
+     * @since 2.7.3
+     *
+     * @param int $vendor_id Vendor user ID.
+     * @return true|WP_Error True on success, WP_Error when the vendor is missing, already inactive, or the save fails.
+     */
+    function wcv_deactivate_vendor( $vendor_id ) {
+        return wcv_set_vendor_status( $vendor_id, 'inactive' );
+    }
+}
+
+if ( ! defined( 'WCV_VENDOR_ALREADY_ACTIVE' ) ) {
+    // Error code wcv_set_vendor_status() returns for a no-op activate. Consumers
+    // key the admin message and the REST 409 status on it, so define it once.
+    define( 'WCV_VENDOR_ALREADY_ACTIVE', 'wcv_vendor_already_active' );
+}
+
+if ( ! defined( 'WCV_VENDOR_ALREADY_INACTIVE' ) ) {
+    // Error code wcv_set_vendor_status() returns for a no-op deactivate.
+    define( 'WCV_VENDOR_ALREADY_INACTIVE', 'wcv_vendor_already_inactive' );
+}
+
+if ( ! function_exists( 'wcv_restate_sticky_settings' ) ) {
+    /**
+     * Restate vendor settings a partial write would otherwise clear.
+     *
+     * Vendors_Settings::save() reads these yes/no fields as 'no' when the change
+     * set does not name them, then deletes their meta. Restate any named field
+     * that is currently on, so a partial write cannot clear a setting it never
+     * sent. Read the stored meta, not get_prop(): a Pro field reports 'no' while
+     * Pro is inactive, but save() deletes the row either way.
+     *
+     * @since 2.7.3
+     *
+     * @param Vendors_Settings $settings  The settings object to write.
+     * @param int              $vendor_id Vendor user ID.
+     * @param array            $fields    Field keys to restate.
+     *
+     * @return void
+     */
+    function wcv_restate_sticky_settings( $settings, $vendor_id, array $fields ) {
+        // Nothing to write, so nothing to protect. Keeps an unchanged write idempotent.
+        $changes = $settings->get_changes();
+
+        if ( empty( $changes ) ) {
+            return;
+        }
+
+        $meta_keys = array(
+            'vacation_mode'      => '_wcv_vacation_mode',
+            'lock_new_products'  => '_wcv_lock_new_products_vendor',
+            'lock_edit_products' => '_wcv_lock_edit_products_vendor',
+            'html_enabled'       => 'pv_shop_html_enabled',
+        );
+
+        foreach ( $fields as $field ) {
+            if ( ! isset( $meta_keys[ $field ] ) || isset( $changes[ $field ] ) ) {
+                continue;
+            }
+
+            if ( 'yes' === get_user_meta( (int) $vendor_id, $meta_keys[ $field ], true ) ) {
+                $settings->set_prop( $field, 'yes' );
+            }
+        }
+    }
+}
+
+if ( ! function_exists( 'wcv_set_vendor_status' ) ) {
+    /**
+     * Write a vendor status and fire the matching transition hook.
+     *
+     * A vendor that already holds the requested status is refused, so a caller
+     * can tell a real transition from a no-op.
+     *
+     * @since 2.7.3
+     *
+     * @param int    $vendor_id Vendor user ID.
+     * @param string $status    Target status: 'active' or 'inactive'.
+     * @return true|WP_Error True on success, WP_Error otherwise.
+     */
+    function wcv_set_vendor_status( $vendor_id, $status ) {
+        $vendor_id = (int) $vendor_id;
+        $settings  = new Vendors_Settings( $vendor_id, true );
+
+        if ( ! $settings->is_valid() ) {
+            return new WP_Error(
+                'wcv_vendor_not_found',
+                __( 'Vendor not found.', 'wc-vendors' )
+            );
+        }
+
+        $current = $settings->get_vendor_status();
+
+        if ( $status === $current['value'] ) {
+            return 'active' === $status
+                ? new WP_Error( WCV_VENDOR_ALREADY_ACTIVE, __( 'Vendor is already active.', 'wc-vendors' ) )
+                : new WP_Error( WCV_VENDOR_ALREADY_INACTIVE, __( 'Vendor is already inactive.', 'wc-vendors' ) );
+        }
+
+        $settings->set_prop( 'vendor_status', $status );
+
+        // A status write names only vendor_status, so restate any sticky setting
+        // that is currently on. Otherwise save() would clear it.
+        wcv_restate_sticky_settings(
+            $settings,
+            $vendor_id,
+            array( 'vacation_mode', 'lock_new_products', 'lock_edit_products' )
+        );
+
+        $result = $settings->save();
+
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+
+        if ( 'active' === $status ) {
+            do_action( 'wcvendors_set_vendor_active', $vendor_id );
+        } else {
+            do_action( 'wcvendors_set_vendor_inactive', $vendor_id );
+        }
+
+        return true;
+    }
+}
