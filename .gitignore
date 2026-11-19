@@ -1,1 +1,31 @@
+# Config et secrets
 wp-config.php
+wp-config*.bak
+wp-config*.old
+*.php~
+*.save
+.env
+.env.*
+.htpasswd
+auth.json
+sftp-config.json
+.vscode/sftp.json
+.ftpconfig
+wp-cli.local.yml
+
+# Données
+*.sql
+*.sql.gz
+wp-content/uploads/
+wp-content/backups/
+wp-content/updraft/
+wp-content/ai1wm-backups/
+wp-content/backup*/
+
+# Logs
+*.log
+wp-content/debug.log
+
+# Dépendances (à réinstaller plutôt qu'à versionner)
+vendor/
+node_modules/
