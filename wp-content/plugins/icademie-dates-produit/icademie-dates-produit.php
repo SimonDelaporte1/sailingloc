@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Dates de début et de fin
- * Description:       Sur les produits qui ont l'attribut « date », affiche deux sélecteurs de date (début et fin) dans le formulaire d'ajout au panier, puis enregistre les dates choisies dans le panier et la commande.
- * Version:           1.0.0
+ * Description:       Sur les produits qui ont l'attribut « date », affiche deux sélecteurs de date (début et fin) dans le formulaire d'ajout au panier, puis enregistre les dates choisies dans le panier et la commande. Le prix de ces produits est un prix par jour : dans le panier, il est multiplié par le nombre de jours choisis.
+ * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -22,10 +22,14 @@ defined( 'ABSPATH' ) || exit;
  *
  * L'attribut ne doit pas être « Utilisé pour les variations » : une variation
  * est un choix dans une liste fixe de valeurs, alors qu'une date est libre.
+ *
+ * Le prix de ces produits est un prix par jour. Dans le panier, l'article coûte
+ * prix × nombre de jours, dates de début et de fin comprises (du 10 au 12 :
+ * 3 jours ; début et fin le même jour : 1 jour).
  */
 final class Icademie_Dates_Produit {
 
-	const VERSION = '1.0.0';
+	const VERSION = '1.1.0';
 
 	/** Attribut qui active les dates sur un produit. */
 	const ATTRIBUTE = 'date';
@@ -50,6 +54,11 @@ final class Icademie_Dates_Produit {
 		add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'validate_dates' ), 10, 2 );
 		add_filter( 'woocommerce_add_cart_item_data', array( __CLASS__, 'add_cart_item_data' ), 10, 2 );
 		add_filter( 'woocommerce_get_item_data', array( __CLASS__, 'display_cart_item_data' ), 10, 2 );
+
+		// Prix par jour × nombre de jours : appliqué quand l'article entre dans le
+		// panier, puis à chaque chargement du panier depuis la session.
+		add_filter( 'woocommerce_add_cart_item', array( __CLASS__, 'apply_price_per_day' ), 20 );
+		add_filter( 'woocommerce_get_cart_item_from_session', array( __CLASS__, 'apply_price_per_day' ), 20 );
 
 		// Commande : les dates sont copiées sur la ligne de commande, visible dans
 		// l'admin, le compte client, le tableau de bord vendeur et les e-mails.
@@ -187,7 +196,42 @@ final class Icademie_Dates_Produit {
 	}
 
 	/**
-	 * Affiche les dates sous le nom du produit (panier, mini-panier, commande).
+	 * Prix de l'article du panier : prix du produit (par jour) × nombre de jours.
+	 *
+	 * WooCommerce recharge le produit depuis la base à chaque chargement du panier :
+	 * le prix de départ est donc toujours le prix par jour actuel, jamais un prix déjà
+	 * multiplié. Le prix normal et le prix promo sont multipliés avec le prix, pour
+	 * qu'une éventuelle promotion reste affichée correctement.
+	 *
+	 * Le total de la ligne (prix × quantité), la commande et la commission du vendeur
+	 * découlent de ce prix.
+	 *
+	 * @param array $cart_item Article du panier.
+	 * @return array
+	 */
+	public static function apply_price_per_day( $cart_item ) {
+		if ( empty( $cart_item[ self::CART_KEY ] ) || ! isset( $cart_item['data'] ) || ! $cart_item['data'] instanceof WC_Product ) {
+			return $cart_item;
+		}
+
+		$days = self::count_days( $cart_item[ self::CART_KEY ] );
+
+		if ( $days < 2 ) {
+			return $cart_item;
+		}
+
+		// Contexte « edit » : prix enregistrés, sans les filtres d'affichage (conversion
+		// de devise…), qui s'appliqueront ensuite au prix multiplié.
+		$product = $cart_item['data'];
+		$product->set_price( self::multiply_price( $product->get_price( 'edit' ), $days ) );
+		$product->set_regular_price( self::multiply_price( $product->get_regular_price( 'edit' ), $days ) );
+		$product->set_sale_price( self::multiply_price( $product->get_sale_price( 'edit' ), $days ) );
+
+		return $cart_item;
+	}
+
+	/**
+	 * Affiche les dates et la durée sous le nom du produit (panier, mini-panier, commande).
 	 *
 	 * @param array $item_data Lignes déjà affichées.
 	 * @param array $cart_item Article du panier.
@@ -207,11 +251,20 @@ final class Icademie_Dates_Produit {
 			'value' => self::format_date( $cart_item[ self::CART_KEY ]['fin'] ),
 		);
 
+		$days = self::count_days( $cart_item[ self::CART_KEY ] );
+
+		if ( $days > 0 ) {
+			$item_data[] = array(
+				'key'   => __( 'Durée', 'icademie-dates-produit' ),
+				'value' => self::format_days( $days ),
+			);
+		}
+
 		return $item_data;
 	}
 
 	/**
-	 * Copie les dates sur la ligne de commande.
+	 * Copie les dates et la durée sur la ligne de commande.
 	 *
 	 * @param WC_Order_Item_Product $item          Ligne de commande.
 	 * @param string                $cart_item_key Clé de l'article du panier.
@@ -223,14 +276,23 @@ final class Icademie_Dates_Produit {
 		}
 
 		$dates = $values[ self::CART_KEY ];
+		$days  = self::count_days( $dates );
 
 		// Version lisible, affichée partout où WooCommerce montre la ligne.
 		$item->add_meta_data( __( 'Date de début', 'icademie-dates-produit' ), self::format_date( $dates['debut'] ), true );
 		$item->add_meta_data( __( 'Date de fin', 'icademie-dates-produit' ), self::format_date( $dates['fin'] ), true );
 
-		// Version technique AAAA-MM-JJ, cachée (préfixe « _ »), pour un export ou un calcul.
+		if ( $days > 0 ) {
+			$item->add_meta_data( __( 'Durée', 'icademie-dates-produit' ), self::format_days( $days ), true );
+		}
+
+		// Version technique, cachée (préfixe « _ »), pour un export ou un calcul.
 		$item->add_meta_data( '_icademie_date_debut', $dates['debut'], true );
 		$item->add_meta_data( '_icademie_date_fin', $dates['fin'], true );
+
+		if ( $days > 0 ) {
+			$item->add_meta_data( '_icademie_nb_jours', $days, true );
+		}
 	}
 
 	/**
@@ -333,6 +395,47 @@ final class Icademie_Dates_Produit {
 		$date = DateTimeImmutable::createFromFormat( '!Y-m-d', $value, wp_timezone() );
 
 		return $date ? wp_date( wc_date_format(), $date->getTimestamp() ) : $value;
+	}
+
+	/**
+	 * Nombre de jours de la période, dates de début et de fin comprises.
+	 *
+	 * @param array $dates Dates « debut » et « fin » au format AAAA-MM-JJ.
+	 * @return int Nombre de jours (1 si début et fin sont le même jour), 0 si les dates sont invalides.
+	 */
+	private static function count_days( $dates ) {
+		// En UTC, tous les jours durent 24 h : pas d'écart au changement d'heure.
+		$utc   = new DateTimeZone( 'UTC' );
+		$start = DateTimeImmutable::createFromFormat( '!Y-m-d', isset( $dates['debut'] ) ? (string) $dates['debut'] : '', $utc );
+		$end   = DateTimeImmutable::createFromFormat( '!Y-m-d', isset( $dates['fin'] ) ? (string) $dates['fin'] : '', $utc );
+
+		if ( ! $start || ! $end || $end < $start ) {
+			return 0;
+		}
+
+		return $start->diff( $end )->days + 1;
+	}
+
+	/**
+	 * Multiplie un prix par le nombre de jours ; un prix vide reste vide.
+	 *
+	 * @param string $price Prix enregistré.
+	 * @param int    $days  Nombre de jours.
+	 * @return float|string
+	 */
+	private static function multiply_price( $price, $days ) {
+		return ( '' === $price || null === $price ) ? '' : (float) $price * $days;
+	}
+
+	/**
+	 * Durée lisible : « 1 jour », « 3 jours ».
+	 *
+	 * @param int $days Nombre de jours.
+	 * @return string
+	 */
+	private static function format_days( $days ) {
+		/* translators: %s: nombre de jours. */
+		return sprintf( _n( '%s jour', '%s jours', $days, 'icademie-dates-produit' ), number_format_i18n( $days ) );
 	}
 }
 
