@@ -1,0 +1,35 @@
+/* Icademie – Dates de début et de fin */
+
+.icademie-dates {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+/* Côte à côte sur grand écran, l'un sous l'autre sur mobile. */
+.icademie-dates__field {
+	flex: 1 1 12rem;
+	margin: 0;
+}
+
+.icademie-dates__field label {
+	display: block;
+	margin-bottom: 0.25em;
+}
+
+/* Mêmes bordure et arrondi que les champs WooCommerce, que le thème règle via ces variables. */
+.icademie-dates__field input[type="date"] {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.5em;
+	border: var(--wc-form-border-width, 1px) solid var(--wc-form-border-color, currentColor);
+	border-radius: var(--wc-form-border-radius, 0);
+	background-color: var(--wc-form-color-background, #fff);
+	color: var(--wc-form-color-text, inherit);
+	font: inherit;
+	line-height: normal;
+}
+
+.icademie-dates__field input[type="date"]:focus {
+	border-color: currentColor;
+}
