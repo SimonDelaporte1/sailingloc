@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Icademie – Page d'accueil
  * Description:       Page d'accueil intégrée d'après les zonings « Accueil » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : bandeau avec moteur de recherche (destination = catégorie ; type de bateau et passagers = attributs ; dates reprises sur la fiche du bateau), réassurance, catégories de bateaux (attribut « Type de bateau »), bateaux à la une, destinations populaires (catégories mises en avant), comment ça marche, devenir loueur, avis des membres et newsletter (formulaire HubSpot de la page Newsletter). L'en-tête et le pied de page restent ceux du thème. Textes, images et liens : Réglages › Page d'accueil.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -32,7 +32,7 @@ require_once __DIR__ . '/includes/class-icademie-page-accueil-zones.php';
  */
 final class Icademie_Page_Accueil {
 
-	const VERSION = '1.0.0';
+	const VERSION = '1.0.1';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;

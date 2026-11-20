@@ -17,7 +17,7 @@ final class Icademie_Page_Accueil_Zones {
 
 	/** Attributs de produit utilisés (slug sans « pa_ »). */
 	const TYPE_ATTRIBUTE       = 'type-de-bateau';
-	const PASSENGERS_ATTRIBUTE = 'nombre-de-personnes';
+	const PASSENGERS_ATTRIBUTE = 'passagers';
 	const BERTHS_ATTRIBUTE     = 'nombre-de-couchages';
 	const LENGTH_ATTRIBUTE     = 'longueur-du-bateau';
 
@@ -324,32 +324,37 @@ final class Icademie_Page_Accueil_Zones {
 	/**
 	 * Valeurs d'un attribut du produit, séparées par des virgules.
 	 *
+	 * Utilisée aussi par les cartes de la page catégorie (extension « Icademie – Page catégorie »).
+	 *
 	 * @param WC_Product $product   Produit.
 	 * @param string     $attribute Slug de l'attribut, sans « pa_ ».
 	 * @return string
 	 */
-	private static function attribute_text( $product, $attribute ) {
+	public static function attribute_text( $product, $attribute ) {
 		return trim( wp_strip_all_tags( html_entity_decode( (string) $product->get_attribute( wc_attribute_taxonomy_name( $attribute ) ), ENT_QUOTES, 'UTF-8' ) ) );
 	}
 
 	/**
-	 * Premier nombre d'un attribut du produit (« 8 » pour 8 personnes).
+	 * Plus grand nombre d'un attribut du produit : « 8 » pour 8 couchages ; « 11 » pour un bateau
+	 * dont l'attribut « Passagers » a les valeurs 1, 2… 11 (de 1 à 11 passagers).
 	 *
 	 * @param WC_Product $product   Produit.
 	 * @param string     $attribute Slug de l'attribut, sans « pa_ ».
 	 * @return int 0 si l'attribut n'est pas renseigné.
 	 */
 	private static function attribute_number( $product, $attribute ) {
-		return preg_match( '/\d+/', self::attribute_text( $product, $attribute ), $number ) ? (int) $number[0] : 0;
+		return preg_match_all( '/\d+/', self::attribute_text( $product, $attribute ), $numbers ) ? (int) max( array_map( 'intval', $numbers[0] ) ) : 0;
 	}
 
 	/**
 	 * Longueur lisible : « 12 m », « plus de 15 m ».
 	 *
+	 * Utilisée aussi par les cartes de la page catégorie.
+	 *
 	 * @param string $value Valeur de l'attribut « Longueur du bateau ».
 	 * @return string
 	 */
-	private static function length_text( $value ) {
+	public static function length_text( $value ) {
 		if ( ! preg_match( '/\d+(?:[.,]\d+)?/', $value, $number ) ) {
 			return $value;
 		}
@@ -368,10 +373,12 @@ final class Icademie_Page_Accueil_Zones {
 	/**
 	 * Port de départ : la catégorie la plus précise du bateau (« Ajaccio » plutôt que « France »).
 	 *
+	 * Utilisé aussi par les cartes de la page catégorie.
+	 *
 	 * @param WC_Product $product Produit.
 	 * @return string
 	 */
-	private static function port( $product ) {
+	public static function port( $product ) {
 		$terms = get_the_terms( $product->get_id(), 'product_cat' );
 
 		if ( ! $terms || is_wp_error( $terms ) ) {

@@ -58,7 +58,7 @@ final class Icademie_Page_Accueil_Settings {
 		$sections = array(
 			'bandeau'     => array(
 				'title'       => __( 'Bandeau et recherche (zone 2)', 'icademie-page-accueil' ),
-				'description' => __( 'Le moteur de recherche cherche par destination (catégories de produits), par type de bateau (attribut « Type de bateau ») et par nombre de passagers (attribut « Nombre de personnes » : bateaux pour ce nombre de personnes ou plus). Les dates choisies sont reprises sur la fiche du bateau.', 'icademie-page-accueil' ),
+				'description' => __( 'Le moteur de recherche cherche par destination (catégories de produits), par type de bateau (attribut « Type de bateau ») et par nombre de passagers (attribut « Passagers » : bateaux qui acceptent ce nombre de passagers ou plus). Les dates choisies sont reprises sur la fiche du bateau.', 'icademie-page-accueil' ),
 				'rows'        => array(
 					'bandeau_titre' => array(
 						'label'    => __( 'Titre principal (H1)', 'icademie-page-accueil' ),
@@ -653,9 +653,18 @@ final class Icademie_Page_Accueil_Settings {
 			$value = home_url( $value );
 		}
 
-		$url = esc_url_raw( $value, array( 'http', 'https' ) );
+		$url  = esc_url_raw( $value, array( 'http', 'https' ) );
+		$host = '' !== $url ? strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) ) : '';
 
-		if ( '' !== $url && wp_parse_url( $url, PHP_URL_HOST ) ) {
+		// Vrai nom de domaine, adresse IP ou nom du site : « pas une adresse » (dont WordPress ferait
+		// « http://pas%20une%20adresse ») est refusé.
+		$valid_host = '' !== $host && (
+			strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) === $host
+			|| false !== filter_var( $host, FILTER_VALIDATE_IP )
+			|| preg_match( '/^(?:[a-z0-9\\x80-\\xff](?:[a-z0-9\\x80-\\xff-]*[a-z0-9\\x80-\\xff])?\\.)+[a-z\\x80-\\xff][a-z0-9\\x80-\\xff-]*[a-z0-9\\x80-\\xff]$/i', $host )
+		);
+
+		if ( $valid_host ) {
 			return $url;
 		}
 
