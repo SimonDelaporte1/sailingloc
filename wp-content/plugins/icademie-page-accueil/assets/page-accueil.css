@@ -1,0 +1,1645 @@
+/* Icademie – Page d'accueil
+ *
+ * Mise en page d'après les zonings « Accueil » : ordinateur (1440 px), tablette (768 px) et
+ * smartphone (390 px). Mêmes couleurs, polices, tailles et arrondis ; les cadres pointillés, les
+ * numéros et les descriptions des zones (repères de maquette) ne sont pas repris.
+ *
+ * La mise en page suit la largeur du bloc (requêtes de conteneur) plutôt que celle de l'écran :
+ * « ordinateur » à partir de 1024 px, « tablette » de 600 à 1023 px, « smartphone » en dessous.
+ * Elle reste donc juste dans l'aperçu de l'éditeur.
+ */
+
+/* Police des titres, hébergée avec l'extension (pas d'appel à Google Fonts). Licence : fonts/OFL.txt. */
+@font-face {
+	font-family: "Space Grotesk";
+	font-style: normal;
+	font-weight: 300 700;
+	font-display: swap;
+	src: url("fonts/space-grotesk-latin-wght-normal.woff2") format("woff2");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.icademie-accueil {
+	--ia-primary: #1d5fd1;
+	--ia-primary-dark: #173f8a;
+	--ia-primary-light: #e3ecfb;
+	--ia-primary-border: #b9cdf1;
+	--ia-text: #1f2933;
+	--ia-text-2: #3e4c59;
+	--ia-text-muted: #52606d;
+	--ia-placeholder: #616e7c;
+	/* Zoning : #8a96a3, un peu foncé pour un contraste de 3:1 sur fond blanc (WCAG 1.4.11). */
+	--ia-field-border: #7b8794;
+	--ia-border: #cbd2d9;
+	--ia-border-soft: #e4e7eb;
+	--ia-surface: #fff;
+	--ia-panel: #fafbfc;
+	--ia-box: #e9ecf0;
+	--ia-dot: #c9d1da;
+	--ia-star: #e3a008;
+	--ia-success: #05603a;
+	--ia-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--ia-font-heading: "Space Grotesk", var(--ia-font);
+	--ia-gutter: 24px;
+
+	container: icademie-accueil / inline-size;
+	background: var(--ia-surface);
+	color: var(--ia-text);
+	font-family: var(--ia-font);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.45;
+	-webkit-font-smoothing: antialiased;
+}
+
+.icademie-accueil,
+.icademie-accueil *,
+.icademie-accueil *::before,
+.icademie-accueil *::after {
+	box-sizing: border-box;
+}
+
+/* Remise à zéro des styles du thème sur les éléments utilisés. */
+.icademie-accueil :where(h1, h2, h3, p, ul, ol, li, figure, figcaption, blockquote) {
+	margin: 0;
+	padding: 0;
+}
+
+.icademie-accueil :where(ul, ol) {
+	list-style: none;
+}
+
+.icademie-accueil :where(a) {
+	color: var(--ia-primary);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.icademie-accueil :where(a):hover {
+	color: var(--ia-primary-dark);
+}
+
+.icademie-accueil :where(a, button, input, select, [tabindex]):focus-visible {
+	outline: 2px solid var(--ia-primary);
+	outline-offset: 2px;
+}
+
+.icademie-accueil [hidden] {
+	display: none !important;
+}
+
+.icademie-accueil__icon {
+	flex: none;
+	display: block;
+}
+
+/* Masqué à l'écran, lu par les lecteurs d'écran. */
+.icademie-accueil__sr {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Libellés longs (ordinateur, tablette) et courts (smartphone). */
+.icademie-accueil__narrow {
+	display: none;
+}
+
+/* Rappel aux administrateurs : réglages à compléter. */
+.icademie-accueil__setup {
+	max-width: 1200px;
+	margin: 16px var(--ia-gutter);
+	padding: 10px 14px;
+	border: 1px dashed #c2410c;
+	border-radius: 8px;
+	background: #fffbeb;
+	color: #78350f;
+	font-size: 12px;
+}
+
+@media (min-width: 1249px) {
+	.icademie-accueil__setup {
+		margin-inline: auto;
+	}
+}
+
+.icademie-accueil__setup ul {
+	margin-top: 4px;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.icademie-accueil .icademie-accueil__setup a {
+	color: inherit;
+	font-weight: 600;
+}
+
+/* Boutons. */
+.icademie-accueil .icademie-accueil__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ia-primary);
+	color: #fff;
+	font-family: var(--ia-font);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.icademie-accueil .icademie-accueil__button:hover {
+	background: var(--ia-primary-dark);
+	color: #fff;
+}
+
+.icademie-accueil .icademie-accueil__button--secondary {
+	border: 1.5px solid var(--ia-primary);
+	background: var(--ia-surface);
+	color: var(--ia-primary);
+}
+
+.icademie-accueil .icademie-accueil__button--secondary:hover {
+	border-color: var(--ia-primary-dark);
+	background: var(--ia-primary-light);
+	color: var(--ia-primary-dark);
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zone 2 : bandeau, accroche et moteur de recherche.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-accueil__hero {
+	position: relative;
+	isolation: isolate;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 560px;
+	padding: 72px var(--ia-gutter) 40px;
+	overflow: hidden;
+	background: var(--ia-primary-dark);
+	color: #fff;
+}
+
+.icademie-accueil__hero-media {
+	position: absolute;
+	inset: 0;
+	z-index: -2;
+}
+
+.icademie-accueil__hero-media > img,
+.icademie-accueil__hero-media > svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Voile sombre sur la photo : titre et sous-titre lisibles quelle que soit l'image. */
+.icademie-accueil__hero::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background:
+		radial-gradient(ellipse 60% 55% at 50% 42%, rgba(15, 23, 42, 0.42), rgba(15, 23, 42, 0) 100%),
+		linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.2) 45%, rgba(15, 23, 42, 0.4) 100%);
+	pointer-events: none;
+}
+
+.icademie-accueil__hero--illustration::after {
+	background: radial-gradient(ellipse 60% 55% at 50% 42%, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0) 100%);
+}
+
+.icademie-accueil__hero-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	max-width: 1100px;
+	text-align: center;
+}
+
+.icademie-accueil .icademie-accueil__hero-title {
+	max-width: 900px;
+	color: #fff;
+	font-family: var(--ia-font-heading);
+	font-size: 44px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 1.1;
+	text-shadow: 0 2px 16px rgba(15, 23, 42, 0.35);
+	text-transform: none;
+}
+
+.icademie-accueil__hero-text {
+	max-width: 640px;
+	color: rgba(255, 255, 255, 0.95);
+	font-size: 17px;
+	line-height: 1.45;
+	text-shadow: 0 1px 8px rgba(15, 23, 42, 0.45);
+}
+
+.icademie-accueil__search {
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
+	width: 100%;
+	margin-top: 12px;
+	padding: 16px;
+	border: 2px solid var(--ia-primary);
+	border-radius: 12px;
+	background: var(--ia-surface);
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+	color: var(--ia-text);
+	text-align: left;
+}
+
+.icademie-accueil__field {
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.icademie-accueil__field--destination {
+	flex-grow: 2;
+}
+
+.icademie-accueil__field--type {
+	flex-grow: 1.2;
+}
+
+.icademie-accueil__field--passagers {
+	flex-grow: 0.8;
+}
+
+.icademie-accueil .icademie-accueil__label {
+	color: var(--ia-primary-dark);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.icademie-accueil .icademie-accueil__control {
+	display: block;
+	width: 100%;
+	height: 44px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--ia-field-border);
+	border-radius: 6px;
+	background-color: var(--ia-surface);
+	box-shadow: none;
+	color: var(--ia-text);
+	font-family: var(--ia-font);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.icademie-accueil .icademie-accueil__control::placeholder {
+	color: var(--ia-placeholder);
+	opacity: 1;
+}
+
+.icademie-accueil .icademie-accueil__control:focus-visible {
+	border-color: var(--ia-primary);
+	outline: 2px solid var(--ia-primary);
+	outline-offset: 1px;
+}
+
+.icademie-accueil select.icademie-accueil__control {
+	padding-right: 36px;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e4c59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-position: right 12px center;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+
+/* Safari (iOS) : date alignée à gauche, comme les autres champs. */
+.icademie-accueil input[type="date"].icademie-accueil__control::-webkit-date-and-time-value {
+	text-align: left;
+}
+
+.icademie-accueil .icademie-accueil__search-submit {
+	flex: none;
+	padding: 0 26px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zones 3 à 10 : colonne de 1200 px.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-accueil__zones {
+	display: flex;
+	flex-direction: column;
+	gap: 56px;
+	max-width: calc(1200px + 2 * var(--ia-gutter));
+	margin-inline: auto;
+	padding: 48px var(--ia-gutter) 64px;
+}
+
+.icademie-accueil__section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+}
+
+.icademie-accueil__section-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+	min-height: 32px;
+}
+
+.icademie-accueil .icademie-accueil__section-title {
+	color: var(--ia-text);
+	font-family: var(--ia-font-heading);
+	font-size: 22px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.2;
+	text-transform: none;
+}
+
+.icademie-accueil .icademie-accueil__section-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.icademie-accueil .icademie-accueil__section-link:hover {
+	text-decoration: underline;
+}
+
+/* Zone 3 : réassurance. */
+.icademie-accueil__reassurance-list {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.icademie-accueil__reassurance-list > li {
+	display: flex;
+	min-width: 0;
+}
+
+.icademie-accueil .icademie-accueil__reassurance-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	min-height: 68px;
+	padding: 12px 14px;
+	border-radius: 8px;
+	background: var(--ia-box);
+	color: var(--ia-text);
+	text-decoration: none;
+	transition: background-color 0.15s ease;
+}
+
+.icademie-accueil a.icademie-accueil__reassurance-item:hover {
+	background: var(--ia-primary-light);
+	color: var(--ia-text);
+}
+
+.icademie-accueil a.icademie-accueil__reassurance-item:hover .icademie-accueil__reassurance-title {
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.icademie-accueil__reassurance-icon {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: var(--ia-surface);
+	color: var(--ia-primary);
+}
+
+.icademie-accueil__reassurance-content {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.icademie-accueil__reassurance-title {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.icademie-accueil__reassurance-text {
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	line-height: 1.35;
+}
+
+/* Zone 4 : catégories de bateaux. */
+.icademie-accueil__types-list {
+	display: grid;
+	grid-template-columns: repeat(var(--icademie-accueil-colonnes, 6), minmax(0, 1fr));
+	gap: 16px;
+}
+
+.icademie-accueil__types-item {
+	display: flex;
+	min-width: 0;
+}
+
+.icademie-accueil .icademie-accueil__type {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	color: var(--ia-text);
+	text-decoration: none;
+}
+
+.icademie-accueil__type-media {
+	display: grid;
+	place-items: center;
+	height: 224px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--ia-primary-light);
+	color: var(--ia-primary);
+}
+
+.icademie-accueil__type-media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.3s ease;
+}
+
+.icademie-accueil__type:hover .icademie-accueil__type-media img {
+	transform: scale(1.04);
+}
+
+.icademie-accueil__type-name {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	background: var(--ia-box);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: center;
+	transition: background-color 0.15s ease;
+}
+
+.icademie-accueil__type:hover .icademie-accueil__type-name {
+	background: var(--ia-primary-light);
+	color: var(--ia-primary-dark);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+/* Carrousels (bateaux à la une, avis) : défilement horizontal, cartes calées au début. */
+.icademie-accueil__track {
+	display: grid;
+	grid-auto-columns: calc((100% - 3 * 20px) / 4);
+	grid-auto-flow: column;
+	gap: 20px;
+	margin: -4px;
+	padding: 4px;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scroll-padding-inline: 4px;
+	scrollbar-width: thin;
+}
+
+/* Avec le script, les boutons et les points remplacent la barre de défilement. */
+.is-enhanced .icademie-accueil__track {
+	scrollbar-width: none;
+}
+
+.is-enhanced .icademie-accueil__track::-webkit-scrollbar {
+	display: none;
+}
+
+.icademie-accueil__track-item {
+	display: flex;
+	min-width: 0;
+	scroll-snap-align: start;
+}
+
+.icademie-accueil__carousel-nav {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
+}
+
+.icademie-accueil .icademie-accueil__round {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	padding: 0;
+	border: 1.5px solid var(--ia-primary);
+	border-radius: 50%;
+	background: var(--ia-surface);
+	color: var(--ia-primary);
+	cursor: pointer;
+}
+
+.icademie-accueil .icademie-accueil__round:hover:not(:disabled) {
+	background: var(--ia-primary-light);
+	color: var(--ia-primary-dark);
+}
+
+.icademie-accueil .icademie-accueil__round:disabled {
+	border-color: var(--ia-border);
+	color: var(--ia-border);
+	cursor: default;
+}
+
+.icademie-accueil__dots {
+	display: none;
+	justify-content: center;
+	gap: 6px;
+}
+
+.icademie-accueil__dots span {
+	width: 8px;
+	height: 8px;
+	border-radius: 4px;
+	background: var(--ia-dot);
+	transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.icademie-accueil__dots span.is-active {
+	width: 20px;
+	background: var(--ia-primary);
+}
+
+/* Zone 5 : bateaux à la une. Toute la carte mène à la fiche (lien du titre étendu). */
+.icademie-accueil__boat {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	overflow: hidden;
+	border: 1px solid var(--ia-border);
+	border-radius: 8px;
+	background: var(--ia-surface);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.icademie-accueil__boat:hover {
+	border-color: var(--ia-primary-border);
+	box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+}
+
+.icademie-accueil__boat-media {
+	display: grid;
+	place-items: center;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	background: var(--ia-box);
+	color: var(--ia-text-muted);
+}
+
+.icademie-accueil__boat-media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.icademie-accueil__boat-body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px 14px 14px;
+}
+
+/* Le titre vient avant dans le code (lecteurs d'écran), le type et le port s'affichent au-dessus. */
+.icademie-accueil__boat-kicker {
+	order: -1;
+	color: var(--ia-text-muted);
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	line-height: 1.25;
+	text-transform: uppercase;
+}
+
+.icademie-accueil .icademie-accueil__boat-title {
+	font-family: var(--ia-font-heading);
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.25;
+	text-transform: none;
+}
+
+.icademie-accueil .icademie-accueil__boat-title a {
+	color: var(--ia-text);
+	text-decoration: none;
+}
+
+.icademie-accueil .icademie-accueil__boat-title a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 8px;
+}
+
+.icademie-accueil .icademie-accueil__boat-title a:focus-visible {
+	outline: none;
+}
+
+.icademie-accueil .icademie-accueil__boat-title a:focus-visible::after {
+	outline: 2px solid var(--ia-primary);
+	outline-offset: -2px;
+}
+
+.icademie-accueil .icademie-accueil__boat:hover .icademie-accueil__boat-title a {
+	color: var(--ia-primary-dark);
+	text-decoration: underline;
+}
+
+.icademie-accueil__boat-specs {
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.icademie-accueil__boat-foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 4px 8px;
+	margin-top: auto;
+	padding-top: 2px;
+}
+
+.icademie-accueil__rating {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--ia-text-2);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.icademie-accueil__rating .icademie-accueil__icon,
+.icademie-accueil__reviews-summary .icademie-accueil__icon,
+.icademie-accueil__review-rating .icademie-accueil__icon {
+	color: var(--ia-star);
+}
+
+.icademie-accueil__rating--none {
+	color: var(--ia-text-muted);
+	font-weight: 400;
+}
+
+.icademie-accueil__price {
+	color: var(--ia-primary-dark);
+	font-size: 14px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.icademie-accueil__price del {
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.icademie-accueil__price ins {
+	text-decoration: none;
+}
+
+.icademie-accueil__price-unit {
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+
+/* Zone 6 : destinations populaires, la première en grande vignette. */
+.icademie-accueil__destinations-list {
+	display: grid;
+	grid-auto-rows: 140px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.icademie-accueil__destinations-item {
+	display: flex;
+	min-width: 0;
+}
+
+.icademie-accueil__destinations-item:first-child {
+	grid-column: span 2;
+	grid-row: span 2;
+}
+
+.icademie-accueil__destinations-list--1 .icademie-accueil__destinations-item:first-child {
+	grid-column: 1 / -1;
+}
+
+.icademie-accueil__destinations-list--2 .icademie-accueil__destinations-item {
+	grid-column: span 2;
+	grid-row: span 2;
+}
+
+.icademie-accueil__destinations-list--3 .icademie-accueil__destinations-item:not(:first-child),
+.icademie-accueil__destinations-list--4 .icademie-accueil__destinations-item:last-child {
+	grid-column: span 2;
+}
+
+.icademie-accueil .icademie-accueil__destination {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	width: 100%;
+	padding: 10px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: linear-gradient(135deg, #3f7fe0, var(--ia-primary-dark));
+	color: var(--ia-text);
+	text-decoration: none;
+}
+
+.icademie-accueil__destination img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.3s ease;
+}
+
+.icademie-accueil__destination:hover img {
+	transform: scale(1.04);
+}
+
+.icademie-accueil__chip {
+	position: relative;
+	padding: 3px 8px;
+	border-radius: 4px;
+	background: var(--ia-surface);
+	color: var(--ia-text);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.icademie-accueil__destinations-item:first-child .icademie-accueil__destination {
+	padding: 14px;
+}
+
+.icademie-accueil__destinations-item:first-child .icademie-accueil__chip {
+	padding: 4px 10px;
+	font-size: 14px;
+}
+
+.icademie-accueil__destination:hover .icademie-accueil__chip {
+	color: var(--ia-primary-dark);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+/* Zone 7 : comment ça marche. */
+.icademie-accueil__tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.icademie-accueil .icademie-accueil__tab {
+	display: inline-flex;
+	align-items: center;
+	min-height: 36px;
+	margin: 0;
+	padding: 0 16px;
+	border: 1.5px solid var(--ia-primary);
+	border-radius: 18px;
+	background: var(--ia-surface);
+	color: var(--ia-primary);
+	font-family: var(--ia-font);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.2;
+	cursor: pointer;
+}
+
+.icademie-accueil .icademie-accueil__tab:hover {
+	background: var(--ia-primary-light);
+	color: var(--ia-primary-dark);
+}
+
+.icademie-accueil .icademie-accueil__tab[aria-selected="true"] {
+	background: var(--ia-primary);
+	color: #fff;
+}
+
+.icademie-accueil__steps-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	border-radius: 6px;
+}
+
+.icademie-accueil .icademie-accueil__steps-panel-title {
+	color: var(--ia-text);
+	font-family: var(--ia-font-heading);
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.3;
+	text-transform: none;
+}
+
+/* Avec les onglets, le nom du parcours est celui de l'onglet : le titre reste pour les lecteurs d'écran. */
+.is-enhanced .icademie-accueil__steps-panel-title {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.icademie-accueil__steps-list {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.icademie-accueil__step {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	min-width: 0;
+	padding: 16px;
+	border-radius: 6px;
+	background: var(--ia-box);
+}
+
+.icademie-accueil__step-number {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border: 1.5px solid var(--ia-field-border);
+	border-radius: 50%;
+	background: var(--ia-surface);
+	color: var(--ia-text);
+	font-family: var(--ia-font-heading);
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.icademie-accueil__step-content {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.icademie-accueil__step-title {
+	color: var(--ia-text);
+	font-family: var(--ia-font-heading);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.icademie-accueil__step-text {
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+/* Zone 8 : devenir loueur. */
+.icademie-accueil__owner {
+	display: grid;
+	grid-template-columns: 420px minmax(0, 1fr);
+	gap: 32px;
+	padding: 16px;
+	border: 1px solid var(--ia-primary-border);
+	border-radius: 10px;
+	background: var(--ia-primary-light);
+}
+
+.icademie-accueil__owner-media {
+	min-height: 226px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: #cfdffa;
+}
+
+.icademie-accueil__owner-media > img,
+.icademie-accueil__owner-media > svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.icademie-accueil__owner-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 12px;
+	min-width: 0;
+	padding: 8px 16px 8px 0;
+}
+
+.icademie-accueil .icademie-accueil__owner-title {
+	color: var(--ia-text);
+	font-family: var(--ia-font-heading);
+	font-size: 22px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.2;
+	text-transform: none;
+}
+
+.icademie-accueil__owner-text {
+	max-width: 600px;
+	color: var(--ia-text-2);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.icademie-accueil__owner-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 4px;
+}
+
+/* Zone 9 : avis des membres. */
+.icademie-accueil__reviews-summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--ia-text-2);
+	font-size: 13px;
+}
+
+.icademie-accueil__reviews-summary strong {
+	color: var(--ia-text);
+	font-weight: 700;
+}
+
+.icademie-accueil__reviews-list {
+	grid-auto-columns: calc((100% - 2 * 20px) / 3);
+}
+
+.icademie-accueil__review {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	padding: 16px;
+	border: 1px solid var(--ia-border);
+	border-radius: 8px;
+	background: var(--ia-surface);
+}
+
+.icademie-accueil__review-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.icademie-accueil__review-avatar {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--ia-primary-light);
+	color: var(--ia-primary-dark);
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.icademie-accueil__review-who {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.icademie-accueil__review-name {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.icademie-accueil__review-meta {
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	line-height: 1.3;
+}
+
+.icademie-accueil__review-rating {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: auto;
+	color: var(--ia-text-2);
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.icademie-accueil .icademie-accueil__review-text {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--ia-text-2);
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1.5;
+	quotes: none;
+}
+
+.icademie-accueil .icademie-accueil__review-text p {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+	line-clamp: 4;
+	font-size: inherit;
+}
+
+.icademie-accueil__review-verified {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: auto;
+	color: var(--ia-success);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+/* Zone 10 : newsletter (formulaire HubSpot de la page Newsletter). */
+.icademie-accueil__newsletter {
+	display: grid;
+	grid-template-areas:
+		"title form"
+		"text form";
+	grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+	align-items: center;
+	gap: 6px 32px;
+	padding: 24px;
+	border: 1px solid var(--ia-border-soft);
+	border-radius: 10px;
+	background: var(--ia-panel);
+}
+
+.icademie-accueil .icademie-accueil__newsletter-title {
+	grid-area: title;
+	align-self: end;
+	color: var(--ia-text);
+	font-family: var(--ia-font-heading);
+	font-size: 18px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.3;
+	text-transform: none;
+}
+
+.icademie-accueil__newsletter-text {
+	grid-area: text;
+	align-self: start;
+	color: var(--ia-text-muted);
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.icademie-accueil__newsletter-form {
+	grid-area: form;
+	min-width: 0;
+	min-height: 48px;
+}
+
+.icademie-accueil__newsletter-form iframe {
+	display: block;
+	max-width: 100%;
+	border: 0;
+}
+
+.icademie-accueil__newsletter-preview {
+	padding: 12px;
+	border: 1px dashed var(--ia-field-border);
+	border-radius: 6px;
+	color: var(--ia-text-muted);
+	text-align: center;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Tablette : zoning 768 px (bloc de 600 à 1023 px de large).
+ * --------------------------------------------------------------------------------------------- */
+
+@container icademie-accueil (max-width: 1023px) {
+
+	.icademie-accueil__hero {
+		min-height: 520px;
+		padding: 64px 32px 32px;
+	}
+
+	.icademie-accueil .icademie-accueil__hero-title {
+		max-width: 620px;
+		font-size: 34px;
+	}
+
+	.icademie-accueil__hero-text {
+		max-width: 480px;
+		font-size: 15px;
+	}
+
+	/* Destination sur toute la largeur, puis départ, retour, passagers, puis type et bouton. */
+	.icademie-accueil__search {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.icademie-accueil__field--destination {
+		grid-column: 1 / -1;
+	}
+
+	.icademie-accueil__field--depart {
+		grid-row: 2;
+		grid-column: 1;
+	}
+
+	.icademie-accueil__field--retour {
+		grid-row: 2;
+		grid-column: 2;
+	}
+
+	.icademie-accueil__field--passagers {
+		grid-row: 2;
+		grid-column: 3;
+	}
+
+	.icademie-accueil__field--type {
+		grid-row: 3;
+		grid-column: 1 / span 2;
+	}
+
+	.icademie-accueil .icademie-accueil__search-submit {
+		grid-row: 3;
+		grid-column: 3;
+		align-self: end;
+		padding: 0 16px;
+	}
+
+	.icademie-accueil__zones {
+		gap: 48px;
+		padding: 40px 32px 56px;
+	}
+
+	.icademie-accueil .icademie-accueil__section-title {
+		font-size: 20px;
+	}
+
+	/* « Tous → » dès la tablette, comme dans le zoning. */
+	.icademie-accueil__section-link .icademie-accueil__wide {
+		display: none;
+	}
+
+	.icademie-accueil__section-link .icademie-accueil__narrow {
+		display: inline;
+	}
+
+	.icademie-accueil__reassurance-list {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+
+	.icademie-accueil__types-list {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.icademie-accueil__type-media {
+		height: 150px;
+	}
+
+	/* Carrousels : deux cartes et le début de la suivante, points de position. */
+	.icademie-accueil__track,
+	.icademie-accueil__reviews-list {
+		grid-auto-columns: 42.5%;
+		gap: 16px;
+	}
+
+	.icademie-accueil__carousel-nav {
+		display: none !important;
+	}
+
+	.icademie-accueil__dots {
+		display: flex;
+	}
+
+	.icademie-accueil__destinations-list {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-rows: 170px;
+		grid-auto-rows: 120px;
+		gap: 12px;
+	}
+
+	.icademie-accueil__destinations-list .icademie-accueil__destinations-item {
+		grid-row: auto;
+		grid-column: auto;
+	}
+
+	.icademie-accueil__destinations-list .icademie-accueil__destinations-item:first-child,
+	.icademie-accueil__destinations-list--2 .icademie-accueil__destinations-item:last-child,
+	.icademie-accueil__destinations-list--4 .icademie-accueil__destinations-item:last-child {
+		grid-column: 1 / -1;
+	}
+
+	.icademie-accueil__steps-list {
+		gap: 12px;
+	}
+
+	.icademie-accueil__step {
+		flex-direction: column;
+		gap: 10px;
+		padding: 14px;
+	}
+
+	.icademie-accueil__owner {
+		grid-template-columns: 240px minmax(0, 1fr);
+		gap: 24px;
+	}
+
+	.icademie-accueil__owner-media {
+		min-height: 236px;
+	}
+
+	.icademie-accueil__owner-body {
+		padding: 4px 8px 4px 0;
+	}
+
+	.icademie-accueil .icademie-accueil__owner-title {
+		font-size: 20px;
+	}
+
+	.icademie-accueil__owner-actions {
+		gap: 10px;
+	}
+
+	.icademie-accueil__owner-actions .icademie-accueil__button {
+		padding: 0 16px;
+	}
+
+	.icademie-accueil__newsletter {
+		grid-template-areas:
+			"title"
+			"form"
+			"text";
+		grid-template-columns: minmax(0, 1fr);
+		gap: 10px;
+		padding: 16px;
+	}
+
+	.icademie-accueil .icademie-accueil__newsletter-title {
+		font-size: 16px;
+	}
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Smartphone : zoning 390 px (bloc de moins de 600 px de large).
+ * --------------------------------------------------------------------------------------------- */
+
+@container icademie-accueil (max-width: 599px) {
+
+	.icademie-accueil__wide {
+		display: none;
+	}
+
+	.icademie-accueil__narrow {
+		display: inline;
+	}
+
+	.icademie-accueil__hero {
+		min-height: 540px;
+		padding: 52px 16px 20px;
+	}
+
+	.icademie-accueil__hero-inner {
+		gap: 14px;
+	}
+
+	.icademie-accueil .icademie-accueil__hero-title {
+		font-size: 28px;
+		line-height: 1.15;
+	}
+
+	.icademie-accueil__hero-text {
+		font-size: 14px;
+	}
+
+	/* Où partez-vous ?, départ et retour, passagers, bouton. Le type se choisit avec les vignettes
+	   « Catégories de bateaux », juste en dessous (zoning smartphone). */
+	.icademie-accueil__search {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+		margin-top: 8px;
+		padding: 12px;
+	}
+
+	.icademie-accueil__field--passagers {
+		grid-row: 3;
+		grid-column: 1 / -1;
+	}
+
+	.icademie-accueil__field--type {
+		display: none;
+	}
+
+	.icademie-accueil .icademie-accueil__search-submit {
+		grid-row: auto;
+		grid-column: 1 / -1;
+		min-height: 48px;
+	}
+
+	/* 16 px : pas de zoom automatique de Safari (iOS) quand on touche un champ. */
+	.icademie-accueil .icademie-accueil__control {
+		font-size: 16px;
+	}
+
+	.icademie-accueil__zones {
+		gap: 40px;
+		padding: 24px 16px 40px;
+	}
+
+	.icademie-accueil .icademie-accueil__section-title {
+		font-size: 18px;
+	}
+
+	.icademie-accueil__section {
+		gap: 12px;
+	}
+
+	/* Quatre arguments compacts : pictogramme et titre. */
+	.icademie-accueil__reassurance-list {
+		gap: 8px;
+	}
+
+	.icademie-accueil .icademie-accueil__reassurance-item {
+		gap: 8px;
+		min-height: 64px;
+		padding: 8px 10px;
+	}
+
+	.icademie-accueil__reassurance-icon {
+		width: 28px;
+		height: 28px;
+	}
+
+	.icademie-accueil__reassurance-icon .icademie-accueil__icon {
+		width: 16px;
+		height: 16px;
+	}
+
+	.icademie-accueil__reassurance-title {
+		font-size: 12px;
+		line-height: 1.25;
+	}
+
+	.icademie-accueil__reassurance-text {
+		display: none;
+	}
+
+	/* Catégories : carrousel de vignettes. */
+	.icademie-accueil__types-list {
+		display: flex;
+		gap: 10px;
+		margin: -4px;
+		padding: 4px;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		scroll-padding-inline: 4px;
+		scrollbar-width: none;
+	}
+
+	.icademie-accueil__types-list::-webkit-scrollbar {
+		display: none;
+	}
+
+	.icademie-accueil__types-item {
+		flex: 0 0 132px;
+		scroll-snap-align: start;
+	}
+
+	.icademie-accueil__type-media {
+		height: 176px;
+	}
+
+	.icademie-accueil__type-name {
+		min-height: 36px;
+		font-size: 12px;
+	}
+
+	/* Carrousels : une carte et le début de la suivante. */
+	.icademie-accueil__track,
+	.icademie-accueil__reviews-list {
+		grid-auto-columns: 78%;
+		gap: 12px;
+	}
+
+	.icademie-accueil__destinations-list {
+		grid-template-rows: 130px;
+		grid-auto-rows: 100px;
+		gap: 8px;
+	}
+
+	.icademie-accueil__destinations-item:first-child .icademie-accueil__destination {
+		padding: 10px;
+	}
+
+	.icademie-accueil__destinations-item:first-child .icademie-accueil__chip {
+		font-size: 13px;
+	}
+
+	.icademie-accueil .icademie-accueil__destination {
+		padding: 8px;
+	}
+
+	/* Étapes empilées : numéro à gauche, texte à droite. */
+	.icademie-accueil .icademie-accueil__tab {
+		padding: 0 14px;
+	}
+
+	.icademie-accueil__steps-list {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 8px;
+	}
+
+	.icademie-accueil__step {
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+		padding: 12px;
+	}
+
+	.icademie-accueil__step-content {
+		gap: 4px;
+	}
+
+	/* Devenir loueur : image, titre, texte, bouton pleine largeur, puis lien. */
+	.icademie-accueil__owner {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 12px;
+	}
+
+	.icademie-accueil__owner-media {
+		height: 150px;
+		min-height: 0;
+	}
+
+	.icademie-accueil__owner-body {
+		gap: 10px;
+		padding: 0;
+	}
+
+	.icademie-accueil .icademie-accueil__owner-title {
+		font-size: 18px;
+	}
+
+	.icademie-accueil__owner-text {
+		line-height: 1.45;
+	}
+
+	.icademie-accueil__owner-actions {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 4px;
+		margin-top: 0;
+	}
+
+	.icademie-accueil .icademie-accueil__owner-actions .icademie-accueil__button {
+		width: 100%;
+		white-space: normal;
+	}
+
+	.icademie-accueil .icademie-accueil__owner-actions .icademie-accueil__button--secondary {
+		border: 0;
+		background: none;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.icademie-accueil__newsletter {
+		padding: 12px;
+	}
+
+	.icademie-accueil__newsletter-text {
+		font-size: 11px;
+		line-height: 1.35;
+	}
+
+	.icademie-accueil .icademie-accueil__newsletter-form .icademie-accueil__button {
+		width: 100%;
+	}
+}
+
+/* Mouvements réduits : pas de zoom des images ni de défilement animé. */
+@media (prefers-reduced-motion: reduce) {
+
+	.icademie-accueil *,
+	.icademie-accueil *::before,
+	.icademie-accueil *::after {
+		scroll-behavior: auto !important;
+		transition: none !important;
+	}
+
+	.icademie-accueil__type:hover .icademie-accueil__type-media img,
+	.icademie-accueil__destination:hover img {
+		transform: none;
+	}
+}
+
+@media print {
+
+	.icademie-accueil__search,
+	.icademie-accueil__carousel-nav,
+	.icademie-accueil__dots,
+	.icademie-accueil__tabs,
+	.icademie-accueil__newsletter {
+		display: none !important;
+	}
+
+	.icademie-accueil__steps-panel[hidden] {
+		display: flex !important;
+	}
+
+	.icademie-accueil__hero {
+		min-height: 0;
+		background: none;
+		color: var(--ia-text);
+	}
+
+	.icademie-accueil__hero::after,
+	.icademie-accueil__hero-media {
+		display: none;
+	}
+
+	.icademie-accueil .icademie-accueil__hero-title,
+	.icademie-accueil__hero-text {
+		color: var(--ia-text);
+		text-shadow: none;
+	}
+}
