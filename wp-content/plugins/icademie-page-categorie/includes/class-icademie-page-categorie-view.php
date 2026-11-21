@@ -653,15 +653,26 @@ final class Icademie_Page_Categorie_View {
 	 * @return array[]
 	 */
 	private static function cards( $query ) {
-		$products = array();
-		$images   = array();
+		return self::product_cards( $query->posts, false );
+	}
 
-		foreach ( $query->posts as $post ) {
-			$product = wc_get_product( $post );
+	/**
+	 * Cartes de bateaux (aussi utilisées par la fiche annonce : « Bateaux similaires »).
+	 *
+	 * @param array $products Bateaux : objets WC_Product, articles ou identifiants.
+	 * @param bool  $lazy     Toutes les photos en chargement différé (liste en bas de page).
+	 * @return array[] Cartes, pour render_card().
+	 */
+	public static function product_cards( $products, $lazy = true ) {
+		$list   = array();
+		$images = array();
+
+		foreach ( (array) $products as $item ) {
+			$product = $item instanceof WC_Product ? $item : wc_get_product( $item );
 
 			if ( $product instanceof WC_Product ) {
-				$products[] = $product;
-				$images     = array_merge( $images, self::photo_ids( $product ) );
+				$list[] = $product;
+				$images = array_merge( $images, self::photo_ids( $product ) );
 			}
 		}
 
@@ -672,11 +683,32 @@ final class Icademie_Page_Categorie_View {
 
 		$cards = array();
 
-		foreach ( $products as $index => $product ) {
-			$cards[] = self::card( $product, $index );
+		foreach ( $list as $index => $product ) {
+			// Au-delà des premières positions : photos en chargement différé.
+			$cards[] = self::card( $product, $lazy ? $index + self::EAGER_CARDS : $index );
 		}
 
 		return $cards;
+	}
+
+	/**
+	 * Code HTML d'une carte (élément de liste), comme dans les pages catégorie.
+	 *
+	 * La feuille de styles de l'extension doit être chargée, et la carte placée dans un élément
+	 * de classe « icademie-categorie ».
+	 *
+	 * @param array $card Carte (voir product_cards()).
+	 * @return string
+	 */
+	public static function render_card( $card ) {
+		$icon = array( 'Icademie_Page_Categorie', 'icon' );
+		/* translators: Note moyenne, par exemple « 4,5 ». */
+		$rating_format = __( '%s sur 5', 'icademie-page-categorie' );
+
+		ob_start();
+		include dirname( __DIR__ ) . '/templates/card.php';
+
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -790,7 +822,7 @@ final class Icademie_Page_Categorie_View {
 	 * @param string     $attribute Slug de l'attribut, sans « pa_ ».
 	 * @return array|null « number » et « text », ou null si l'attribut n'est pas renseigné.
 	 */
-	private static function attribute_max( $product, $attribute ) {
+	public static function attribute_max( $product, $attribute ) {
 		$taxonomy = wc_attribute_taxonomy_name( $attribute );
 
 		if ( ! taxonomy_exists( $taxonomy ) ) {

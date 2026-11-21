@@ -8,7 +8,9 @@
  *  - type de produit imposé (simple + virtuel), plus de choix pour le vendeur ;
  *  - prix de vente placé juste sous le nom du produit, sans les champs « De » / « À »
  *    (retirés par des filtres dans icademie-formulaire-vendeur.php) ;
- *  - encart « Général » supprimé.
+ *  - encart « Général » supprimé ;
+ *  - conditions de location sous le prix (action « icademie_formulaire_vendeur_conditions »,
+ *    remplie par l'extension « Icademie – Page annonce »).
  *
  * Basé sur le template WC Vendors 2.7.3 :
  * @version 2.6.5 - Fix security issues.
@@ -60,6 +62,8 @@ $post_status               = ( isset( $product ) && null !== $product ) ? $post_
             <?php WCV_Product_Form::prices( $object_id ); ?>
             <?php do_action( 'wcv_after_product_prices', $object_id ); ?>
         </div>
+        <!-- Conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) : extension « Icademie – Page annonce » -->
+        <?php do_action( 'icademie_formulaire_vendeur_conditions', $object_id ); ?>
         <!-- Product Description -->
         <?php WCV_Product_Form::description( $object_id, $product_description ); ?>
         <!-- Product Short Description -->
