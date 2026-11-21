@@ -11,6 +11,11 @@ defined( 'ABSPATH' ) || exit;
  * Prépare le contenu de chaque zone : fil d'Ariane, en-tête, recherche, filtres, tri, bateaux,
  * pagination, contenu éditorial, questions et maillage.
  *
+ * Trois listes de bateaux ont cette présentation : les catégories de produits, la boutique (tous les
+ * bateaux, où mène le moteur de recherche sans destination) et les résultats de la recherche de
+ * produits (loupe de l'en-tête du thème). Le contenu éditorial, les questions et le maillage sont
+ * propres aux catégories.
+ *
  * La liste des bateaux est celle de la page (requête principale de WordPress, avec les filtres, le
  * tri et la pagination appliqués par WooCommerce). Dans l'aperçu de l'éditeur, une catégorie qui a
  * des bateaux sert d'exemple.
@@ -44,13 +49,23 @@ final class Icademie_Page_Categorie_View {
 		$paged   = max( 1, (int) $query->get( 'paged' ) );
 		$content = self::content( $term );
 
+		$is_search = 'search' === $context['type'];
+
 		$data = array(
 			'preview'     => $context['preview'],
+			'type'        => $context['type'],
 			'base'        => $base,
+			// Mots cherchés, gardés par les formulaires des filtres et du tri.
+			'base_args'   => Icademie_Page_Categorie_Filters::base_args(),
 			'params'      => $params,
 			'breadcrumb'  => self::breadcrumb( $context ),
-			'header'      => self::header( $term, $stats ),
-			'search'      => self::search( $term, $params ),
+			'header'      => self::header( $term, $stats, $context['type'] ),
+			// Résultats d'une recherche : le champ de la recherche à la place du moteur de recherche.
+			'search'      => $is_search ? null : self::search( $term, $params ),
+			'text_search' => $is_search ? array(
+				'action' => home_url( '/' ),
+				'query'  => (string) get_search_query( false ),
+			) : null,
 			'filters'     => self::filters( $params, $stats ),
 			'chips'       => $chips,
 			'clear_url'   => Icademie_Page_Categorie_Filters::url( $base, Icademie_Page_Categorie_Filters::without_filters( $params ) ),
@@ -76,9 +91,11 @@ final class Icademie_Page_Categorie_View {
 	}
 
 	/**
-	 * Liste affichée : catégorie (ou autre taxonomie de produits, ou boutique) et requête.
+	 * Liste affichée : catégorie (ou autre taxonomie de produits), boutique ou résultats d'une
+	 * recherche de produits, et requête.
 	 *
-	 * @return array|null « term », « query », « preview », ou null hors d'une liste de produits.
+	 * @return array|null « term », « query », « type » (category, shop, search), « preview », ou null
+	 *                    hors d'une liste de produits.
 	 */
 	private static function context() {
 		global $wp_query;
@@ -92,10 +109,18 @@ final class Icademie_Page_Categorie_View {
 		}
 
 		$term = is_product_taxonomy() ? get_queried_object() : null;
+		$term = $term instanceof WP_Term ? $term : null;
+
+		if ( $term ) {
+			$type = 'category';
+		} else {
+			$type = Icademie_Page_Categorie_Filters::is_search() ? 'search' : 'shop';
+		}
 
 		return array(
-			'term'    => $term instanceof WP_Term ? $term : null,
+			'term'    => $term,
 			'query'   => $wp_query,
+			'type'    => $type,
 			'preview' => false,
 		);
 	}
@@ -139,6 +164,7 @@ final class Icademie_Page_Categorie_View {
 		return array(
 			'term'    => $term,
 			'query'   => new WP_Query( $args ),
+			'type'    => $term ? 'category' : 'shop',
 			'preview' => true,
 		);
 	}
@@ -207,7 +233,8 @@ final class Icademie_Page_Categorie_View {
 
 		foreach ( $crumbs as $crumb ) {
 			$items[] = array(
-				'label' => wp_strip_all_tags( (string) $crumb[0] ),
+				// Libellés de WooCommerce avec entités (« &ldquo; ») : décodés, échappés à l'affichage.
+				'label' => html_entity_decode( wp_strip_all_tags( (string) $crumb[0] ), ENT_QUOTES, 'UTF-8' ),
 				'url'   => isset( $crumb[1] ) ? (string) $crumb[1] : '',
 			);
 		}
@@ -236,20 +263,40 @@ final class Icademie_Page_Categorie_View {
 	 * Zone 3 : titre (nom de la catégorie), introduction (description), nombre de bateaux, visuel
 	 * (miniature de la catégorie).
 	 *
+	 * Boutique : titre de la page de la boutique. Résultats d'une recherche : « Résultats pour « … » »
+	 * et nombre de bateaux trouvés.
+	 *
 	 * @param WP_Term|null $term  Catégorie.
-	 * @param array        $stats Bateaux de la catégorie.
+	 * @param array        $stats Bateaux de la liste.
+	 * @param string       $type  Liste affichée : category, shop ou search.
 	 * @return array
 	 */
-	private static function header( $term, $stats ) {
+	private static function header( $term, $stats, $type ) {
+		$count = (int) $stats['count'];
+
 		if ( $term instanceof WP_Term ) {
 			$title       = $term->name;
 			$description = term_description( $term );
 			$image_id    = 'product_cat' === $term->taxonomy ? absint( get_term_meta( $term->term_id, 'thumbnail_id', true ) ) : 0;
+		} elseif ( 'search' === $type ) {
+			$query       = trim( (string) get_search_query( false ) );
+			/* translators: %s: mots cherchés. */
+			$title       = '' !== $query ? sprintf( __( 'Résultats pour « %s »', 'icademie-page-categorie' ), $query ) : __( 'Résultats de la recherche', 'icademie-page-categorie' );
+			$description = '';
+			$image_id    = 0;
 		} else {
 			$shop_id     = wc_get_page_id( 'shop' );
 			$title       = $shop_id > 0 ? get_the_title( $shop_id ) : __( 'Tous les bateaux', 'icademie-page-categorie' );
 			$description = '';
 			$image_id    = 0;
+		}
+
+		if ( 'search' === $type ) {
+			/* translators: %s: nombre de bateaux trouvés. */
+			$count_text = $count > 0 ? sprintf( _n( '%s bateau trouvé', '%s bateaux trouvés', $count, 'icademie-page-categorie' ), number_format_i18n( $count ) ) : __( 'Aucun bateau trouvé', 'icademie-page-categorie' );
+		} else {
+			/* translators: %s: nombre de bateaux de la liste. */
+			$count_text = $count > 0 ? sprintf( _n( '%s bateau disponible', '%s bateaux disponibles', $count, 'icademie-page-categorie' ), number_format_i18n( $count ) ) : __( 'Aucun bateau pour le moment', 'icademie-page-categorie' );
 		}
 
 		// Chargement différé : le visuel n'est pas affiché sur smartphone, il n'y est pas téléchargé.
@@ -269,7 +316,8 @@ final class Icademie_Page_Categorie_View {
 		return array(
 			'title'       => $title,
 			'description' => is_string( $description ) ? trim( $description ) : '',
-			'count'       => (int) $stats['count'],
+			'count'       => $count,
+			'count_text'  => $count_text,
 			'image'       => $image,
 		);
 	}

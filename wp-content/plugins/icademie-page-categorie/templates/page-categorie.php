@@ -71,16 +71,7 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 	<header class="icademie-categorie__head<?php echo '' !== $header['image'] ? ' has-image' : ''; ?>">
 		<div class="icademie-categorie__head-text">
 			<h1 class="icademie-categorie__title"><?php echo esc_html( $header['title'] ); ?></h1>
-			<p class="icademie-categorie__count">
-				<?php
-				if ( $header['count'] > 0 ) {
-					/* translators: %s: nombre de bateaux de la catégorie. */
-					echo esc_html( sprintf( _n( '%s bateau disponible', '%s bateaux disponibles', $header['count'], 'icademie-page-categorie' ), number_format_i18n( $header['count'] ) ) );
-				} else {
-					esc_html_e( 'Aucun bateau pour le moment', 'icademie-page-categorie' );
-				}
-				?>
-			</p>
+			<p class="icademie-categorie__count"><?php echo esc_html( $header['count_text'] ); ?></p>
 			<?php if ( '' !== $header['description'] ) : ?>
 				<div class="icademie-categorie__intro"><?php echo wp_kses_post( $header['description'] ); ?></div>
 			<?php endif; ?>
@@ -91,6 +82,21 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 			</div>
 		<?php endif; ?>
 	</header>
+
+	<?php /* Résultats d'une recherche de produits : les mots cherchés, modifiables. */ ?>
+	<?php if ( $data['text_search'] ) : ?>
+		<form class="icademie-categorie__text-search" role="search" method="get" action="<?php echo esc_url( $data['text_search']['action'] ); ?>">
+			<label class="icademie-categorie__label" for="icademie-categorie-mots"><?php esc_html_e( 'Rechercher un bateau', 'icademie-page-categorie' ); ?></label>
+			<div class="icademie-categorie__text-search-row">
+				<input class="icademie-categorie__control" type="search" id="icademie-categorie-mots" name="s" value="<?php echo esc_attr( $data['text_search']['query'] ); ?>" autocomplete="off">
+				<input type="hidden" name="post_type" value="product">
+				<button type="submit" class="icademie-categorie__button">
+					<?php echo call_user_func( $icon, 'search', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
+					<?php esc_html_e( 'Rechercher', 'icademie-page-categorie' ); ?>
+				</button>
+			</div>
+		</form>
+	<?php endif; ?>
 
 	<?php /* Zone 4 : moteur de recherche de la page d'accueil (tablette et smartphone : résumé). */ ?>
 	<?php if ( $search ) : ?>
@@ -181,6 +187,9 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 				<form class="icademie-categorie__filters" method="get" action="<?php echo esc_url( $data['base'] ); ?>#icademie-categorie-resultats" data-filters-form>
 					<h2 class="icademie-categorie__filters-title" id="icademie-categorie-filtres-titre"><?php esc_html_e( 'Filtres', 'icademie-page-categorie' ); ?></h2>
 					<input type="hidden" name="<?php echo esc_attr( Icademie_Page_Categorie_Filters::MARKER ); ?>" value="1">
+					<?php foreach ( $data['base_args'] as $name => $value ) : ?>
+						<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+					<?php endforeach; ?>
 					<?php foreach ( $filters_hidden as $name => $value ) : ?>
 						<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>">
 					<?php endforeach; ?>
@@ -226,8 +235,12 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 
 				<p class="icademie-categorie__total">
 					<?php
-					/* translators: %s: nombre de bateaux trouvés. */
-					echo esc_html( sprintf( _n( '%s résultat', '%s résultats', $results['total'], 'icademie-page-categorie' ), number_format_i18n( $results['total'] ) ) );
+					if ( $results['total'] > 0 ) {
+						/* translators: %s: nombre de bateaux trouvés. */
+						echo esc_html( sprintf( _n( '%s résultat', '%s résultats', $results['total'], 'icademie-page-categorie' ), number_format_i18n( $results['total'] ) ) );
+					} else {
+						esc_html_e( 'Aucun résultat', 'icademie-page-categorie' );
+					}
 					?>
 				</p>
 
@@ -249,6 +262,9 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 
 				<?php if ( count( $data['sort']['options'] ) > 1 && $results['total'] > 1 ) : ?>
 					<form class="icademie-categorie__sort" method="get" action="<?php echo esc_url( $data['base'] ); ?>#icademie-categorie-resultats" data-sort-form>
+						<?php foreach ( $data['base_args'] as $name => $value ) : ?>
+							<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+						<?php endforeach; ?>
 						<?php foreach ( $data['sort']['hidden'] as $name => $value ) : ?>
 							<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>">
 						<?php endforeach; ?>
@@ -281,6 +297,10 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 					<?php if ( $chips ) : ?>
 						<p><?php esc_html_e( 'Aucun bateau ne correspond à tous ces critères.', 'icademie-page-categorie' ); ?></p>
 						<a class="icademie-categorie__button icademie-categorie__button--secondary" href="<?php echo esc_url( $data['clear_url'] ); ?>"><?php esc_html_e( 'Effacer les filtres', 'icademie-page-categorie' ); ?></a>
+					<?php elseif ( 'search' === $data['type'] ) : ?>
+						<?php /* translators: %s: mots cherchés. */ ?>
+						<p><?php echo esc_html( sprintf( __( 'Aucun bateau ne correspond à « %s ». Essayez d\'autres mots, ou parcourez tous les bateaux.', 'icademie-page-categorie' ), $data['text_search']['query'] ) ); ?></p>
+						<a class="icademie-categorie__button icademie-categorie__button--secondary" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Voir tous les bateaux', 'icademie-page-categorie' ); ?></a>
 					<?php else : ?>
 						<p><?php esc_html_e( 'Aucun bateau n\'est encore proposé ici.', 'icademie-page-categorie' ); ?></p>
 						<a class="icademie-categorie__button icademie-categorie__button--secondary" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Voir tous les bateaux', 'icademie-page-categorie' ); ?></a>

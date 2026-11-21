@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Icademie – Page catégorie
- * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page restent ceux du thème.
+ * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination) et les résultats de la recherche de produits ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page restent ceux du thème.
  * Version:           1.0.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
@@ -25,9 +25,10 @@ require_once __DIR__ . '/includes/class-icademie-page-categorie-view.php';
  * d'Ariane au maillage interne : zones 2 à 10 des zonings. L'en-tête et le pied de page (zones 1
  * et 11, communs à tout le site) restent ceux du thème.
  *
- * Les pages des catégories de produits utilisent automatiquement le modèle « Catégorie de bateaux
- * SailingLoc » (en-tête du thème, ce bloc, pied de page du thème). Un modèle créé dans l'éditeur du
- * site pour une catégorie précise reste prioritaire. Désactiver l'extension rend le modèle du thème.
+ * Les pages des catégories de produits, la boutique et les résultats de la recherche de produits
+ * utilisent automatiquement le modèle « Liste de bateaux SailingLoc » (en-tête du thème, ce bloc,
+ * pied de page du thème). Un modèle créé dans l'éditeur du site pour une catégorie précise reste
+ * prioritaire. Désactiver l'extension rend les modèles du thème.
  */
 final class Icademie_Page_Categorie {
 
@@ -59,6 +60,9 @@ final class Icademie_Page_Categorie {
 		add_action( 'init', array( __CLASS__, 'register' ) );
 		// Après WooCommerce (priorité 1), qui ajoute son modèle de repli « archive-product ».
 		add_filter( 'taxonomy_template_hierarchy', array( __CLASS__, 'template_hierarchy' ), 20 );
+		add_filter( 'archive_template_hierarchy', array( __CLASS__, 'shop_template_hierarchy' ), 20 );
+		// Après WooCommerce (priorité 10), qui ajoute « product-search-results ».
+		add_filter( 'search_template_hierarchy', array( __CLASS__, 'search_template_hierarchy' ), 20 );
 		add_filter( 'loop_shop_per_page', array( __CLASS__, 'per_page' ), 20 );
 		add_action( 'wp_head', array( __CLASS__, 'preload_font' ), 2 );
 		add_action( 'admin_init', array( __CLASS__, 'add_privacy_policy_content' ) );
@@ -105,7 +109,7 @@ final class Icademie_Page_Categorie {
 			array(
 				'api_version'         => 3,
 				'title'               => __( 'Page catégorie', 'icademie-page-categorie' ),
-				'description'         => __( 'Liste des bateaux d\'une catégorie de produits, du fil d\'Ariane au maillage interne : recherche, filtres, tri, résultats, contenu éditorial et questions fréquentes. Contenu, questions et liens : fiche de la catégorie.', 'icademie-page-categorie' ),
+				'description'         => __( 'Liste des bateaux d\'une catégorie de produits, de la boutique ou des résultats de la recherche de produits, du fil d\'Ariane au maillage interne : recherche, filtres, tri, résultats, contenu éditorial et questions fréquentes. Contenu, questions et liens : fiche de la catégorie.', 'icademie-page-categorie' ),
 				'category'            => 'woocommerce',
 				'icon'                => 'list-view',
 				'keywords'            => array( 'catégorie', 'bateaux', 'filtres', 'liste' ),
@@ -132,8 +136,8 @@ final class Icademie_Page_Categorie {
 		register_block_template(
 			self::TEMPLATE_NAME,
 			array(
-				'title'       => __( 'Catégorie de bateaux SailingLoc', 'icademie-page-categorie' ),
-				'description' => __( 'Pages des catégories de produits : en-tête et pied de page du thème ; entre les deux, le bloc « Page catégorie ».', 'icademie-page-categorie' ),
+				'title'       => __( 'Liste de bateaux SailingLoc', 'icademie-page-categorie' ),
+				'description' => __( 'Pages des catégories de produits, boutique et résultats de la recherche de produits : en-tête et pied de page du thème ; entre les deux, le bloc « Page catégorie ».', 'icademie-page-categorie' ),
 				'content'     => self::template_content(),
 			)
 		);
@@ -171,11 +175,46 @@ final class Icademie_Page_Categorie {
 	 * @return string[]
 	 */
 	public static function template_hierarchy( $templates ) {
-		foreach ( array( 'taxonomy-product_cat', 'taxonomy-product_cat.php' ) as $generic ) {
-			$index = array_search( $generic, $templates, true );
+		return self::insert_before( $templates, 'taxonomy-product_cat' );
+	}
+
+	/**
+	 * Fait utiliser le modèle de l'extension à la boutique (tous les bateaux).
+	 *
+	 * C'est la page des résultats du moteur de recherche quand aucune destination n'est choisie.
+	 *
+	 * @param string[] $templates Modèles candidats (« archive-product.php », « archive.php »…).
+	 * @return string[]
+	 */
+	public static function shop_template_hierarchy( $templates ) {
+		return self::insert_before( $templates, 'archive-product' );
+	}
+
+	/**
+	 * Fait utiliser le modèle de l'extension aux résultats de la recherche de produits (loupe de
+	 * l'en-tête du thème), à la place du modèle « Résultats de recherche de produits » de
+	 * WooCommerce. La recherche dans tout le site (articles, pages) garde le modèle du thème.
+	 *
+	 * @param string[] $templates Modèles candidats (« product-search-results », « search.php »…).
+	 * @return string[]
+	 */
+	public static function search_template_hierarchy( $templates ) {
+		return self::insert_before( $templates, 'product-search-results' );
+	}
+
+	/**
+	 * Place le modèle de l'extension juste avant un modèle de la liste, s'il y est.
+	 *
+	 * @param string[] $templates Modèles candidats.
+	 * @param string   $slug      Modèle à précéder (avec ou sans « .php »).
+	 * @return string[]
+	 */
+	private static function insert_before( $templates, $slug ) {
+		foreach ( array( $slug, $slug . '.php' ) as $candidate ) {
+			$index = array_search( $candidate, $templates, true );
 
 			if ( false !== $index ) {
-				$suffix = '.php' === substr( $generic, -4 ) ? '.php' : '';
+				$suffix = '.php' === substr( $candidate, -4 ) ? '.php' : '';
 
 				if ( ! in_array( self::TEMPLATE_SLUG . $suffix, $templates, true ) ) {
 					array_splice( $templates, $index, 0, self::TEMPLATE_SLUG . $suffix );
@@ -189,18 +228,28 @@ final class Icademie_Page_Categorie {
 	}
 
 	/**
-	 * Bateaux par page sur les catégories.
+	 * Listes de bateaux qui ont la présentation de l'extension : catégories, boutique et résultats
+	 * de la recherche de produits.
+	 *
+	 * @return bool
+	 */
+	public static function is_listing() {
+		return function_exists( 'is_product_category' ) && ( is_product_category() || is_shop() );
+	}
+
+	/**
+	 * Bateaux par page sur les catégories, la boutique et les résultats de recherche.
 	 *
 	 * @param int $per_page Nombre prévu par WooCommerce.
 	 * @return int
 	 */
 	public static function per_page( $per_page ) {
-		if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
+		if ( ! self::is_listing() ) {
 			return $per_page;
 		}
 
 		/**
-		 * Bateaux par page sur les pages des catégories.
+		 * Bateaux par page sur les pages des catégories, la boutique et les résultats de recherche.
 		 *
 		 * @param int $per_page 12 par défaut (4 lignes de 3, 6 de 2 ou 12 de 1).
 		 */
@@ -221,12 +270,12 @@ final class Icademie_Page_Categorie {
 	}
 
 	/**
-	 * Précharge la police des titres sur les catégories (titre visible dès l'arrivée).
+	 * Précharge la police des titres sur les listes de bateaux (titre visible dès l'arrivée).
 	 */
 	public static function preload_font() {
 		$font = self::font_url();
 
-		if ( '' === $font || ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
+		if ( '' === $font || ! self::is_listing() ) {
 			return;
 		}
 
@@ -290,9 +339,15 @@ final class Icademie_Page_Categorie {
 	}
 
 	/**
-	 * Vide le cache des pages de toutes les catégories (activation, désactivation).
+	 * Vide le cache des pages de toutes les catégories et de la boutique (activation, désactivation).
 	 */
 	private static function clear_all_terms_cache() {
+		$shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : '';
+
+		if ( $shop && function_exists( 'wpsc_delete_url_cache' ) ) {
+			wpsc_delete_url_cache( $shop );
+		}
+
 		$ids = get_terms(
 			array(
 				'taxonomy'   => 'product_cat',

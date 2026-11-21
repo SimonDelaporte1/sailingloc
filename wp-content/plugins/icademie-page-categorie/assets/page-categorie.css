@@ -289,6 +289,10 @@ html.icademie-categorie-panneau {
 	align-items: center;
 	align-content: center;
 	gap: 8px 14px;
+}
+
+/* Hauteur du visuel seulement quand il y en a un (boutique, recherche : pas de blanc). */
+.icademie-categorie__head.has-image .icademie-categorie__head-text {
 	min-height: 118px;
 }
 
@@ -340,6 +344,33 @@ html.icademie-categorie-panneau {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Résultats d'une recherche de produits : champ des mots cherchés.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__text-search {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-width: 640px;
+}
+
+.icademie-categorie__text-search-row {
+	display: flex;
+	gap: 8px;
+}
+
+.icademie-categorie .icademie-categorie__text-search-row .icademie-categorie__control {
+	flex: 1;
+	min-width: 0;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.icademie-categorie .icademie-categorie__text-search-row .icademie-categorie__button {
+	flex: none;
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -1472,6 +1503,9 @@ html.icademie-categorie-panneau {
 		flex-wrap: nowrap;
 		align-items: flex-start;
 		justify-content: center;
+	}
+
+	.icademie-categorie__head.has-image .icademie-categorie__head-text {
 		min-height: 130px;
 	}
 
@@ -1706,7 +1740,8 @@ html.icademie-categorie-panneau {
 		display: none;
 	}
 
-	.icademie-categorie__head-text {
+	.icademie-categorie__head-text,
+	.icademie-categorie__head.has-image .icademie-categorie__head-text {
 		gap: 6px;
 		min-height: 0;
 	}

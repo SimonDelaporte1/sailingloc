@@ -425,7 +425,8 @@ final class Icademie_Page_Categorie_Filters {
 	 * Tris proposés : ceux de WooCommerce, avec des libellés courts.
 	 *
 	 * Comme WooCommerce : « Pertinence » (ordre des produits) n'est proposé que si c'est le tri par
-	 * défaut de la boutique, et le tri par note seulement si les notes sont activées.
+	 * défaut de la boutique, et le tri par note seulement si les notes sont activées. Sur les
+	 * résultats d'une recherche, « Pertinence » est le classement de la recherche.
 	 *
 	 * @return string[] Libellés, par valeur de « orderby ».
 	 */
@@ -452,9 +453,14 @@ final class Icademie_Page_Categorie_Filters {
 			'price-desc' => __( 'Prix décroissant', 'icademie-page-categorie' ),
 		);
 
-		if ( 'menu_order' !== self::default_sort() ) {
+		if ( self::is_search() ) {
+			$options = array( 'relevance' => __( 'Relevance', 'woocommerce' ) ) + $options;
+			unset( $options['menu_order'] );
+		} elseif ( 'menu_order' !== self::default_sort() ) {
 			unset( $options['menu_order'] );
 		}
+
+		$labels['relevance'] = __( 'Pertinence', 'icademie-page-categorie' );
 
 		if ( ! wc_review_ratings_enabled() ) {
 			unset( $options['rating'] );
@@ -473,8 +479,37 @@ final class Icademie_Page_Categorie_Filters {
 	 * @return string
 	 */
 	private static function default_sort() {
+		if ( self::is_search() ) {
+			return 'relevance';
+		}
+
 		// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment -- Filtre de WooCommerce.
 		return (string) apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', 'menu_order' ) );
+	}
+
+	/**
+	 * La page affiche-t-elle les résultats d'une recherche de produits (loupe de l'en-tête) ?
+	 *
+	 * @return bool
+	 */
+	public static function is_search() {
+		return function_exists( 'is_search' ) && is_search() && is_post_type_archive( 'product' );
+	}
+
+	/**
+	 * Paramètres de la recherche à garder dans toutes les adresses de la liste (mots cherchés).
+	 *
+	 * @return string[] « s » et « post_type » sur les résultats d'une recherche, sinon rien.
+	 */
+	public static function base_args() {
+		if ( ! self::is_search() ) {
+			return array();
+		}
+
+		return array(
+			's'         => (string) get_search_query( false ),
+			'post_type' => 'product',
+		);
 	}
 
 	/**
@@ -496,7 +531,10 @@ final class Icademie_Page_Categorie_Filters {
 	}
 
 	/**
-	 * Adresse de la liste (première page), sans paramètres.
+	 * Adresse de la liste (première page), sans filtres.
+	 *
+	 * Catégorie : son adresse. Boutique : celle de la boutique. Résultats d'une recherche : l'adresse
+	 * de la recherche (mots cherchés compris).
 	 *
 	 * @param WP_Term|null $term Catégorie (ou autre taxonomie de produits) ; null pour la boutique.
 	 * @return string
@@ -510,7 +548,9 @@ final class Icademie_Page_Categorie_Filters {
 			}
 		}
 
-		return wc_get_page_permalink( 'shop' );
+		$args = self::base_args();
+
+		return $args ? self::url( home_url( '/' ), $args ) : wc_get_page_permalink( 'shop' );
 	}
 
 	/**
@@ -1021,14 +1061,15 @@ final class Icademie_Page_Categorie_Filters {
 	 *               (« min » et « max », ou null), « rated » (bateaux qui ont une note).
 	 */
 	public static function stats( $term ) {
-		$key   = 'stats:' . ( $term instanceof WP_Term ? $term->term_taxonomy_id : 0 ) . ':' . wp_cache_get_last_changed( 'posts' ) . ':' . wp_cache_get_last_changed( 'terms' );
+		$search = self::is_search() ? (string) get_search_query( false ) : '';
+		$key    = 'stats:' . ( $term instanceof WP_Term ? $term->term_taxonomy_id : 0 ) . ':' . md5( $search ) . ':' . wp_cache_get_last_changed( 'posts' ) . ':' . wp_cache_get_last_changed( 'terms' );
 		$stats = wp_cache_get( $key, self::CACHE_GROUP );
 
 		if ( false !== $stats ) {
 			return $stats;
 		}
 
-		$ids   = self::product_ids( $term );
+		$ids   = self::product_ids( $term, $search );
 		$stats = array(
 			'count' => count( $ids ),
 			'terms' => array(),
@@ -1087,14 +1128,19 @@ final class Icademie_Page_Categorie_Filters {
 	}
 
 	/**
-	 * Bateaux publiés et visibles dans le catalogue, de la catégorie et de ses sous-catégories.
+	 * Bateaux publiés et visibles dans le catalogue, de la catégorie et de ses sous-catégories, ou
+	 * trouvés par une recherche.
 	 *
-	 * @param WP_Term|null $term Catégorie ; null pour toute la boutique.
+	 * @param WP_Term|null $term   Catégorie ; null pour toute la boutique.
+	 * @param string       $search Mots cherchés (résultats d'une recherche), ou vide.
 	 * @return int[]
 	 */
-	private static function product_ids( $term ) {
+	private static function product_ids( $term, $search = '' ) {
 		$visibility = wc_get_product_visibility_term_ids();
-		$hidden     = array( isset( $visibility['exclude-from-catalog'] ) ? (int) $visibility['exclude-from-catalog'] : 0 );
+
+		// Recherche : bateaux masqués des résultats de recherche, comme la liste de WooCommerce.
+		$hidden_key = '' !== $search ? 'exclude-from-search' : 'exclude-from-catalog';
+		$hidden     = array( isset( $visibility[ $hidden_key ] ) ? (int) $visibility[ $hidden_key ] : 0 );
 
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && isset( $visibility['outofstock'] ) ) {
 			$hidden[] = (int) $visibility['outofstock'];
@@ -1121,22 +1167,24 @@ final class Icademie_Page_Categorie_Filters {
 			);
 		}
 
-		$ids = get_posts(
-			array(
-				'post_type'              => 'product',
-				'post_status'            => 'publish',
-				'numberposts'            => -1,
-				'fields'                 => 'ids',
-				'orderby'                => 'ID',
-				'order'                  => 'ASC',
-				'no_found_rows'          => true,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Une requête par page, mise en cache.
-				'tax_query'              => $tax_query,
-			)
+		$args = array(
+			'post_type'              => 'product',
+			'post_status'            => 'publish',
+			'numberposts'            => -1,
+			'fields'                 => 'ids',
+			'orderby'                => 'ID',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Une requête par page, mise en cache.
+			'tax_query'              => $tax_query,
 		);
 
-		return array_map( 'intval', $ids );
+		if ( '' !== $search ) {
+			$args['s'] = $search;
+		}
+
+		return array_map( 'intval', get_posts( $args ) );
 	}
 }
