@@ -1,0 +1,210 @@
+/* Icademie – Avis sur les produits : notes détaillées (formulaire, avis, moyennes).
+ *
+ * Couleurs du texte reprises du thème ; accent bleu des pages de l'extension Page catégorie.
+ */
+
+.icademie-avis-sr {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Formulaire : une ligne par critère, choix de 0 à 5. */
+.icademie-avis-criteres {
+	margin: 1.25em 0;
+}
+
+.icademie-avis-criteres__titre {
+	margin: 0 0 0.2em;
+	font-weight: 600;
+}
+
+.icademie-avis-criteres__aide {
+	margin: 0 0 0.5em;
+	font-size: 0.875em;
+	opacity: 0.85;
+}
+
+.icademie-avis-critere {
+	min-width: 0;
+	margin: 0;
+	padding: 0.65em 0;
+	border: 0;
+	border-top: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.icademie-avis-critere__nom {
+	float: left;
+	width: 100%;
+	margin: 0 0 0.45em;
+	padding: 0;
+	font-weight: 500;
+}
+
+.icademie-avis-critere__choix {
+	clear: left;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.icademie-avis-critere__note {
+	position: relative;
+	display: block;
+	margin: 0;
+}
+
+.icademie-avis-critere__note input {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.icademie-avis-critere__note span[aria-hidden] {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border: 1px solid #7b8794;
+	border-radius: 8px;
+	background: #fff;
+	color: #1f2933;
+	font-weight: 600;
+	line-height: 1;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.icademie-avis-critere__note:hover span[aria-hidden] {
+	border-color: #1d5fd1;
+}
+
+.icademie-avis-critere__note input:checked + span[aria-hidden] {
+	border-color: #1d5fd1;
+	background: #1d5fd1;
+	color: #fff;
+}
+
+.icademie-avis-critere__note input:focus-visible + span[aria-hidden] {
+	outline: 2px solid #1d5fd1;
+	outline-offset: 2px;
+}
+
+.icademie-avis-critere.is-invalid .icademie-avis-critere__note span[aria-hidden] {
+	border-color: #b42318;
+}
+
+.icademie-avis-critere__erreur {
+	display: block;
+	clear: both;
+	margin-top: 0.4em;
+	color: #b42318;
+	font-size: 0.875em;
+}
+
+.icademie-avis-critere__erreur[hidden] {
+	display: none;
+}
+
+/* Écran assez large : critère à gauche, notes à droite. */
+@media (min-width: 640px) {
+	.icademie-avis-critere__nom {
+		width: 40%;
+		margin: 0;
+		line-height: 44px;
+	}
+
+	.icademie-avis-critere__choix {
+		clear: none;
+	}
+}
+
+/* Notes d'un avis, sous son texte. */
+.icademie-avis-notes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3em 1.25em;
+	margin: 0.6em 0 0;
+	padding: 0;
+	font-size: 0.875em;
+}
+
+.icademie-avis-notes__item {
+	display: flex;
+	gap: 0.35em;
+}
+
+.icademie-avis-notes dt {
+	margin: 0;
+	opacity: 0.85;
+}
+
+.icademie-avis-notes dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+/* Moyennes, sous le titre de la section des avis. */
+.icademie-avis-moyennes {
+	margin: 0.75em 0 1.5em;
+}
+
+.icademie-avis-moyennes__titre {
+	margin: 0 0 0.5em;
+	font-weight: 600;
+}
+
+.icademie-avis-moyennes__liste {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 0.6em 2.5em;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-avis-moyennes__item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 90px 2.2em;
+	align-items: center;
+	gap: 0.75em;
+	margin: 0;
+	font-size: 0.9375em;
+}
+
+.icademie-avis-moyennes__barre {
+	display: block;
+	height: 6px;
+	overflow: hidden;
+	border-radius: 3px;
+	background: rgba(15, 23, 42, 0.14);
+}
+
+.icademie-avis-moyennes__barre > span {
+	display: block;
+	height: 100%;
+	border-radius: 3px;
+	background: currentColor;
+}
+
+.icademie-avis-moyennes__valeur {
+	font-weight: 600;
+	text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.icademie-avis-critere__note span[aria-hidden] {
+		transition: none;
+	}
+}

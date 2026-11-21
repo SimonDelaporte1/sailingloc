@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Avis sur les produits
- * Description:       Active les avis (commentaire et note) sur chaque nouveau produit : produit créé par un vendeur depuis son tableau de bord WC Vendors, ajouté dans l'administration ou dupliqué. La case « Activer les avis » (onglet « Avancé » du produit) reste modifiable dans l'administration. Les produits existants ne sont pas modifiés.
- * Version:           1.0.0
+ * Description:       Active les avis (commentaire et note) sur chaque nouveau produit : produit créé par un vendeur depuis son tableau de bord WC Vendors, ajouté dans l'administration ou dupliqué. La case « Activer les avis » (onglet « Avancé » du produit) reste modifiable dans l'administration. Les produits existants ne sont pas modifiés. Notes détaillées : en plus de la note générale, l'avis note de 0 à 5 la conformité de l'annonce, la propreté, la communication et le rapport qualité-prix ; chaque avis affiche ses notes et la fiche du produit la moyenne de chaque critère.
+ * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -12,6 +12,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+
+require_once __DIR__ . '/includes/class-icademie-avis-criteres.php';
 
 /**
  * Avis activés sur chaque nouveau produit.
@@ -37,6 +39,11 @@ defined( 'ABSPATH' ) || exit;
  * les évaluations par étoiles sur les avis » est cochée (WooCommerce › Réglages › Produits).
  */
 final class Icademie_Avis_Produits {
+
+	const VERSION = '1.1.0';
+
+	/** Fichier principal de l'extension. */
+	const FILE = __FILE__;
 
 	/**
 	 * Branche les filtres et actions.
@@ -104,3 +111,4 @@ final class Icademie_Avis_Produits {
 }
 
 Icademie_Avis_Produits::init();
+Icademie_Avis_Criteres::init();
