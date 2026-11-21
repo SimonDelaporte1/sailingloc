@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Icademie – Page catégorie
  * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination) et les résultats de la recherche de produits ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page restent ceux du thème.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil
@@ -32,7 +32,7 @@ require_once __DIR__ . '/includes/class-icademie-page-categorie-view.php';
  */
 final class Icademie_Page_Categorie {
 
-	const VERSION = '1.0.0';
+	const VERSION = '1.1.0';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;

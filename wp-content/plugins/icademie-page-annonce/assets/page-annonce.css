@@ -1,0 +1,2175 @@
+/* Icademie – Page annonce
+ *
+ * Mise en page d'après les zonings « Produit » : ordinateur (1440 px), tablette (768 px) et
+ * smartphone (390 px). Mêmes couleurs, polices, tailles et arrondis que les pages d'accueil et
+ * catégorie ; les cadres pointillés, les numéros et les descriptions des zones (repères de maquette)
+ * ne sont pas repris.
+ *
+ * La mise en page suit la largeur du bloc (requêtes de conteneur) : « ordinateur » à partir de
+ * 1024 px, « tablette » de 600 à 1023 px, « smartphone » en dessous. La classe « has-js » (posée par
+ * le script) active les listes repliées, le calendrier, la visionneuse et, sur smartphone, la barre
+ * de réservation du bas de l'écran ; sans script, tout reste affiché dans la page.
+ */
+
+.icademie-annonce,
+.icademie-annonce-bar {
+	--ic-primary: #1d5fd1;
+	--ic-primary-dark: #173f8a;
+	--ic-primary-light: #e3ecfb;
+	--ic-primary-hover: #d3e1f8;
+	--ic-primary-border: #b9cdf1;
+	--ic-text: #1f2933;
+	--ic-text-2: #3e4c59;
+	--ic-muted: #52606d;
+	--ic-placeholder: #616e7c;
+	/* Zoning : #8a96a3, un peu foncé pour un contraste de 3:1 sur fond blanc (WCAG 1.4.11). */
+	--ic-field-border: #7b8794;
+	--ic-border: #cbd2d9;
+	--ic-divider: #dde2e8;
+	--ic-surface: #fff;
+	--ic-panel: #fafbfc;
+	--ic-box: #e9ecf0;
+	--ic-track: #c9d1da;
+	--ic-star: #e3a008;
+	--ic-error: #b42318;
+	--ic-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--ic-font-heading: "Space Grotesk", var(--ic-font);
+	--ic-gutter: 24px;
+
+	color: var(--ic-text);
+	font-family: var(--ic-font);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.45;
+	-webkit-font-smoothing: antialiased;
+}
+
+.icademie-annonce {
+	container: icademie-annonce / inline-size;
+	background: var(--ic-surface);
+}
+
+.icademie-annonce,
+.icademie-annonce *,
+.icademie-annonce *::before,
+.icademie-annonce *::after,
+.icademie-annonce-bar,
+.icademie-annonce-bar * {
+	box-sizing: border-box;
+}
+
+/* Remise à zéro des styles du thème sur les éléments utilisés. */
+.icademie-annonce :where(h1, h2, h3, p, ul, ol, li, dl, dt, dd, figure, dialog, table),
+.icademie-annonce-bar :where(p) {
+	margin: 0;
+	padding: 0;
+}
+
+.icademie-annonce :where(ul, ol) {
+	list-style: none;
+}
+
+.icademie-annonce :where(a) {
+	color: var(--ic-primary);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.icademie-annonce :where(a):hover {
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce :where(a, button, input, select, textarea, [tabindex]):focus-visible,
+.icademie-annonce-bar :where(button):focus-visible {
+	outline: 2px solid var(--ic-primary);
+	outline-offset: 2px;
+}
+
+.icademie-annonce [hidden],
+.icademie-annonce-bar[hidden] {
+	display: none !important;
+}
+
+.icademie-annonce__icon {
+	flex: none;
+	display: block;
+}
+
+/* Masqué à l'écran, lu par les lecteurs d'écran. */
+.icademie-annonce__sr {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.icademie-annonce__muted {
+	color: var(--ic-muted);
+}
+
+/* Défilement bloqué derrière une fenêtre ouverte. */
+html.icademie-annonce-panneau {
+	overflow: hidden;
+}
+
+/* Place sous le pied de page pour la barre de réservation du smartphone. */
+html.icademie-annonce-barre body {
+	padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+}
+
+.icademie-annonce__inner {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	max-width: calc(1200px + 2 * var(--ic-gutter));
+	margin-inline: auto;
+	padding: 24px var(--ic-gutter) 64px;
+}
+
+/* Rappel aux gestionnaires : contenu à compléter. */
+.icademie-annonce__setup {
+	padding: 10px 14px;
+	border: 1px dashed #c2410c;
+	border-radius: 8px;
+	background: #fffbeb;
+	color: #7c2d12;
+}
+
+.icademie-annonce__setup ul {
+	margin-top: 4px;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.icademie-annonce .icademie-annonce__setup a {
+	color: #7c2d12;
+}
+
+/* Boutons. */
+.icademie-annonce .icademie-annonce__button,
+.icademie-annonce-bar .icademie-annonce-bar__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ic-primary);
+	color: #fff;
+	font: 600 13px/1.2 var(--ic-font);
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.icademie-annonce .icademie-annonce__button:hover,
+.icademie-annonce-bar .icademie-annonce-bar__button:hover {
+	background: var(--ic-primary-dark);
+	color: #fff;
+}
+
+.icademie-annonce .icademie-annonce__button--secondary {
+	border: 1.5px solid var(--ic-primary);
+	background: var(--ic-surface);
+	color: var(--ic-primary);
+}
+
+.icademie-annonce .icademie-annonce__button--secondary:hover {
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce .icademie-annonce__link-button,
+.icademie-annonce .icademie-annonce__expand {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--ic-primary);
+	font: 600 13px/1.3 var(--ic-font);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	cursor: pointer;
+}
+
+.icademie-annonce .icademie-annonce__link-button:hover,
+.icademie-annonce .icademie-annonce__expand:hover {
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce .icademie-annonce__round {
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	padding: 0;
+	border: 1.5px solid var(--ic-primary);
+	border-radius: 50%;
+	background: var(--ic-surface);
+	color: var(--ic-primary);
+	cursor: pointer;
+}
+
+.icademie-annonce .icademie-annonce__round:hover {
+	background: var(--ic-primary-light);
+}
+
+.icademie-annonce .icademie-annonce__round:disabled {
+	border-color: var(--ic-border);
+	color: var(--ic-placeholder);
+	background: var(--ic-surface);
+	cursor: default;
+}
+
+/* Zone 2 : fil d'Ariane. */
+.icademie-annonce__breadcrumb {
+	color: var(--ic-muted);
+	font-size: 13px;
+}
+
+.icademie-annonce__crumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px 0;
+}
+
+.icademie-annonce__crumbs li + li::before {
+	content: "›";
+	margin: 0 8px;
+	color: var(--ic-muted);
+}
+
+.icademie-annonce__crumbs [aria-current] {
+	color: var(--ic-text);
+	font-weight: 600;
+}
+
+.icademie-annonce .icademie-annonce__back {
+	display: none;
+	align-items: center;
+	gap: 4px;
+	font-weight: 500;
+}
+
+/* Colonne principale et module de réservation (ordinateur). */
+.icademie-annonce__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 380px;
+	column-gap: 32px;
+	row-gap: 32px;
+	align-items: start;
+}
+
+.icademie-annonce__layout > * {
+	grid-column: 1;
+	min-width: 0;
+}
+
+.icademie-annonce__layout > .icademie-annonce__header {
+	grid-column: 1 / -1;
+}
+
+.icademie-annonce__layout > .icademie-annonce__booking {
+	grid-column: 2;
+	grid-row: 2 / span var(--ic-main-rows, 8);
+	align-self: stretch;
+}
+
+/* Zone 3 : en-tête de l'annonce. */
+.icademie-annonce__header {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+
+.icademie-annonce__heading {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.icademie-annonce .icademie-annonce__title {
+	color: var(--ic-text);
+	font: 600 26px/1.15 var(--ic-font-heading);
+	letter-spacing: 0;
+	overflow-wrap: anywhere;
+}
+
+.icademie-annonce__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	color: var(--ic-muted);
+	font-size: 13px;
+}
+
+.icademie-annonce__meta > span + span::before {
+	content: "·";
+	margin: 0 8px;
+}
+
+.icademie-annonce .icademie-annonce__meta-rating {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--ic-text-2);
+	font-weight: 500;
+}
+
+.icademie-annonce__meta-rating .icademie-annonce__icon,
+.icademie-annonce__reviews-average .icademie-annonce__icon,
+.icademie-annonce__review-rating .icademie-annonce__icon {
+	color: var(--ic-star);
+}
+
+.icademie-annonce .icademie-annonce__share {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 40px;
+	margin: 0;
+	padding: 0 18px;
+	border: 1.5px solid var(--ic-primary);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	color: var(--ic-primary);
+	font: 600 13px/1 var(--ic-font);
+	cursor: pointer;
+}
+
+.icademie-annonce .icademie-annonce__share:hover {
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce .icademie-annonce__share--gallery {
+	display: none;
+}
+
+/* Zone 4 : galerie photos (ordinateur : grande photo et 4 vignettes). */
+.icademie-annonce__gallery {
+	position: relative;
+}
+
+.icademie-annonce__gallery-list {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-rows: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+	height: 420px;
+}
+
+.icademie-annonce__gallery-item {
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--ic-box);
+}
+
+.icademie-annonce__gallery-item:first-child {
+	grid-column: span 2;
+	grid-row: span 2;
+}
+
+.icademie-annonce__gallery-item:nth-child(n+6) {
+	display: none;
+}
+
+:where(.icademie-annonce__gallery--n1) .icademie-annonce__gallery-list {
+	grid-template-columns: minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
+}
+
+:where(.icademie-annonce__gallery--n1, .icademie-annonce__gallery--n2) .icademie-annonce__gallery-item:first-child {
+	grid-column: auto;
+	grid-row: auto;
+}
+
+:where(.icademie-annonce__gallery--n2) .icademie-annonce__gallery-list {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-rows: minmax(0, 1fr);
+}
+
+:where(.icademie-annonce__gallery--n3) .icademie-annonce__gallery-item:nth-child(n+2),
+:where(.icademie-annonce__gallery--n4) .icademie-annonce__gallery-item:nth-child(2) {
+	grid-column: span 2;
+}
+
+.icademie-annonce .icademie-annonce__gallery-link {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+/* Plus précis que les règles « img { height: auto } » de WooCommerce et du thème. */
+.icademie-annonce .icademie-annonce__gallery-link img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: filter 0.15s ease;
+}
+
+.icademie-annonce .icademie-annonce__gallery-link:hover img {
+	filter: brightness(0.92);
+}
+
+.icademie-annonce .icademie-annonce__gallery-link:focus-visible {
+	outline-offset: -4px;
+	outline-color: #fff;
+	box-shadow: inset 0 0 0 4px var(--ic-primary);
+}
+
+.icademie-annonce .icademie-annonce__gallery-all {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	z-index: 1;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 36px;
+	padding: 0 12px;
+	border: 1.5px solid var(--ic-primary);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	color: var(--ic-primary);
+	font: 600 12px/1.2 var(--ic-font);
+	text-decoration: none;
+}
+
+.icademie-annonce .icademie-annonce__gallery-all:hover {
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce__gallery-counter {
+	display: none;
+}
+
+.icademie-annonce__gallery-empty {
+	display: grid;
+	place-content: center;
+	justify-items: center;
+	gap: 8px;
+	height: 320px;
+	border-radius: 6px;
+	background: var(--ic-box);
+	color: var(--ic-muted);
+}
+
+/* Zone 5 : module de réservation, collant pendant le défilement (ordinateur). */
+.icademie-annonce__booking-card {
+	position: sticky;
+	top: calc(var(--wp-admin--admin-bar--height, 0px) + 24px);
+	padding: 20px;
+	border: 1px solid var(--ic-border);
+	border-radius: 12px;
+	background: var(--ic-surface);
+	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+.icademie-annonce__booking-form,
+.icademie-annonce__booking-main,
+.icademie-annonce__booking-side {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.icademie-annonce__price {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.icademie-annonce__price-amount {
+	color: var(--ic-primary-dark);
+	font: 700 26px/1.2 var(--ic-font-heading);
+}
+
+.icademie-annonce__price-unit {
+	color: var(--ic-text-2);
+	font: 500 14px/1.2 var(--ic-font);
+}
+
+.icademie-annonce__dates {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.icademie-annonce__field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.icademie-annonce__field label {
+	color: var(--ic-primary-dark);
+	font: 600 11px/1.2 var(--ic-font);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.icademie-annonce .icademie-annonce__input {
+	width: 100%;
+	min-width: 0;
+	height: 44px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--ic-field-border);
+	border-radius: 6px;
+	background-color: var(--ic-surface);
+	color: var(--ic-text);
+	font: 400 13px/1.2 var(--ic-font);
+}
+
+.icademie-annonce .icademie-annonce__input[aria-invalid="true"] {
+	border-color: var(--ic-error);
+	box-shadow: 0 0 0 1px var(--ic-error);
+}
+
+.icademie-annonce__error {
+	color: var(--ic-error);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.icademie-annonce__lines {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding-top: 12px;
+	border-top: 1px solid var(--ic-border);
+}
+
+.icademie-annonce__line {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	color: var(--ic-text-2);
+	font-size: 13px;
+}
+
+.icademie-annonce__line dd {
+	flex: none;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.icademie-annonce__line--total {
+	padding-top: 8px;
+	border-top: 1px solid var(--ic-border);
+	color: var(--ic-text);
+	font-weight: 700;
+}
+
+.icademie-annonce__hint,
+.icademie-annonce__note {
+	color: var(--ic-muted);
+	font-size: 12px;
+}
+
+.icademie-annonce__note {
+	margin-top: -6px;
+	text-align: center;
+}
+
+.icademie-annonce .icademie-annonce__submit {
+	width: 100%;
+	min-height: 48px;
+	font-size: 14px;
+}
+
+.icademie-annonce__unavailable {
+	margin-top: 10px;
+	color: var(--ic-text-2);
+}
+
+/* Zones 6 à 12 : titres et séparateurs. */
+.icademie-annonce__zone {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-top: 28px;
+	border-top: 1px solid var(--ic-divider);
+}
+
+.icademie-annonce .icademie-annonce__zone-title {
+	color: var(--ic-text);
+	font: 600 20px/1.25 var(--ic-font-heading);
+	letter-spacing: 0;
+}
+
+/* Zone 6 : caractéristiques clés. */
+.icademie-annonce__specs {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.icademie-annonce__spec {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 2px;
+	min-width: 0;
+	min-height: 58px;
+	padding: 8px 12px 8px 50px;
+	border-radius: 6px;
+	background: var(--ic-box);
+}
+
+.icademie-annonce__spec dt {
+	color: var(--ic-muted);
+	font-size: 11px;
+}
+
+.icademie-annonce__spec dd {
+	color: var(--ic-text);
+	font-size: 12px;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.icademie-annonce__spec-icon {
+	position: absolute;
+	top: 50%;
+	left: 12px;
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--ic-surface);
+	color: var(--ic-primary-dark);
+	transform: translateY(-50%);
+}
+
+/* Zone 7 : description, repliée au-delà de quelques lignes. */
+.icademie-annonce__description-text {
+	color: var(--ic-text-2);
+	font-size: 14px;
+	line-height: 1.65;
+	overflow-wrap: break-word;
+}
+
+.icademie-annonce__description-text > * + * {
+	margin-top: 0.8em;
+}
+
+.icademie-annonce__description-text :where(ul, ol) {
+	padding-left: 1.4em;
+	list-style: disc;
+}
+
+.icademie-annonce.has-js .icademie-annonce__description-text.is-clamped {
+	max-height: calc(7 * 1.65em);
+	overflow: hidden;
+	-webkit-mask-image: linear-gradient(#000 60%, transparent);
+	mask-image: linear-gradient(#000 60%, transparent);
+}
+
+.icademie-annonce__description .icademie-annonce__link-button {
+	align-self: flex-start;
+	margin-top: -4px;
+}
+
+/* Zones 8 et 12 : listes repliées, bouton « Voir les… » dans l'en-tête de la zone. */
+.icademie-annonce__equipments {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-areas:
+		"title toggle"
+		"list list";
+	align-items: center;
+	gap: 16px;
+}
+
+.icademie-annonce__equipments > .icademie-annonce__zone-title {
+	grid-area: title;
+}
+
+.icademie-annonce__equipments > .icademie-annonce__expand {
+	grid-area: toggle;
+}
+
+.icademie-annonce__equipment-list {
+	display: grid;
+	grid-area: list;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px 16px;
+}
+
+.icademie-annonce__equipment {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+	color: var(--ic-text-2);
+	font-size: 13px;
+}
+
+.icademie-annonce__equipment-icon {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	background: var(--ic-box);
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce.has-js .is-collapsed .icademie-annonce__equipment:nth-child(n+10) {
+	display: none;
+}
+
+/* Bouton affiché par le script quand la liste dépasse ce qui est visible à cette largeur. */
+.icademie-annonce .icademie-annonce__expand[data-ready] {
+	display: none;
+}
+
+.icademie-annonce.has-js .icademie-annonce__equipments.is-over-9 > .icademie-annonce__expand[data-ready],
+.icademie-annonce.has-js .icademie-annonce__reviews.is-over-2 > .icademie-annonce__expand[data-ready] {
+	display: inline-flex;
+}
+
+.icademie-annonce .icademie-annonce__expand::after {
+	content: "→";
+	text-decoration: none;
+}
+
+.icademie-annonce .icademie-annonce__expand[aria-expanded="true"]::after {
+	content: "↑";
+}
+
+/* Zone 9 : disponibilités, calendrier sur 2 mois. */
+.icademie-annonce__calendar {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 32px;
+}
+
+/* Hauteur réservée avant l'affichage du calendrier par le script (pas de décalage de la page). */
+.icademie-annonce.has-js .icademie-annonce__calendar:empty {
+	min-height: 290px;
+}
+
+.icademie-annonce:not(.has-js) .icademie-annonce__calendar,
+.icademie-annonce:not(.has-js) .icademie-annonce__legend {
+	display: none;
+}
+
+.icademie-annonce__month {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.icademie-annonce__month-head {
+	display: grid;
+	grid-template-columns: 32px minmax(0, 1fr) 32px;
+	align-items: center;
+	min-height: 32px;
+}
+
+.icademie-annonce .icademie-annonce__month-title {
+	grid-column: 2;
+	color: var(--ic-text);
+	font: 600 15px/1.25 var(--ic-font-heading);
+	text-align: center;
+}
+
+.icademie-annonce__month-head .icademie-annonce__round:first-child {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.icademie-annonce__month-head .icademie-annonce__round:last-child {
+	grid-column: 3;
+	grid-row: 1;
+}
+
+.icademie-annonce__days {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 4px;
+	table-layout: fixed;
+	margin: -4px;
+	width: calc(100% + 8px);
+}
+
+.icademie-annonce__days th {
+	padding: 0 0 2px;
+	border: 0;
+	color: var(--ic-muted);
+	font: 600 11px/16px var(--ic-font);
+	text-align: center;
+}
+
+.icademie-annonce__days td {
+	padding: 0;
+	border: 0;
+}
+
+.icademie-annonce .icademie-annonce__day {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 34px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--ic-divider);
+	border-radius: 6px;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+	font: 500 12px/1 var(--ic-font);
+	font-variant-numeric: tabular-nums;
+}
+
+.icademie-annonce button.icademie-annonce__day {
+	cursor: pointer;
+}
+
+.icademie-annonce button.icademie-annonce__day:hover {
+	border-color: var(--ic-primary);
+}
+
+.icademie-annonce .icademie-annonce__day.is-today {
+	border-color: var(--ic-text-2);
+	font-weight: 700;
+}
+
+.icademie-annonce .icademie-annonce__day.is-past {
+	border-color: transparent;
+	background: transparent;
+	color: var(--ic-placeholder);
+}
+
+.icademie-annonce .icademie-annonce__day.is-booked {
+	border-color: var(--ic-divider);
+	background: var(--ic-divider);
+	/* Contraste de 4,9:1 sur le gris des jours réservés. */
+	color: var(--ic-muted);
+	text-decoration: line-through;
+}
+
+.icademie-annonce .icademie-annonce__day.is-selected {
+	border-color: var(--ic-primary);
+	background: var(--ic-primary);
+	color: #fff;
+}
+
+.icademie-annonce .icademie-annonce__day.is-selected:focus-visible {
+	outline-color: var(--ic-primary-dark);
+}
+
+.icademie-annonce__legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	color: var(--ic-text-2);
+	font-size: 12px;
+}
+
+.icademie-annonce__legend li {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.icademie-annonce__swatch {
+	width: 12px;
+	height: 12px;
+	border: 1px solid var(--ic-field-border);
+	border-radius: 3px;
+	background: var(--ic-surface);
+}
+
+.icademie-annonce__swatch--booked {
+	border-color: var(--ic-divider);
+	background: var(--ic-divider);
+}
+
+.icademie-annonce__swatch--selected {
+	border-color: var(--ic-primary);
+	background: var(--ic-primary);
+}
+
+.icademie-annonce__periods {
+	color: var(--ic-text-2);
+}
+
+.icademie-annonce__periods ul {
+	margin-top: 4px;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+/* Avec le calendrier, la liste des périodes réservées reste lue par les lecteurs d'écran. */
+.icademie-annonce.has-js .icademie-annonce__periods {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/* Zone 10 : conditions de location. */
+.icademie-annonce__conditions {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.icademie-annonce__condition {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: baseline;
+	gap: 4px 14px;
+	min-height: 48px;
+	padding: 12px 14px;
+	border-radius: 6px;
+	background: var(--ic-box);
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.icademie-annonce__condition dt {
+	color: var(--ic-text);
+	font-weight: 600;
+}
+
+.icademie-annonce__condition dd {
+	text-align: right;
+}
+
+/* Zone 11 : localisation (carte OpenStreetMap chargée au clic). */
+.icademie-annonce__map {
+	position: relative;
+	height: 260px;
+	overflow: hidden;
+	border-radius: 8px;
+	background:
+		linear-gradient(90deg, rgba(29, 95, 209, 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+		linear-gradient(rgba(29, 95, 209, 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+		var(--ic-primary-light);
+}
+
+.icademie-annonce__map-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	height: 100%;
+	padding: 16px;
+	text-align: center;
+}
+
+.icademie-annonce__map-pin {
+	color: var(--ic-primary-dark);
+}
+
+.icademie-annonce__chip {
+	padding: 4px 10px;
+	border-radius: 4px;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.icademie-annonce__map-note {
+	max-width: 34ch;
+	color: var(--ic-text-2);
+	font-size: 12px;
+}
+
+.icademie-annonce .icademie-annonce__map iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+.icademie-annonce__map-caption {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 6px 16px;
+	color: var(--ic-text-2);
+}
+
+.icademie-annonce .icademie-annonce__map-caption a {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: 500;
+}
+
+/* Zone 12 : avis des locataires. */
+.icademie-annonce__reviews {
+	display: grid;
+	grid-template-columns: 230px minmax(0, 1fr) auto;
+	grid-template-areas:
+		"title title toggle"
+		"summary list list"
+		"form form form";
+	align-items: start;
+	gap: 16px 24px;
+}
+
+.icademie-annonce__reviews > .icademie-annonce__zone-title {
+	grid-area: title;
+	align-self: center;
+}
+
+.icademie-annonce__reviews > .icademie-annonce__expand {
+	grid-area: toggle;
+	align-self: center;
+}
+
+.icademie-annonce__reviews-summary {
+	display: flex;
+	flex-direction: column;
+	grid-area: summary;
+	gap: 12px;
+}
+
+.icademie-annonce__reviews-average {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--ic-text);
+	font: 700 30px/1 var(--ic-font-heading);
+}
+
+.icademie-annonce__reviews-count {
+	margin-top: -4px;
+	color: var(--ic-muted);
+	font-size: 12px;
+}
+
+.icademie-annonce__subnotes {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.icademie-annonce__subnote {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.icademie-annonce__subnote dt {
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.icademie-annonce__subnote dd {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.icademie-annonce__bar {
+	flex: 1;
+	height: 6px;
+	overflow: hidden;
+	border-radius: 3px;
+	background: var(--ic-track);
+}
+
+.icademie-annonce__bar > span {
+	display: block;
+	height: 100%;
+	border-radius: 3px;
+	background: var(--ic-text-2);
+}
+
+.icademie-annonce__subnote-value {
+	flex: none;
+	min-width: 2.2em;
+	color: var(--ic-text);
+	font-size: 12px;
+	font-weight: 600;
+	text-align: right;
+}
+
+.icademie-annonce__review-list {
+	display: flex;
+	flex-direction: column;
+	grid-area: list;
+	gap: 12px;
+}
+
+.icademie-annonce__reviews-empty {
+	grid-column: 1 / -1;
+	color: var(--ic-text-2);
+}
+
+.icademie-annonce__review article {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	height: 100%;
+	padding: 14px;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+}
+
+.icademie-annonce.has-js .is-collapsed .icademie-annonce__review:nth-child(n+3) {
+	display: none;
+}
+
+.icademie-annonce__review-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.icademie-annonce__avatar {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+	font: 600 14px/1 var(--ic-font-heading);
+}
+
+.icademie-annonce__review-author {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.icademie-annonce__review-name {
+	color: var(--ic-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.icademie-annonce__review-date {
+	color: var(--ic-muted);
+	font-size: 11px;
+}
+
+.icademie-annonce__review-rating {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 4px;
+	margin-left: auto;
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.icademie-annonce__review-pending {
+	color: #7c2d12;
+	font-size: 12px;
+	font-style: italic;
+}
+
+.icademie-annonce__review-text {
+	color: var(--ic-text-2);
+	font-size: 13px;
+	line-height: 1.55;
+	overflow-wrap: break-word;
+}
+
+.icademie-annonce__review-text > * + * {
+	margin-top: 0.6em;
+}
+
+.icademie-annonce__review-form {
+	display: flex;
+	flex-direction: column;
+	grid-area: form;
+	align-items: flex-start;
+	gap: 16px;
+	padding-top: 8px;
+}
+
+.icademie-annonce__review-form-body {
+	width: 100%;
+}
+
+/* Zone 13 : bateaux similaires (cartes des pages catégorie, en carrousel). */
+.icademie-annonce__similar {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-top: 28px;
+	border-top: 1px solid var(--ic-divider);
+}
+
+.icademie-annonce__similar-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.icademie-annonce__similar-nav {
+	display: flex;
+	gap: 8px;
+}
+
+.icademie-annonce .icademie-annonce__similar-cards {
+	background: transparent;
+}
+
+.icademie-annonce .icademie-annonce__similar-list {
+	display: flex;
+	gap: 20px;
+	margin: -6px;
+	padding: 6px;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scroll-padding-inline: 6px;
+	scrollbar-width: none;
+}
+
+.icademie-annonce__similar-list::-webkit-scrollbar {
+	display: none;
+}
+
+.icademie-annonce .icademie-annonce__similar-list > .icademie-categorie__item {
+	flex: 0 0 calc((100% - 3 * 20px) / 4);
+	scroll-snap-align: start;
+}
+
+.icademie-annonce__dots {
+	display: none;
+	justify-content: center;
+	gap: 6px;
+}
+
+.icademie-annonce__dots > span {
+	width: 8px;
+	height: 8px;
+	border-radius: 4px;
+	background: var(--ic-track);
+	transition: width 0.2s ease;
+}
+
+.icademie-annonce__dots > span.is-active {
+	width: 20px;
+	background: var(--ic-primary);
+}
+
+/* Fenêtres : partage, visionneuse, réservation (smartphone). */
+.icademie-annonce .icademie-annonce__dialog {
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+}
+
+.icademie-annonce__dialog::backdrop {
+	background: rgba(15, 23, 42, 0.6);
+}
+
+.icademie-annonce__dialog-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.icademie-annonce .icademie-annonce__dialog-title {
+	color: var(--ic-text);
+	font: 600 18px/1.25 var(--ic-font-heading);
+	letter-spacing: 0;
+}
+
+.icademie-annonce .icademie-annonce__close {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	margin: -8px -10px -8px 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--ic-text);
+	cursor: pointer;
+}
+
+.icademie-annonce .icademie-annonce__close:hover {
+	background: var(--ic-box);
+}
+
+/* Partage. */
+.icademie-annonce__dialog--share[open] {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	width: min(440px, calc(100vw - 32px));
+	height: fit-content;
+	max-height: calc(100dvh - 32px);
+	margin: auto;
+	padding: 20px 22px 22px;
+	overflow-y: auto;
+	border-radius: 12px;
+	box-shadow: 0 16px 48px rgba(15, 23, 42, 0.25);
+}
+
+.icademie-annonce__share-title {
+	color: var(--ic-text-2);
+	font-size: 13px;
+}
+
+.icademie-annonce__share-list {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.icademie-annonce .icademie-annonce__share-link {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	min-height: 48px;
+	margin: 0;
+	padding: 8px 12px;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+	font: 500 13px/1.25 var(--ic-font);
+	text-align: left;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.icademie-annonce .icademie-annonce__share-link:hover {
+	border-color: var(--ic-primary);
+	background: var(--ic-primary-light);
+	color: var(--ic-text);
+}
+
+.icademie-annonce__share-icon {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--ic-text-2);
+	color: #fff;
+}
+
+.icademie-annonce__share-icon svg {
+	width: 18px;
+	height: 18px;
+	fill: currentColor;
+}
+
+.icademie-annonce__share-icon .icademie-annonce__icon {
+	fill: none;
+}
+
+.icademie-annonce__share-link--facebook .icademie-annonce__share-icon {
+	background: #1259c3;
+}
+
+.icademie-annonce__share-link--x .icademie-annonce__share-icon {
+	background: #000;
+}
+
+.icademie-annonce__share-link--whatsapp .icademie-annonce__share-icon {
+	background: #0b7a3e;
+}
+
+.icademie-annonce__share-link--linkedin .icademie-annonce__share-icon {
+	background: #0a66c2;
+}
+
+.icademie-annonce__share-link--pinterest .icademie-annonce__share-icon {
+	background: #bd081c;
+}
+
+.icademie-annonce__share-status {
+	min-height: 1.45em;
+	color: var(--ic-text-2);
+	font-size: 12px;
+}
+
+/* Visionneuse des photos. */
+.icademie-annonce .icademie-annonce__dialog--lightbox {
+	background: #0b1220;
+	color: #fff;
+}
+
+.icademie-annonce__dialog--lightbox[open] {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+.icademie-annonce__dialog--lightbox::backdrop {
+	background: #0b1220;
+}
+
+.icademie-annonce__lightbox-head {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 20px;
+}
+
+.icademie-annonce__lightbox-count {
+	font-size: 14px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.icademie-annonce .icademie-annonce__close--light {
+	margin: 0 -10px 0 0;
+	color: #fff;
+}
+
+.icademie-annonce .icademie-annonce__close--light:hover {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+.icademie-annonce .icademie-annonce__dialog--lightbox :focus-visible {
+	outline-color: #fff;
+}
+
+.icademie-annonce__lightbox-track {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	overflow-x: auto;
+	overscroll-behavior: contain;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+}
+
+.icademie-annonce__lightbox-track::-webkit-scrollbar {
+	display: none;
+}
+
+.icademie-annonce__lightbox-item {
+	display: grid;
+	flex: 0 0 100%;
+	place-items: center;
+	padding: 0 72px 24px;
+	scroll-snap-align: start;
+}
+
+.icademie-annonce .icademie-annonce__lightbox-item img {
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+}
+
+.icademie-annonce .icademie-annonce__lightbox-nav {
+	position: absolute;
+	top: 50%;
+	display: grid;
+	place-items: center;
+	width: 48px;
+	height: 48px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--ic-text);
+	transform: translateY(-50%);
+	cursor: pointer;
+}
+
+.icademie-annonce .icademie-annonce__lightbox-nav:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.icademie-annonce__lightbox-nav--prev {
+	left: 14px;
+}
+
+.icademie-annonce__lightbox-nav--next {
+	right: 14px;
+}
+
+/* Réservation en plein écran (smartphone). */
+.icademie-annonce__dialog--booking[open] {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+.icademie-annonce__dialog--booking .icademie-annonce__dialog-head {
+	flex: none;
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--ic-divider);
+}
+
+.icademie-annonce__dialog-body {
+	flex: 1;
+	min-height: 0;
+	padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+	overflow-y: auto;
+}
+
+.icademie-annonce__dialog-body .icademie-annonce__booking-card {
+	position: static;
+	padding: 0;
+	border: 0;
+	box-shadow: none;
+}
+
+/* Smartphone : barre fixe en bas de l'écran (hors du bloc). */
+.icademie-annonce-bar {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 90;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 76px;
+	padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+	border-top: 2px solid var(--ic-primary);
+	background: var(--ic-surface);
+	box-shadow: 0 -6px 18px rgba(15, 23, 42, 0.14);
+}
+
+.icademie-annonce-bar__price {
+	display: flex;
+	flex: 1;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 4px;
+	min-width: 0;
+}
+
+.icademie-annonce-bar__amount {
+	color: var(--ic-primary-dark);
+	font: 700 16px/1.2 var(--ic-font-heading);
+}
+
+.icademie-annonce-bar__unit {
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.icademie-annonce-bar__dates {
+	flex-basis: 100%;
+	overflow: hidden;
+	color: var(--ic-muted);
+	font-size: 11px;
+	line-height: 1.3;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.icademie-annonce-bar__dates:empty {
+	display: none;
+}
+
+.icademie-annonce-bar .icademie-annonce-bar__button {
+	flex: none;
+}
+
+/* Tablette (600 à 1023 px). */
+@container icademie-annonce (max-width: 1023px) {
+
+	.icademie-annonce__inner {
+		gap: 20px;
+		padding: 20px 32px 48px;
+	}
+
+	.icademie-annonce__layout {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: 28px;
+	}
+
+	.icademie-annonce__layout > .icademie-annonce__booking {
+		grid-column: 1;
+		grid-row: auto;
+	}
+
+	.icademie-annonce .icademie-annonce__title {
+		font-size: 22px;
+		line-height: 1.2;
+	}
+
+	.icademie-annonce__header {
+		gap: 12px;
+	}
+
+	.icademie-annonce .icademie-annonce__share--header {
+		width: 44px;
+		height: 44px;
+		padding: 0;
+		border-radius: 50%;
+	}
+
+	.icademie-annonce__share--header .icademie-annonce__share-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	/* Grande photo et bandeau de vignettes. */
+	.icademie-annonce__gallery-list {
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		grid-template-rows: minmax(0, 1fr) 72px;
+		height: 400px;
+	}
+
+	.icademie-annonce__gallery .icademie-annonce__gallery-item {
+		grid-column: auto;
+		grid-row: auto;
+	}
+
+	.icademie-annonce__gallery .icademie-annonce__gallery-item:first-child {
+		grid-column: 1 / -1;
+	}
+
+	:where(.icademie-annonce__gallery--n1) .icademie-annonce__gallery-list {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: minmax(0, 1fr);
+	}
+
+	.icademie-annonce .icademie-annonce__gallery-all {
+		right: 0;
+		bottom: 0;
+		justify-content: center;
+		width: calc((100% - 4 * 8px) / 5);
+		height: 72px;
+		padding: 0 8px;
+		border-radius: 6px;
+		font-size: 12px;
+	}
+
+	.icademie-annonce__gallery-all .icademie-annonce__icon {
+		display: none;
+	}
+
+	/* Module sous la galerie, en pleine largeur, sur 2 colonnes. */
+	.icademie-annonce__booking-card {
+		position: static;
+		box-shadow: none;
+	}
+
+	.icademie-annonce__booking-form {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: start;
+		gap: 24px;
+	}
+
+	.icademie-annonce__booking-side {
+		gap: 12px;
+	}
+
+	.icademie-annonce__booking-side .icademie-annonce__lines {
+		padding: 12px;
+		border: 0;
+		border-radius: 8px;
+		background: var(--ic-primary-light);
+	}
+
+	.icademie-annonce__booking-side .icademie-annonce__line--total {
+		border-top-color: #9db5e5;
+	}
+
+	.icademie-annonce__note {
+		margin-top: -4px;
+	}
+
+	.icademie-annonce__zone,
+	.icademie-annonce__similar {
+		padding-top: 24px;
+	}
+
+	.icademie-annonce .icademie-annonce__zone-title {
+		font-size: 18px;
+	}
+
+	.icademie-annonce__spec {
+		padding-left: 46px;
+	}
+
+	.icademie-annonce__spec-icon {
+		left: 10px;
+	}
+
+	.icademie-annonce__equipment-list {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.icademie-annonce.has-js .is-collapsed .icademie-annonce__equipment:nth-child(n+9) {
+		display: none;
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__equipments.is-over-9 > .icademie-annonce__expand[data-ready] {
+		display: none;
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__equipments.is-over-8 > .icademie-annonce__expand[data-ready] {
+		display: inline-flex;
+	}
+
+	.icademie-annonce__calendar {
+		gap: 24px;
+	}
+
+	.icademie-annonce__condition dd {
+		text-align: right;
+	}
+
+	/* Avis : note et notes détaillées au-dessus, 2 avis côte à côte. */
+	.icademie-annonce__reviews {
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			"title toggle"
+			"summary summary"
+			"list list"
+			"form form";
+	}
+
+	.icademie-annonce__reviews-summary {
+		display: grid;
+		grid-template-columns: 170px minmax(0, 1fr);
+		align-items: center;
+		gap: 6px 20px;
+	}
+
+	.icademie-annonce__reviews-average,
+	.icademie-annonce__reviews-count {
+		grid-column: 1;
+	}
+
+	.icademie-annonce__reviews-average {
+		font-size: 28px;
+	}
+
+	.icademie-annonce__reviews-count {
+		margin-top: 0;
+	}
+
+	.icademie-annonce__subnotes {
+		display: grid;
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px 20px;
+	}
+
+	.icademie-annonce__review-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+	}
+
+	/* Bateaux similaires : 2 cartes visibles et une coupée. */
+	.icademie-annonce .icademie-annonce__similar-list {
+		gap: 16px;
+	}
+
+	.icademie-annonce .icademie-annonce__similar-list > .icademie-categorie__item {
+		flex-basis: 300px;
+	}
+
+	.icademie-annonce__similar-nav {
+		display: none;
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__dots {
+		display: flex;
+	}
+}
+
+/* Smartphone (moins de 600 px). */
+@container icademie-annonce (max-width: 599px) {
+
+	/* Le conteneur ne peut pas se styler lui-même : marge posée sur son contenu. */
+	.icademie-annonce__inner {
+		--ic-gutter: 16px;
+
+		gap: 0;
+		padding: 0 var(--ic-gutter) 40px;
+	}
+
+	/* Fil d'Ariane : retour au port de départ, en bandeau. */
+	.icademie-annonce__breadcrumb {
+		display: flex;
+		align-items: center;
+		min-height: 44px;
+		margin-inline: calc(-1 * var(--ic-gutter));
+		padding: 0 var(--ic-gutter);
+		border-bottom: 1px solid var(--ic-divider);
+		background: var(--ic-panel);
+	}
+
+	.icademie-annonce__breadcrumb:has(.icademie-annonce__back) .icademie-annonce__crumbs {
+		display: none;
+	}
+
+	.icademie-annonce .icademie-annonce__back {
+		display: inline-flex;
+		min-height: 44px;
+	}
+
+	.icademie-annonce__setup {
+		margin-top: 16px;
+	}
+
+	.icademie-annonce__layout {
+		row-gap: 24px;
+	}
+
+	/* Photos au-dessus du titre, en carrousel pleine largeur. */
+	.icademie-annonce__layout > .icademie-annonce__gallery {
+		order: -1;
+		margin-inline: calc(-1 * var(--ic-gutter));
+	}
+
+	.icademie-annonce__layout > .icademie-annonce__header {
+		margin-top: -8px;
+	}
+
+	.icademie-annonce .icademie-annonce__gallery-list {
+		display: flex;
+		height: 276px;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		gap: 0;
+		scrollbar-width: none;
+	}
+
+	.icademie-annonce__gallery-list::-webkit-scrollbar {
+		display: none;
+	}
+
+	.icademie-annonce__gallery .icademie-annonce__gallery-item,
+	.icademie-annonce__gallery .icademie-annonce__gallery-item:nth-child(n+6) {
+		display: block;
+		flex: 0 0 100%;
+		border-radius: 0;
+		scroll-snap-align: start;
+	}
+
+	.icademie-annonce .icademie-annonce__gallery-all {
+		display: none;
+	}
+
+	.icademie-annonce__gallery-counter {
+		position: absolute;
+		right: 12px;
+		bottom: 12px;
+		display: block;
+		padding: 3px 9px;
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.94);
+		color: var(--ic-text);
+		font-size: 12px;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		pointer-events: none;
+	}
+
+	.icademie-annonce__gallery-empty {
+		height: 220px;
+		border-radius: 0;
+	}
+
+	.icademie-annonce .icademie-annonce__share--header {
+		display: none;
+	}
+
+	.icademie-annonce .icademie-annonce__share--gallery {
+		position: absolute;
+		top: 8px;
+		right: 12px;
+		z-index: 1;
+		display: inline-flex;
+		width: 44px;
+		height: 44px;
+		padding: 0;
+		border: 0;
+		border-radius: 50%;
+		background: var(--ic-surface);
+		color: var(--ic-text-2);
+		box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+	}
+
+	.icademie-annonce .icademie-annonce__share--gallery[hidden] {
+		display: none;
+	}
+
+	.icademie-annonce .icademie-annonce__title {
+		font-size: 19px;
+	}
+
+	.icademie-annonce__meta {
+		font-size: 12px;
+	}
+
+	/* Module de réservation : ouvert en plein écran par la barre du bas (avec le script). */
+	.icademie-annonce.has-js .icademie-annonce__layout > .icademie-annonce__booking--form {
+		display: none;
+	}
+
+	.icademie-annonce__booking-form {
+		display: flex;
+		gap: 14px;
+	}
+
+	.icademie-annonce__booking-card {
+		padding: 16px;
+	}
+
+	.icademie-annonce__booking-side .icademie-annonce__lines {
+		padding: 12px 0 0;
+		border-top: 1px solid var(--ic-border);
+		border-radius: 0;
+		background: none;
+	}
+
+	.icademie-annonce__zone,
+	.icademie-annonce__similar {
+		padding-top: 20px;
+	}
+
+	.icademie-annonce .icademie-annonce__zone-title {
+		font-size: 17px;
+	}
+
+	.icademie-annonce__specs {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+	}
+
+	.icademie-annonce__spec {
+		min-height: 52px;
+		padding: 6px 10px 6px 40px;
+	}
+
+	.icademie-annonce__spec-icon {
+		left: 8px;
+		width: 24px;
+		height: 24px;
+	}
+
+	.icademie-annonce__spec-icon svg {
+		width: 15px;
+		height: 15px;
+	}
+
+	/* Listes repliées : bouton pleine largeur sous la liste. */
+	.icademie-annonce__equipments {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas:
+			"title"
+			"list"
+			"toggle";
+		gap: 14px;
+	}
+
+	.icademie-annonce__equipment-list {
+		gap: 10px 12px;
+	}
+
+	.icademie-annonce .icademie-annonce__expand {
+		justify-content: center;
+		width: 100%;
+		min-height: 44px;
+		padding: 0 18px;
+		border: 1.5px solid var(--ic-primary);
+		border-radius: 8px;
+		background: var(--ic-surface);
+		text-decoration: none;
+	}
+
+	.icademie-annonce .icademie-annonce__expand::after {
+		content: none;
+	}
+
+	.icademie-annonce.has-js .is-collapsed .icademie-annonce__equipment:nth-child(n+7) {
+		display: none;
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__equipments.is-over-8 > .icademie-annonce__expand[data-ready] {
+		display: none;
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__equipments.is-over-6 > .icademie-annonce__expand[data-ready] {
+		display: flex;
+	}
+
+	/* Calendrier sur 1 mois. */
+	.icademie-annonce__calendar {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__calendar:empty {
+		min-height: 300px;
+	}
+
+	.icademie-annonce__legend {
+		gap: 6px 14px;
+		font-size: 11px;
+	}
+
+	.icademie-annonce__conditions {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 6px;
+	}
+
+	.icademie-annonce__condition {
+		min-height: 44px;
+		padding: 10px 12px;
+	}
+
+	.icademie-annonce__map {
+		height: 220px;
+	}
+
+	/* Avis : note en ligne, notes détaillées sur 2 colonnes, 1 avis visible. */
+	.icademie-annonce__reviews {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas:
+			"title"
+			"summary"
+			"list"
+			"toggle"
+			"form";
+		gap: 14px;
+	}
+
+	.icademie-annonce__reviews-summary {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: baseline;
+		gap: 12px 10px;
+	}
+
+	.icademie-annonce__reviews-average {
+		font-size: 26px;
+	}
+
+	.icademie-annonce__subnotes {
+		flex-basis: 100%;
+		gap: 10px 16px;
+	}
+
+	.icademie-annonce__subnote dt {
+		font-size: 11px;
+	}
+
+	.icademie-annonce__review-list {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.icademie-annonce.has-js .is-collapsed .icademie-annonce__review:nth-child(n+2) {
+		display: none;
+	}
+
+	.icademie-annonce.has-js .icademie-annonce__reviews.is-over-1 > .icademie-annonce__expand[data-ready] {
+		display: flex;
+	}
+
+	.icademie-annonce__review-form > .icademie-annonce__button {
+		width: 100%;
+	}
+
+	/* Bateaux similaires : 1 carte visible et une coupée. */
+	.icademie-annonce .icademie-annonce__similar-list {
+		gap: 12px;
+	}
+
+	.icademie-annonce .icademie-annonce__similar-list > .icademie-categorie__item {
+		flex-basis: min(280px, 82%);
+	}
+
+	.icademie-annonce__lightbox-item {
+		padding: 0 0 16px;
+	}
+
+	.icademie-annonce .icademie-annonce__lightbox-nav {
+		display: none;
+	}
+
+	.icademie-annonce__share-list {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.icademie-annonce *,
+	.icademie-annonce *::before,
+	.icademie-annonce *::after {
+		scroll-behavior: auto !important;
+		transition: none !important;
+	}
+}
