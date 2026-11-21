@@ -13,8 +13,8 @@ defined( 'ABSPATH' ) || exit;
  * Correspondance avec les données de WooCommerce :
  * - destination : catégorie de produits (une catégorie parente inclut ses sous-catégories) ;
  * - type de bateau : attribut « Type de bateau » (pa_type-de-bateau) ;
- * - passagers : attribut « Nombre de personnes » (pa_nombre-de-personnes), au moins le nombre
- *   demandé (2 passagers : bateaux pour 2, 3… personnes) ;
+ * - passagers : attribut « Passagers » (pa_passagers), au moins le nombre demandé (2 passagers :
+ *   bateaux qui ont la valeur 2, 3… ; un bateau pour 1 à 6 passagers a les valeurs 1 à 6) ;
  * - départ et retour : l'attribut « Date » sert seulement à afficher les sélecteurs de date sur la
  *   fiche du bateau (extension « Icademie – Dates de début et de fin ») ; aucune disponibilité n'est
  *   enregistrée, il n'y a donc rien à filtrer. Les dates choisies sont reprises sur la fiche du
@@ -156,7 +156,7 @@ final class Icademie_Page_Accueil_Search {
 	}
 
 	/**
-	 * Valeurs de l'attribut « Nombre de personnes », lues comme des nombres.
+	 * Valeurs de l'attribut « Passagers », lues comme des nombres.
 	 *
 	 * « 10+ », « > 10 » ou « plus de 10 » sont ouvertes : elles conviennent à toute demande.
 	 *
@@ -199,7 +199,7 @@ final class Icademie_Page_Accueil_Search {
 	}
 
 	/**
-	 * Plus grande valeur de l'attribut « Nombre de personnes » (maximum du champ « Passagers »).
+	 * Plus grande valeur de l'attribut « Passagers » (maximum du champ « Passagers »).
 	 *
 	 * @return int 0 s'il n'y a pas de valeur, ou si une valeur est ouverte (« 10+ »).
 	 */

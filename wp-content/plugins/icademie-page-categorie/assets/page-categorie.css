@@ -1,0 +1,2002 @@
+/* Icademie – Page catégorie
+ *
+ * Mise en page d'après les zonings « Catégorie » : ordinateur (1440 px), tablette (768 px) et
+ * smartphone (390 px). Mêmes couleurs, polices, tailles et arrondis que la page d'accueil ; les
+ * cadres pointillés, les numéros et les descriptions des zones (repères de maquette) ne sont pas
+ * repris.
+ *
+ * La mise en page suit la largeur du bloc (requêtes de conteneur) : « ordinateur » à partir de
+ * 1024 px, « tablette » de 600 à 1023 px, « smartphone » en dessous. La classe « has-js » (posée par
+ * le script) active les panneaux de la recherche et des filtres ; sans script, les formulaires
+ * restent affichés dans la page.
+ */
+
+.icademie-categorie {
+	--ic-primary: #1d5fd1;
+	--ic-primary-dark: #173f8a;
+	--ic-primary-light: #e3ecfb;
+	--ic-primary-hover: #d3e1f8;
+	--ic-primary-border: #b9cdf1;
+	--ic-text: #1f2933;
+	--ic-text-2: #3e4c59;
+	--ic-muted: #52606d;
+	--ic-placeholder: #616e7c;
+	/* Zoning : #8a96a3, un peu foncé pour un contraste de 3:1 sur fond blanc (WCAG 1.4.11). */
+	--ic-field-border: #7b8794;
+	--ic-border: #cbd2d9;
+	--ic-divider: #dde2e8;
+	--ic-surface: #fff;
+	--ic-panel: #fafbfc;
+	--ic-box: #e9ecf0;
+	--ic-track: #c9d1da;
+	--ic-star: #e3a008;
+	--ic-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--ic-font-heading: "Space Grotesk", var(--ic-font);
+	--ic-gutter: 24px;
+
+	container: icademie-categorie / inline-size;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+	font-family: var(--ic-font);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.45;
+	-webkit-font-smoothing: antialiased;
+}
+
+.icademie-categorie,
+.icademie-categorie *,
+.icademie-categorie *::before,
+.icademie-categorie *::after {
+	box-sizing: border-box;
+}
+
+/* Remise à zéro des styles du thème sur les éléments utilisés. */
+.icademie-categorie :where(h1, h2, h3, p, ul, ol, li, fieldset, legend, details, summary, figure, dialog) {
+	margin: 0;
+	padding: 0;
+}
+
+.icademie-categorie :where(ul, ol) {
+	list-style: none;
+}
+
+.icademie-categorie :where(a) {
+	color: var(--ic-primary);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.icademie-categorie :where(a):hover {
+	color: var(--ic-primary-dark);
+}
+
+.icademie-categorie :where(a, button, input, select, summary, [tabindex]):focus-visible {
+	outline: 2px solid var(--ic-primary);
+	outline-offset: 2px;
+}
+
+.icademie-categorie [hidden] {
+	display: none !important;
+}
+
+.icademie-categorie__icon {
+	flex: none;
+	display: block;
+}
+
+/* Masqué à l'écran, lu par les lecteurs d'écran. */
+.icademie-categorie__sr {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Défilement bloqué derrière un panneau ouvert. */
+html.icademie-categorie-panneau {
+	overflow: hidden;
+}
+
+.icademie-categorie__inner {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	max-width: calc(1200px + 2 * var(--ic-gutter));
+	margin-inline: auto;
+	padding: 24px var(--ic-gutter) 64px;
+}
+
+/* Rappel aux gestionnaires : contenu à compléter. */
+.icademie-categorie__setup {
+	padding: 10px 14px;
+	border: 1px dashed #c2410c;
+	border-radius: 8px;
+	background: #fffbeb;
+	color: #78350f;
+	font-size: 12px;
+}
+
+.icademie-categorie__setup ul {
+	margin-top: 4px;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.icademie-categorie .icademie-categorie__setup a {
+	color: inherit;
+	font-weight: 600;
+}
+
+/* Boutons. */
+.icademie-categorie .icademie-categorie__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ic-primary);
+	color: #fff;
+	font-family: var(--ic-font);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.icademie-categorie .icademie-categorie__button:hover {
+	background: var(--ic-primary-dark);
+	color: #fff;
+}
+
+.icademie-categorie .icademie-categorie__button--secondary {
+	border: 1.5px solid var(--ic-primary);
+	background: var(--ic-surface);
+	color: var(--ic-primary);
+}
+
+.icademie-categorie .icademie-categorie__button--secondary:hover {
+	border-color: var(--ic-primary-dark);
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+}
+
+/* Champs. */
+.icademie-categorie .icademie-categorie__label {
+	color: var(--ic-primary-dark);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.icademie-categorie .icademie-categorie__control {
+	display: block;
+	width: 100%;
+	height: 44px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--ic-field-border);
+	border-radius: 6px;
+	background-color: var(--ic-surface);
+	box-shadow: none;
+	color: var(--ic-text);
+	font-family: var(--ic-font);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.icademie-categorie .icademie-categorie__control::placeholder {
+	color: var(--ic-placeholder);
+	opacity: 1;
+}
+
+.icademie-categorie .icademie-categorie__control:focus-visible {
+	border-color: var(--ic-primary);
+	outline: 2px solid var(--ic-primary);
+	outline-offset: 1px;
+}
+
+.icademie-categorie select.icademie-categorie__control {
+	padding-right: 36px;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e4c59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-position: right 12px center;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+
+/* Safari (iOS) : date alignée à gauche, comme les autres champs. */
+.icademie-categorie input[type="date"].icademie-categorie__control::-webkit-date-and-time-value {
+	text-align: left;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zone 2 : fil d'Ariane.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__crumbs {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	color: var(--ic-muted);
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.icademie-categorie__crumb + .icademie-categorie__crumb::before {
+	content: "›";
+	margin: 0 8px;
+	color: var(--ic-muted);
+}
+
+.icademie-categorie .icademie-categorie__crumb a {
+	text-decoration: none;
+}
+
+.icademie-categorie .icademie-categorie__crumb a:hover {
+	text-decoration: underline;
+}
+
+.icademie-categorie__crumb [aria-current] {
+	color: var(--ic-text);
+	font-weight: 600;
+}
+
+.icademie-categorie .icademie-categorie__back {
+	display: none;
+	align-items: center;
+	gap: 4px;
+	min-height: 32px;
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zone 3 : en-tête de la catégorie.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__head {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 24px;
+}
+
+.icademie-categorie__head.has-image {
+	grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.icademie-categorie__head-text {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	align-content: center;
+	gap: 8px 14px;
+}
+
+/* Hauteur du visuel seulement quand il y en a un (boutique, recherche : pas de blanc). */
+.icademie-categorie__head.has-image .icademie-categorie__head-text {
+	min-height: 118px;
+}
+
+.icademie-categorie .icademie-categorie__title {
+	color: var(--ic-text);
+	font-family: var(--ic-font-heading);
+	font-size: 28px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.15;
+	text-transform: none;
+}
+
+.icademie-categorie__count {
+	flex: none;
+	padding: 3px 8px;
+	border-radius: 4px;
+	background: var(--ic-box);
+	color: var(--ic-text-2);
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.icademie-categorie__intro {
+	flex-basis: 100%;
+	max-width: 760px;
+	color: var(--ic-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.icademie-categorie__intro > * + * {
+	margin-top: 6px;
+}
+
+.icademie-categorie__head-media {
+	position: relative;
+	min-height: 118px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--ic-box);
+}
+
+.icademie-categorie__head-media img {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Résultats d'une recherche de produits : champ des mots cherchés.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__text-search {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-width: 640px;
+}
+
+.icademie-categorie__text-search-row {
+	display: flex;
+	gap: 8px;
+}
+
+.icademie-categorie .icademie-categorie__text-search-row .icademie-categorie__control {
+	flex: 1;
+	min-width: 0;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.icademie-categorie .icademie-categorie__text-search-row .icademie-categorie__button {
+	flex: none;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zone 4 : moteur de recherche (celui de la page d'accueil).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__summary {
+	display: none;
+}
+
+.icademie-categorie__search-form {
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
+	padding: 14px 16px;
+	border: 1px solid var(--ic-border);
+	border-radius: 10px;
+	background: var(--ic-panel);
+}
+
+.icademie-categorie__field {
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.icademie-categorie__field--destination {
+	flex-grow: 2;
+}
+
+.icademie-categorie__field--passagers {
+	flex-grow: 0.8;
+}
+
+.icademie-categorie .icademie-categorie__search-submit {
+	flex: none;
+}
+
+/* Panneaux (recherche, filtres) : tablette et smartphone. */
+.icademie-categorie__dialog[open] {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+	background: var(--ic-surface);
+	box-shadow: 0 10px 40px rgba(15, 23, 42, 0.25);
+	color: var(--ic-text);
+}
+
+.icademie-categorie__dialog::backdrop {
+	background: rgba(15, 23, 42, 0.45);
+}
+
+.icademie-categorie__dialog-head {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 12px 10px 16px;
+	border-bottom: 1px solid var(--ic-divider);
+}
+
+.icademie-categorie .icademie-categorie__dialog-title {
+	color: var(--ic-text);
+	font-family: var(--ic-font-heading);
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-transform: none;
+}
+
+.icademie-categorie .icademie-categorie__close {
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--ic-text);
+	cursor: pointer;
+}
+
+.icademie-categorie .icademie-categorie__close:hover {
+	background: var(--ic-box);
+}
+
+.icademie-categorie__dialog-body {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	overscroll-behavior: contain;
+}
+
+.icademie-categorie__dialog .icademie-categorie__search-form {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px 12px;
+	padding: 16px;
+	border: 0;
+	border-radius: 0;
+	background: none;
+}
+
+.icademie-categorie__dialog .icademie-categorie__field--destination,
+.icademie-categorie__dialog .icademie-categorie__field--passagers,
+.icademie-categorie__dialog .icademie-categorie__search-submit {
+	grid-column: 1 / -1;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zones 5 à 8 : filtres, tri, résultats, pagination.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__listing {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	align-items: start;
+	gap: 24px;
+	scroll-margin-top: 16px;
+}
+
+.icademie-categorie__listing.has-filters {
+	grid-template-columns: 280px minmax(0, 1fr);
+}
+
+/* Zone 5 : filtres. */
+.icademie-categorie__sidebar {
+	min-width: 0;
+	padding: 4px 16px 16px;
+	border: 1px solid var(--ic-border);
+	border-radius: 10px;
+	background: var(--ic-surface);
+}
+
+.icademie-categorie .icademie-categorie__filters-title {
+	padding: 12px 0 2px;
+	color: var(--ic-text);
+	font-family: var(--ic-font-heading);
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-transform: none;
+}
+
+.icademie-categorie__group {
+	min-width: 0;
+	padding: 14px 0;
+	border: 0;
+	border-bottom: 1px solid var(--ic-divider);
+}
+
+.icademie-categorie .icademie-categorie__legend {
+	float: left;
+	width: 100%;
+	margin: 0 0 8px;
+	padding: 0;
+	color: var(--ic-text);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+/* Tout le contenu du groupe sous le titre (le titre est flottant pour garder sa marge). */
+.icademie-categorie__group > :not(.icademie-categorie__legend) {
+	clear: left;
+}
+
+.icademie-categorie__options > li + li {
+	margin-top: 2px;
+}
+
+.icademie-categorie__check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 28px;
+	color: var(--ic-text-2);
+	font-size: 13px;
+	line-height: 1.3;
+	cursor: pointer;
+}
+
+.icademie-categorie__check input {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	accent-color: var(--ic-primary);
+	cursor: pointer;
+}
+
+.icademie-categorie__more-options > summary {
+	display: inline-block;
+	margin-top: 6px;
+	color: var(--ic-primary);
+	font-size: 12px;
+	font-weight: 600;
+	list-style: none;
+	cursor: pointer;
+}
+
+.icademie-categorie__more-options > summary::-webkit-details-marker {
+	display: none;
+}
+
+.icademie-categorie__more-options > summary:hover {
+	text-decoration: underline;
+}
+
+.icademie-categorie__more-options[open] > summary {
+	margin-bottom: 4px;
+}
+
+/* Curseurs. */
+.icademie-categorie .icademie-categorie__range {
+	display: block;
+	width: 100%;
+	margin: 6px 0 10px;
+	accent-color: var(--ic-primary);
+	cursor: pointer;
+}
+
+.icademie-categorie__price {
+	display: flex;
+	gap: 8px;
+}
+
+.icademie-categorie__price-field {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+}
+
+.icademie-categorie .icademie-categorie__price-field .icademie-categorie__control {
+	height: 36px;
+	min-height: 36px;
+	padding-right: 26px;
+	-moz-appearance: textfield;
+}
+
+.icademie-categorie__price-field .icademie-categorie__control::-webkit-inner-spin-button,
+.icademie-categorie__price-field .icademie-categorie__control::-webkit-outer-spin-button {
+	margin: 0;
+	-webkit-appearance: none;
+}
+
+.icademie-categorie__price-unit {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	color: var(--ic-muted);
+	font-size: 12px;
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+.icademie-categorie__range-output {
+	margin-bottom: 4px;
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+/* Curseur double : deux curseurs superposés, seules les poignées reçoivent le pointeur. */
+.icademie-categorie__dual {
+	--icademie-de: 0%;
+	--icademie-a: 100%;
+
+	position: relative;
+	height: 28px;
+}
+
+.icademie-categorie__dual::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	left: 12px;
+	height: 4px;
+	margin-top: -2px;
+	border-radius: 2px;
+	background: linear-gradient(to right, var(--ic-track) var(--icademie-de), var(--ic-primary) var(--icademie-de), var(--ic-primary) var(--icademie-a), var(--ic-track) var(--icademie-a));
+}
+
+.icademie-categorie .icademie-categorie__dual .icademie-categorie__range {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background: none;
+	pointer-events: none;
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+.icademie-categorie__dual .icademie-categorie__range::-webkit-slider-runnable-track {
+	height: 4px;
+	background: transparent;
+}
+
+.icademie-categorie__dual .icademie-categorie__range::-moz-range-track {
+	height: 4px;
+	background: transparent;
+}
+
+.icademie-categorie__dual .icademie-categorie__range::-webkit-slider-thumb {
+	width: 24px;
+	height: 24px;
+	margin-top: -10px;
+	border: 2px solid var(--ic-primary);
+	border-radius: 50%;
+	background: var(--ic-surface);
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+	cursor: pointer;
+	pointer-events: auto;
+	-webkit-appearance: none;
+}
+
+.icademie-categorie__dual .icademie-categorie__range::-moz-range-thumb {
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--ic-primary);
+	border-radius: 50%;
+	background: var(--ic-surface);
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+	cursor: pointer;
+	pointer-events: auto;
+}
+
+.icademie-categorie__dual .icademie-categorie__range:focus-visible {
+	outline: none;
+}
+
+.icademie-categorie__dual .icademie-categorie__range:focus-visible::-webkit-slider-thumb {
+	outline: 2px solid var(--ic-primary);
+	outline-offset: 2px;
+}
+
+.icademie-categorie__dual .icademie-categorie__range:focus-visible::-moz-range-thumb {
+	outline: 2px solid var(--ic-primary);
+	outline-offset: 2px;
+}
+
+/* Compteur (passagers). */
+.icademie-categorie__stepper {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.icademie-categorie .icademie-categorie__step {
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--ic-field-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	color: var(--ic-text-2);
+	font-family: var(--ic-font);
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.icademie-categorie .icademie-categorie__step:hover {
+	border-color: var(--ic-primary);
+	color: var(--ic-primary);
+}
+
+.icademie-categorie .icademie-categorie__step:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.icademie-categorie .icademie-categorie__stepper-input {
+	width: 56px;
+	height: 36px;
+	min-height: 36px;
+	padding: 0 4px;
+	font-size: 14px;
+	font-weight: 600;
+	text-align: center;
+	-moz-appearance: textfield;
+}
+
+.icademie-categorie__stepper-input::-webkit-inner-spin-button,
+.icademie-categorie__stepper-input::-webkit-outer-spin-button {
+	margin: 0;
+	-webkit-appearance: none;
+}
+
+/* Pastilles (cabines, note). */
+.icademie-categorie__pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.icademie-categorie__pill {
+	position: relative;
+	display: block;
+}
+
+.icademie-categorie__pill input {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.icademie-categorie__pill > span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 32px;
+	padding: 0 10px;
+	border: 1px solid var(--ic-field-border);
+	border-radius: 16px;
+	background: var(--ic-surface);
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.icademie-categorie__pill:hover > span {
+	border-color: var(--ic-primary);
+}
+
+.icademie-categorie__pill input:checked + span {
+	border-color: var(--ic-primary);
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+	font-weight: 600;
+}
+
+.icademie-categorie__pill input:focus-visible + span {
+	outline: 2px solid var(--ic-primary);
+	outline-offset: 2px;
+}
+
+.icademie-categorie__filters-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	padding-top: 14px;
+}
+
+.icademie-categorie .icademie-categorie__reset {
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.icademie-categorie .icademie-categorie__filters-submit {
+	width: 100%;
+}
+
+/* Ordinateur avec le script : les filtres s'appliquent dès qu'on les change. */
+.icademie-categorie.has-js .icademie-categorie__sidebar .icademie-categorie__filters-submit {
+	display: none;
+}
+
+/* Pendant le chargement de la nouvelle liste. */
+.icademie-categorie__listing.is-loading .icademie-categorie__results,
+.icademie-categorie__listing.is-loading .icademie-categorie__sidebar {
+	opacity: 0.55;
+	transition: opacity 0.2s ease;
+}
+
+/* Zone 6 : nombre de résultats, filtres actifs, tri. */
+.icademie-categorie__results {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+}
+
+.icademie-categorie__toolbar {
+	display: grid;
+	grid-template-areas: "total active sort";
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 10px 12px;
+	min-height: 44px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--ic-divider);
+}
+
+.icademie-categorie .icademie-categorie__filters-open {
+	display: none;
+	grid-area: button;
+}
+
+.icademie-categorie__total {
+	grid-area: total;
+	color: var(--ic-text);
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.icademie-categorie__active {
+	display: flex;
+	flex-wrap: wrap;
+	grid-area: active;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+.icademie-categorie__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.icademie-categorie .icademie-categorie__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 30px;
+	padding: 0 10px 0 12px;
+	border: 1px solid var(--ic-primary);
+	border-radius: 15px;
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+	font-size: 12px;
+	font-weight: 500;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.icademie-categorie .icademie-categorie__chip:hover {
+	background: var(--ic-primary-hover);
+	color: var(--ic-primary-dark);
+}
+
+.icademie-categorie .icademie-categorie__clear {
+	display: none;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.icademie-categorie__sort {
+	position: relative;
+	display: flex;
+	grid-area: sort;
+	align-items: center;
+	gap: 8px;
+}
+
+.icademie-categorie__sort-label {
+	color: var(--ic-muted);
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.icademie-categorie__sort-face {
+	display: none;
+}
+
+.icademie-categorie .icademie-categorie__sort-select {
+	width: auto;
+	min-width: 170px;
+}
+
+.icademie-categorie.has-js .icademie-categorie__sort-submit {
+	display: none;
+}
+
+/* Zone 7 : résultats. */
+.icademie-categorie__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+}
+
+.icademie-categorie__listing:not(.has-filters) .icademie-categorie__grid {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.icademie-categorie__item {
+	display: flex;
+	min-width: 0;
+}
+
+.icademie-categorie__card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	overflow: hidden;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.icademie-categorie__card:hover {
+	border-color: var(--ic-primary-border);
+	box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+}
+
+.icademie-categorie__card-media {
+	position: relative;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	background: var(--ic-box);
+}
+
+/* Photos : défilement horizontal (glisser au doigt), une photo à la fois. */
+.icademie-categorie__photos {
+	display: flex;
+	height: 100%;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+}
+
+.icademie-categorie__photos::-webkit-scrollbar {
+	display: none;
+}
+
+.icademie-categorie__photo {
+	flex: 0 0 100%;
+	height: 100%;
+	scroll-snap-align: start;
+}
+
+.icademie-categorie__photo a,
+.icademie-categorie__photo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.icademie-categorie__photo img {
+	object-fit: cover;
+}
+
+.icademie-categorie .icademie-categorie__photo-nav {
+	position: absolute;
+	top: 50%;
+	z-index: 2;
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.94);
+	box-shadow: 0 1px 4px rgba(15, 23, 42, 0.3);
+	color: var(--ic-text);
+	opacity: 0;
+	transform: translateY(-50%);
+	transition: opacity 0.15s ease;
+	cursor: pointer;
+}
+
+.icademie-categorie__photo-nav--prev {
+	left: 8px;
+}
+
+.icademie-categorie__photo-nav--next {
+	right: 8px;
+}
+
+.icademie-categorie__card:hover .icademie-categorie__photo-nav,
+.icademie-categorie .icademie-categorie__photo-nav:focus-visible {
+	opacity: 1;
+}
+
+.icademie-categorie .icademie-categorie__photo-nav:disabled {
+	opacity: 0 !important;
+	pointer-events: none;
+}
+
+/* Écrans tactiles : on fait glisser les photos, sans boutons. */
+@media (hover: none) {
+	.icademie-categorie .icademie-categorie__photo-nav {
+		display: none;
+	}
+}
+
+.icademie-categorie__photo-dots {
+	position: absolute;
+	bottom: 8px;
+	left: 50%;
+	z-index: 2;
+	display: flex;
+	gap: 4px;
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.icademie-categorie__photo-dots > span {
+	width: 6px;
+	height: 6px;
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 0.65);
+	box-shadow: 0 0 2px rgba(15, 23, 42, 0.45);
+	transition: width 0.2s ease;
+}
+
+.icademie-categorie__photo-dots > span.is-active {
+	width: 14px;
+	background: #fff;
+}
+
+.icademie-categorie__photo-empty {
+	display: grid;
+	place-items: center;
+	width: 100%;
+	height: 100%;
+	color: var(--ic-muted);
+}
+
+.icademie-categorie__card-body {
+	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px 14px 14px;
+}
+
+/* Le titre vient avant dans le code (lecteurs d'écran), le type et le port s'affichent au-dessus. */
+.icademie-categorie__card-kicker {
+	order: -1;
+	color: var(--ic-muted);
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	line-height: 1.25;
+	text-transform: uppercase;
+}
+
+.icademie-categorie .icademie-categorie__card-title {
+	font-family: var(--ic-font-heading);
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.25;
+	text-transform: none;
+}
+
+.icademie-categorie .icademie-categorie__card-title a {
+	color: var(--ic-text);
+	text-decoration: none;
+}
+
+/* Lien du titre étendu au texte de la carte. */
+.icademie-categorie .icademie-categorie__card-title a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.icademie-categorie .icademie-categorie__card-title a:focus-visible {
+	outline: none;
+}
+
+.icademie-categorie .icademie-categorie__card-title a:focus-visible::after {
+	border-radius: 0 0 8px 8px;
+	outline: 2px solid var(--ic-primary);
+	outline-offset: -2px;
+}
+
+.icademie-categorie .icademie-categorie__card:hover .icademie-categorie__card-title a {
+	color: var(--ic-primary-dark);
+	text-decoration: underline;
+}
+
+.icademie-categorie__card-specs {
+	color: var(--ic-muted);
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.icademie-categorie__card-foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 4px 8px;
+	margin-top: auto;
+	padding-top: 2px;
+}
+
+.icademie-categorie__rating {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--ic-text-2);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.icademie-categorie__rating .icademie-categorie__icon {
+	color: var(--ic-star);
+}
+
+.icademie-categorie__rating--none {
+	color: var(--ic-muted);
+	font-weight: 400;
+}
+
+.icademie-categorie__price-tag {
+	color: var(--ic-primary-dark);
+	font-size: 14px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.icademie-categorie__price-tag del {
+	color: var(--ic-muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.icademie-categorie__price-tag ins {
+	text-decoration: none;
+}
+
+.icademie-categorie__price-day {
+	color: var(--ic-muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.icademie-categorie__empty {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 24px;
+	border: 1px dashed var(--ic-field-border);
+	border-radius: 8px;
+	color: var(--ic-text-2);
+	font-size: 14px;
+}
+
+/* Zone 8 : pagination (ordinateur, tablette) et « Afficher plus » (smartphone). */
+.icademie-categorie__pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+}
+
+.icademie-categorie .icademie-categorie__pagination .page-numbers {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	border: 1px solid var(--ic-field-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	color: var(--ic-text-2);
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.icademie-categorie .icademie-categorie__pagination a.page-numbers:hover {
+	border-color: var(--ic-primary);
+	color: var(--ic-primary);
+}
+
+.icademie-categorie .icademie-categorie__pagination .page-numbers.current {
+	border-color: var(--ic-primary);
+	background: var(--ic-primary);
+	color: #fff;
+}
+
+.icademie-categorie .icademie-categorie__pagination .page-numbers.dots {
+	min-width: 0;
+	border: 0;
+	background: transparent;
+}
+
+.icademie-categorie__pagination .page-numbers > span[aria-hidden] {
+	font-size: 18px;
+	line-height: 1;
+}
+
+.icademie-categorie__more {
+	display: none;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 10px;
+	text-align: center;
+}
+
+.icademie-categorie__more-status {
+	color: var(--ic-muted);
+	font-size: 12px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zone 9 : contenu éditorial et questions fréquentes.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie__editorial {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 24px;
+	padding-top: 24px;
+	border-top: 1px solid var(--ic-divider);
+}
+
+.icademie-categorie__editorial.has-faq {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 32px;
+}
+
+.icademie-categorie .icademie-categorie__section-title,
+.icademie-categorie .icademie-categorie__faq-title,
+.icademie-categorie .icademie-categorie__links-title {
+	margin-bottom: 12px;
+	color: var(--ic-text);
+	font-family: var(--ic-font-heading);
+	font-size: 18px;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1.25;
+	text-transform: none;
+}
+
+.icademie-categorie__prose {
+	color: var(--ic-text-2);
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.icademie-categorie__prose > * + * {
+	margin-top: 0.8em;
+}
+
+.icademie-categorie .icademie-categorie__prose :where(h2, h3, h4) {
+	color: var(--ic-text);
+	font-family: var(--ic-font-heading);
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.3;
+	text-transform: none;
+}
+
+.icademie-categorie__prose ul {
+	padding-left: 1.4em;
+	list-style: disc;
+}
+
+.icademie-categorie__prose ol {
+	padding-left: 1.4em;
+	list-style: decimal;
+}
+
+.icademie-categorie__prose img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 6px;
+}
+
+.icademie-categorie .icademie-categorie__readmore {
+	align-self: flex-start;
+	margin: 6px 0 0;
+	padding: 6px 0;
+	border: 0;
+	background: none;
+	color: var(--ic-primary);
+	font-family: var(--ic-font);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.icademie-categorie .icademie-categorie__readmore:hover {
+	text-decoration: underline;
+}
+
+.icademie-categorie__editorial-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.icademie-categorie__faq {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+}
+
+.icademie-categorie .icademie-categorie__faq-title {
+	margin-bottom: 4px;
+}
+
+.icademie-categorie__faq-item {
+	border-radius: 6px;
+	background: var(--ic-box);
+}
+
+.icademie-categorie__faq-question {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-height: 44px;
+	padding: 10px 14px;
+	border-radius: 6px;
+	color: var(--ic-text);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.35;
+	list-style: none;
+	cursor: pointer;
+}
+
+.icademie-categorie__faq-question::-webkit-details-marker {
+	display: none;
+}
+
+.icademie-categorie__faq-question .icademie-categorie__icon {
+	color: var(--ic-text-2);
+	transition: transform 0.2s ease;
+}
+
+.icademie-categorie__faq-item[open] .icademie-categorie__faq-question .icademie-categorie__icon {
+	transform: rotate(180deg);
+}
+
+.icademie-categorie .icademie-categorie__faq-answer {
+	padding: 0 14px 14px;
+	font-size: 13px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Zone 10 : maillage interne.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-categorie .icademie-categorie__links-title {
+	font-size: 16px;
+}
+
+.icademie-categorie__links-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.icademie-categorie .icademie-categorie__tag {
+	display: inline-flex;
+	align-items: center;
+	height: 30px;
+	padding: 0 12px;
+	border: 1px solid var(--ic-primary);
+	border-radius: 15px;
+	background: var(--ic-surface);
+	color: var(--ic-primary-dark);
+	font-size: 12px;
+	font-weight: 500;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.icademie-categorie .icademie-categorie__tag:hover {
+	background: var(--ic-primary-light);
+	color: var(--ic-primary-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.icademie-categorie *,
+	.icademie-categorie *::before,
+	.icademie-categorie *::after {
+		transition: none !important;
+	}
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Tablette : zoning 768 px (bloc de 600 à 1023 px de large).
+ * --------------------------------------------------------------------------------------------- */
+
+@container icademie-categorie (max-width: 1023px) {
+
+	.icademie-categorie__inner {
+		gap: 20px;
+		padding: 20px 32px 48px;
+	}
+
+	.icademie-categorie__head.has-image {
+		grid-template-columns: minmax(0, 1fr) 180px;
+		gap: 20px;
+	}
+
+	.icademie-categorie__head-text {
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+		justify-content: center;
+	}
+
+	.icademie-categorie__head.has-image .icademie-categorie__head-text {
+		min-height: 130px;
+	}
+
+	.icademie-categorie .icademie-categorie__title {
+		font-size: 24px;
+	}
+
+	.icademie-categorie__intro {
+		order: 1;
+	}
+
+	.icademie-categorie__count {
+		order: 2;
+	}
+
+	/* Recherche : résumé et bouton « Modifier », le formulaire s'ouvre dans un panneau. */
+	.icademie-categorie.has-js .icademie-categorie__summary {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		margin: 0;
+		padding: 8px 8px 8px 14px;
+		border: 1px solid var(--ic-field-border);
+		border-radius: 10px;
+		background: var(--ic-surface);
+		color: var(--ic-text);
+		font-family: var(--ic-font);
+		font-size: 13px;
+		line-height: 1.3;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__summary:hover {
+		border-color: var(--ic-primary);
+	}
+
+	.icademie-categorie__summary-icon {
+		display: none;
+		color: var(--ic-primary);
+	}
+
+	.icademie-categorie__summary-text {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.icademie-categorie__summary-part.is-empty {
+		color: var(--ic-placeholder);
+	}
+
+	.icademie-categorie__summary-sep {
+		margin: 0 6px;
+		color: var(--ic-muted);
+	}
+
+	.icademie-categorie__summary-action {
+		display: inline-flex;
+		flex: none;
+		align-items: center;
+		min-height: 44px;
+		padding: 0 20px;
+		border-radius: 8px;
+		background: var(--ic-primary);
+		color: #fff;
+		font-weight: 600;
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__search-slot {
+		display: none;
+	}
+
+	/* Sans script : le formulaire reste dans la page, sur trois colonnes. */
+	.icademie-categorie__search-slot .icademie-categorie__search-form {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.icademie-categorie__search-slot .icademie-categorie__field--destination,
+	.icademie-categorie__search-slot .icademie-categorie__search-submit {
+		grid-column: 1 / -1;
+	}
+
+	/* Panneau de recherche : en haut de l'écran. */
+	.icademie-categorie__dialog--search[open] {
+		inset: 0 0 auto;
+		height: auto;
+		max-height: 100%;
+	}
+
+	.icademie-categorie__dialog--search .icademie-categorie__search-form {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		padding: 16px 24px 24px;
+	}
+
+	.icademie-categorie__dialog--search .icademie-categorie__field--passagers {
+		grid-column: auto;
+	}
+
+	/* Filtres : panneau latéral, par-dessus la liste. */
+	.icademie-categorie__listing.has-filters {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__sidebar {
+		display: none;
+	}
+
+	/* Sans script : les filtres restent dans la page, sur deux colonnes. */
+	.icademie-categorie__sidebar .icademie-categorie__filters {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: 24px;
+	}
+
+	.icademie-categorie__sidebar .icademie-categorie__filters-title,
+	.icademie-categorie__sidebar .icademie-categorie__filters-actions {
+		grid-column: 1 / -1;
+	}
+
+	.icademie-categorie__dialog--filters[open] {
+		inset: 0 auto 0 0;
+		width: min(400px, 100%);
+	}
+
+	.icademie-categorie__dialog .icademie-categorie__filters {
+		padding: 0 16px;
+	}
+
+	.icademie-categorie__dialog .icademie-categorie__filters-title {
+		position: absolute !important;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.icademie-categorie__dialog .icademie-categorie__filters-actions {
+		position: sticky;
+		bottom: 0;
+		z-index: 1;
+		flex-direction: row-reverse;
+		align-items: center;
+		justify-content: space-between;
+		margin: 0 -16px;
+		padding: 12px 16px;
+		border-top: 1px solid var(--ic-divider);
+		background: var(--ic-surface);
+	}
+
+	.icademie-categorie__dialog .icademie-categorie__filters-submit {
+		width: auto;
+		flex: 1;
+		max-width: 240px;
+	}
+
+	.icademie-categorie__dialog .icademie-categorie__group:last-of-type {
+		border-bottom: 0;
+	}
+
+	/* Barre : « Filtres (n) », nombre de résultats et tri ; filtres actifs en dessous. */
+	.icademie-categorie__toolbar {
+		grid-template-areas:
+			"button total sort"
+			"active active active";
+		grid-template-columns: auto minmax(0, 1fr) auto;
+	}
+
+	.icademie-categorie__toolbar:not(.has-chips) {
+		grid-template-areas: "button total sort";
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__filters-open {
+		display: inline-flex;
+		padding: 0 18px;
+	}
+
+	.icademie-categorie .icademie-categorie__clear {
+		display: inline;
+	}
+
+	.icademie-categorie__grid,
+	.icademie-categorie__listing:not(.has-filters) .icademie-categorie__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.icademie-categorie .icademie-categorie__pagination .page-numbers {
+		min-width: 44px;
+		height: 44px;
+	}
+
+	.icademie-categorie__editorial.has-faq {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 24px;
+	}
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Smartphone : zoning 390 px (bloc de moins de 600 px de large).
+ * --------------------------------------------------------------------------------------------- */
+
+@container icademie-categorie (max-width: 599px) {
+
+	.icademie-categorie__inner {
+		gap: 16px;
+		padding: 16px 16px 40px;
+	}
+
+	/* Fil d'Ariane : retour au niveau au-dessus. */
+	.icademie-categorie__crumbs {
+		display: none;
+	}
+
+	.icademie-categorie .icademie-categorie__back {
+		display: inline-flex;
+	}
+
+	.icademie-categorie__head,
+	.icademie-categorie__head.has-image {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.icademie-categorie__head-media {
+		display: none;
+	}
+
+	.icademie-categorie__head-text,
+	.icademie-categorie__head.has-image .icademie-categorie__head-text {
+		gap: 6px;
+		min-height: 0;
+	}
+
+	.icademie-categorie .icademie-categorie__title {
+		font-size: 20px;
+	}
+
+	.icademie-categorie__intro {
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	/* Recherche : résumé cliquable, la recherche s'ouvre en plein écran. */
+	.icademie-categorie.has-js .icademie-categorie__summary {
+		gap: 10px;
+		min-height: 44px;
+		padding: 0 14px;
+		border: 1.5px solid var(--ic-primary);
+		border-radius: 22px;
+		font-weight: 500;
+	}
+
+	.icademie-categorie__summary-icon {
+		display: block;
+	}
+
+	.icademie-categorie__summary-action {
+		display: none;
+	}
+
+	.icademie-categorie__search-slot .icademie-categorie__search-form {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		padding: 12px;
+	}
+
+	.icademie-categorie__search-slot .icademie-categorie__field--passagers {
+		grid-column: 1 / -1;
+	}
+
+	.icademie-categorie__dialog--search[open] {
+		inset: 0;
+		height: 100%;
+	}
+
+	.icademie-categorie__dialog--search .icademie-categorie__search-form {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		padding: 16px;
+	}
+
+	.icademie-categorie__dialog--search .icademie-categorie__field--passagers {
+		grid-column: 1 / -1;
+	}
+
+	.icademie-categorie__dialog--filters[open] {
+		width: 100%;
+	}
+
+	.icademie-categorie__sidebar .icademie-categorie__filters {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* 16 px : pas de zoom automatique de Safari (iOS) quand on touche un champ. */
+	.icademie-categorie .icademie-categorie__control {
+		font-size: 16px;
+	}
+
+	.icademie-categorie .icademie-categorie__step {
+		width: 44px;
+		height: 44px;
+	}
+
+	.icademie-categorie .icademie-categorie__stepper-input {
+		height: 44px;
+		min-height: 44px;
+	}
+
+	.icademie-categorie__pill > span {
+		min-width: 44px;
+		height: 40px;
+		border-radius: 20px;
+	}
+
+	.icademie-categorie__check {
+		min-height: 40px;
+	}
+
+	/* Barre collante en haut de l'écran : « Filtres (n) » et « Trier », filtres actifs dessous. */
+	.icademie-categorie__toolbar,
+	.icademie-categorie__toolbar:not(.has-chips) {
+		position: sticky;
+		top: 0;
+		z-index: 5;
+		grid-template-areas:
+			"button sort"
+			"active active";
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+		margin: 0 -16px;
+		padding: 8px 16px;
+		background: var(--ic-surface);
+	}
+
+	.icademie-categorie__toolbar:not(.has-chips) {
+		grid-template-areas: "button sort";
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__filters-open {
+		justify-content: center;
+		width: 100%;
+		padding: 0 12px;
+	}
+
+	.icademie-categorie__total {
+		position: absolute !important;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.icademie-categorie__active {
+		flex-wrap: nowrap;
+		margin: 0 -16px;
+		padding: 2px 16px;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.icademie-categorie__active::-webkit-scrollbar {
+		display: none;
+	}
+
+	.icademie-categorie__chips {
+		flex-wrap: nowrap;
+	}
+
+	.icademie-categorie .icademie-categorie__clear {
+		display: none;
+	}
+
+	/* « Trier » : la liste du navigateur, sous un bouton. */
+	.icademie-categorie__sort-label {
+		position: absolute !important;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__sort-face {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		width: 100%;
+		min-height: 44px;
+		padding: 0 12px;
+		border: 1.5px solid var(--ic-primary);
+		border-radius: 8px;
+		background: var(--ic-surface);
+		color: var(--ic-primary);
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__sort-select {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		min-width: 0;
+		height: 100%;
+		opacity: 0;
+	}
+
+	.icademie-categorie.has-js .icademie-categorie__sort-select:focus-visible + .icademie-categorie__sort-submit,
+	.icademie-categorie.has-js .icademie-categorie__sort:focus-within .icademie-categorie__sort-face {
+		outline: 2px solid var(--ic-primary);
+		outline-offset: 2px;
+	}
+
+	.icademie-categorie .icademie-categorie__sort-select {
+		min-width: 0;
+	}
+
+	.icademie-categorie__grid,
+	.icademie-categorie__listing:not(.has-filters) .icademie-categorie__grid {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+	}
+
+	.icademie-categorie__pagination {
+		display: none;
+	}
+
+	.icademie-categorie__more {
+		display: flex;
+	}
+
+	.icademie-categorie .icademie-categorie__more-link {
+		width: 100%;
+	}
+
+	.icademie-categorie__editorial {
+		gap: 20px;
+		padding-top: 20px;
+	}
+
+	.icademie-categorie .icademie-categorie__section-title,
+	.icademie-categorie .icademie-categorie__faq-title {
+		font-size: 16px;
+	}
+
+	/* Texte replié après quelques lignes : « Lire la suite ». */
+	.icademie-categorie.has-js .icademie-categorie__prose.is-collapsible:not(.is-expanded) {
+		max-height: 9.6em;
+		overflow: hidden;
+		-webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+		mask-image: linear-gradient(to bottom, #000 55%, transparent);
+	}
+
+	.icademie-categorie__prose {
+		font-size: 13px;
+	}
+
+	/* Maillage : ruban horizontal. */
+	.icademie-categorie__links-list {
+		flex-wrap: nowrap;
+		margin: 0 -16px;
+		padding: 2px 16px 6px;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.icademie-categorie__links-list::-webkit-scrollbar {
+		display: none;
+	}
+
+	.icademie-categorie__links-list > li {
+		flex: none;
+	}
+}
+
+/* « Lire la suite » : seulement quand le texte est replié (smartphone). */
+@container icademie-categorie (min-width: 600px) {
+
+	.icademie-categorie .icademie-categorie__readmore {
+		display: none !important;
+	}
+}
