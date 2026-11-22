@@ -318,6 +318,86 @@ final class Icademie_Page_Accueil_Zones {
 			'reviews'  => (int) $product->get_review_count(),
 			'price'    => $product->get_price_html(),
 			'per_day'  => class_exists( 'Icademie_Dates_Produit' ) && Icademie_Dates_Produit::requires_dates( $product ),
+			'badges'   => array_slice( self::badges( $product ), 0, 1 ),
+		);
+	}
+
+	/**
+	 * Badges d'un bateau, d'après ses attributs (charte graphique : trois au plus, l'écologie
+	 * d'abord). Vert « varech » seulement pour un engagement écologique réel : propulsion
+	 * électrique ou hybride, panneaux solaires. Puis le skipper (service) et « Sans permis »
+	 * (caractéristique). Utilisés aussi par les pages catégorie et annonce.
+	 *
+	 * @param WC_Product $product Bateau.
+	 * @return array[] « label », « kind » (eco, service, neutral) et « icon » (vide : sans icône).
+	 */
+	public static function badges( $product ) {
+		$slugs = static function ( $attribute ) use ( $product ) {
+			$terms = wc_get_product_terms( $product->get_id(), wc_attribute_taxonomy_name( $attribute ), array( 'fields' => 'slugs' ) );
+			return is_array( $terms ) ? $terms : array();
+		};
+
+		$types  = $slugs( self::TYPE_ATTRIBUTE );
+		$badges = array();
+
+		if ( in_array( 'electrique', $types, true ) ) {
+			$badges[] = array(
+				'label' => __( 'Électrique', 'icademie-page-accueil' ),
+				'kind'  => 'eco',
+				'icon'  => 'bolt',
+			);
+		} elseif ( in_array( 'hybride', $types, true ) ) {
+			$badges[] = array(
+				'label' => __( 'Hybride', 'icademie-page-accueil' ),
+				'kind'  => 'eco',
+				'icon'  => 'leaf',
+			);
+		}
+
+		if ( in_array( 'panneaux-solaires', $slugs( 'equipements' ), true ) ) {
+			$badges[] = array(
+				'label' => __( 'Panneaux solaires', 'icademie-page-accueil' ),
+				'kind'  => 'eco',
+				'icon'  => 'solar',
+			);
+		}
+
+		if ( in_array( 'avec-skipper', $slugs( 'skipper' ), true ) ) {
+			$badges[] = array(
+				'label' => __( 'Skipper disponible', 'icademie-page-accueil' ),
+				'kind'  => 'service',
+				'icon'  => 'skipper',
+			);
+		}
+
+		if ( in_array( 'sans-permis-bateau-requis', $slugs( 'permis-bateau' ), true ) ) {
+			$badges[] = array(
+				'label' => __( 'Sans permis', 'icademie-page-accueil' ),
+				'kind'  => 'neutral',
+				'icon'  => '',
+			);
+		}
+
+		/**
+		 * Badges d'un bateau (cartes, fiche annonce).
+		 *
+		 * @param array[]    $badges  « label », « kind » (eco, service, neutral, warn), « icon ».
+		 * @param WC_Product $product Bateau.
+		 */
+		return array_slice( (array) apply_filters( 'icademie_badges_bateau', $badges, $product ), 0, 3 );
+	}
+
+	/**
+	 * Icônes des badges (trait de 2 px, couleur du texte), pour les trois extensions des pages.
+	 *
+	 * @return string[] Tracés SVG, par nom.
+	 */
+	public static function badge_icons() {
+		return array(
+			'bolt'    => '<path d="M13 3 5 13h6l-1 8 8-10h-6z"/>',
+			'leaf'    => '<path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="m5 19 7-7"/>',
+			'solar'   => '<rect x="3" y="9" width="18" height="10" rx="1"/><path d="M3 14h18M9 9v10M15 9v10M12 3v3M6 5l1.5 1.5M18 5l-1.5 1.5"/>',
+			'skipper' => '<circle cx="12" cy="9" r="4"/><path d="M7 7h10M8 5.5h8l-1-2.5H9z"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
 		);
 	}
 

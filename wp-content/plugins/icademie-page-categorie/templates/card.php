@@ -50,6 +50,17 @@ $title_id    = 'icademie-categorie-bateau-' . (int) $card['id'];
 					<?php echo call_user_func( $icon, 'boat', 48 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
 				</a>
 			<?php endif; ?>
+			<?php if ( ! empty( $card['badges'] ) ) : ?>
+				<?php /* Badge posé sur la photo, sans gêner le glisser des photos. */ ?>
+				<ul class="icademie-categorie__badges">
+					<?php foreach ( $card['badges'] as $badge ) : ?>
+						<li class="icademie-categorie__badge icademie-categorie__badge--<?php echo esc_attr( $badge['kind'] ); ?>">
+							<?php echo '' !== $badge['icon'] ? call_user_func( $icon, $badge['icon'], 15 ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
+							<?php echo esc_html( $badge['label'] ); ?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
 		</div>
 
 		<div class="icademie-categorie__card-body">
@@ -66,10 +77,12 @@ $title_id    = 'icademie-categorie-bateau-' . (int) $card['id'];
 						<?php echo call_user_func( $icon, 'star', 14 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
 						<span class="icademie-categorie__sr"><?php esc_html_e( 'Note :', 'icademie-page-categorie' ); ?> <?php echo esc_html( sprintf( $rating_format, number_format_i18n( $card['rating'], 1 ) ) ); ?></span>
 						<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $card['rating'], 1 ) ); ?></span>
-						<?php
-						/* translators: %s: nombre d'avis. */
-						echo esc_html( sprintf( _n( '(%s avis)', '(%s avis)', $card['reviews'], 'icademie-page-categorie' ), number_format_i18n( $card['reviews'] ) ) );
-						?>
+						<span class="icademie-categorie__rating-count">
+							<?php
+							/* translators: %s: nombre d'avis. */
+							echo esc_html( sprintf( _n( '(%s avis)', '(%s avis)', $card['reviews'], 'icademie-page-categorie' ), number_format_i18n( $card['reviews'] ) ) );
+							?>
+						</span>
 					</span>
 				<?php else : ?>
 					<span class="icademie-categorie__rating icademie-categorie__rating--none"><?php esc_html_e( 'Pas encore d\'avis', 'icademie-page-categorie' ); ?></span>

@@ -195,6 +195,8 @@ final class Icademie_Annonce_View {
 			'port_url' => is_wp_error( $link ) ? '' : (string) $link,
 			'rating'   => (float) $product->get_average_rating(),
 			'reviews'  => (int) $product->get_review_count(),
+			// Badges sous le titre (maquette) : écologie, skipper, sans permis.
+			'badges'   => method_exists( 'Icademie_Page_Accueil_Zones', 'badges' ) ? Icademie_Page_Accueil_Zones::badges( $product ) : array(),
 		);
 	}
 

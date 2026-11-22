@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Page Contact
- * Description:       Page Contact intégrée d'après le zoning « Contact · Ordinateur 1440 px » : fil d'Ariane, aide rapide (recherche et thèmes fréquents), formulaire adapté au profil avec pièce jointe et accusé de réception par e-mail, coordonnées, plan d'accès et bandeau d'assistance pendant la location. Les coordonnées se règlent dans Réglages › Page contact ; à l'activation, la page « Contact » est créée en brouillon.
- * Version:           1.0.0
+ * Description:       Page Contact intégrée d'après le zoning « Contact · Ordinateur 1440 px » : fil d'Ariane, aide rapide (recherche et thèmes fréquents), formulaire adapté au profil avec pièce jointe et accusé de réception par e-mail, coordonnées, plan d'accès et bandeau d'assistance pendant la location. Les coordonnées se règlent dans Réglages › Page contact ; à l'activation, la page « Contact » est créée en brouillon. Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Text Domain:       icademie-page-contact
@@ -20,7 +20,8 @@ require_once __DIR__ . '/includes/class-icademie-page-contact-form.php';
  *
  * Le bloc « Page contact » (icademie/page-contact) affiche tout le contenu de la page, du fil
  * d'Ariane au bandeau d'assistance : zones 2 à 8 du zoning. L'en-tête et le pied de page (zones 1
- * et 9, communs à tout le site) restent ceux du thème.
+ * et 9, communs à tout le site) sont ceux du thème, ou ceux de
+ * l'extension « Icademie – En-tête et pied de page » qui les remplace.
  *
  * Une page qui contient ce bloc utilise automatiquement le modèle « Page de contact » : pleine
  * largeur et sans titre de page, puisque le bloc affiche son propre titre. Un autre modèle choisi
@@ -28,7 +29,7 @@ require_once __DIR__ . '/includes/class-icademie-page-contact-form.php';
  */
 final class Icademie_Page_Contact {
 
-	const VERSION = '1.0.0';
+	const VERSION = '1.1.0';
 
 	/** Bloc qui affiche la page. */
 	const BLOCK = 'icademie/page-contact';
@@ -61,7 +62,16 @@ final class Icademie_Page_Contact {
 	 * Enregistre les styles, le script, le bloc et le modèle de page.
 	 */
 	public static function register() {
-		wp_register_style( self::HANDLE, plugins_url( 'assets/page-contact.css', __FILE__ ), array(), self::VERSION );
+		$shared = defined( 'Icademie_Page_Accueil::FONTS_HANDLE' );
+
+		// Polices de la charte : feuille commune de l'extension de la page d'accueil (déclarées une
+		// seule fois avec l'en-tête du site), sinon les fichiers de cette extension.
+		wp_register_style( self::HANDLE, plugins_url( 'assets/page-contact.css', __FILE__ ), $shared ? array( Icademie_Page_Accueil::FONTS_HANDLE ) : array(), self::VERSION );
+
+		if ( ! $shared ) {
+			wp_add_inline_style( self::HANDLE, self::font_face_css() );
+		}
+
 		wp_register_script(
 			self::HANDLE,
 			plugins_url( 'assets/page-contact.js', __FILE__ ),
@@ -165,17 +175,37 @@ final class Icademie_Page_Contact {
 	}
 
 	/**
-	 * Précharge la police des titres sur la page Contact (titre principal visible dès l'arrivée).
+	 * Précharge les polices du titre et du texte sur la page Contact (affichés dès l'arrivée).
 	 */
 	public static function preload_font() {
 		if ( ! self::is_contact_page() ) {
 			return;
 		}
 
-		printf(
-			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
-			esc_url( plugins_url( 'assets/fonts/space-grotesk-latin-wght-normal.woff2', __FILE__ ) )
-		);
+		if ( method_exists( 'Icademie_Page_Accueil', 'print_font_preloads' ) ) {
+			Icademie_Page_Accueil::print_font_preloads();
+			return;
+		}
+
+		foreach ( array( 'fraunces-latin-600-normal.woff2', 'atkinson-hyperlegible-latin-400-normal.woff2' ) as $file ) {
+			printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( plugins_url( 'assets/fonts/' . $file, __FILE__ ) ) );
+		}
+	}
+
+	/**
+	 * Règles @font-face des fichiers de polices de cette extension (sans l'extension de l'accueil).
+	 *
+	 * @return string CSS.
+	 */
+	private static function font_face_css() {
+		$range = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+		$css   = '';
+
+		foreach ( array( array( 'Fraunces', '600', 'fraunces-latin-600-normal.woff2' ), array( 'Atkinson Hyperlegible', '400', 'atkinson-hyperlegible-latin-400-normal.woff2' ), array( 'Atkinson Hyperlegible', '700', 'atkinson-hyperlegible-latin-700-normal.woff2' ) ) as $font ) {
+			$css .= sprintf( '@font-face{font-family:"%1$s";font-style:normal;font-weight:%2$s;font-display:swap;src:url("%3$s") format("woff2");unicode-range:%4$s}', $font[0], $font[1], esc_url( plugins_url( 'assets/fonts/' . $font[2], __FILE__ ) ), $range );
+		}
+
+		return $css;
 	}
 
 	/**
@@ -581,6 +611,7 @@ final class Icademie_Page_Contact {
 			'chat'       => '<path d="M4 5h16v11H9l-5 4z"/>',
 			'pin'        => '<path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
 			'warning'    => '<path d="M12 3 22 21H2z"/><path d="M12 10v5M12 18v.5"/>',
+			'lifebuoy'   => '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m5.6 5.6 3.6 3.6m5.6 5.6 3.6 3.6m0-12.8-3.6 3.6m-5.6 5.6-3.6 3.6"/>',
 			'paperclip'  => '<path d="m21 11-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/>',
 			'check'      => '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8 5.7-5.8"/>',
 			'alert'      => '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.5"/>',
@@ -600,23 +631,20 @@ final class Icademie_Page_Contact {
 	}
 
 	/**
-	 * Illustration de l'en-tête (voilier), affichée quand la page n'a pas d'image mise en avant.
+	 * Illustration de l'en-tête (voilier au port), affichée quand la page n'a pas d'image mise en
+	 * avant. Aplats aux couleurs de la charte graphique, sans dégradé.
 	 *
 	 * @return string SVG décoratif.
 	 */
 	public static function illustration() {
 		return '<svg class="icademie-contact__illustration" viewBox="0 0 480 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'
-			. '<defs><linearGradient id="icademie-contact-ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfdffa"/><stop offset="1" stop-color="#f4f8fe"/></linearGradient></defs>'
-			. '<rect width="480" height="240" fill="url(#icademie-contact-ciel)"/>'
-			. '<circle cx="376" cy="72" r="30" fill="#ffd9a8"/>'
-			. '<path d="M300 176c34-40 88-52 132-30 18 9 34 20 48 30v64H300z" fill="#b9cdf1"/>'
-			. '<path d="M92 76q8-8 16 0 8-8 16 0M136 102q6-6 12 0 6-6 12 0" fill="none" stroke="#243040" stroke-width="3" stroke-linecap="round"/>'
-			. '<path d="M232 46v124" stroke="#243040" stroke-width="4" stroke-linecap="round"/>'
-			. '<path d="M239 56l64 106h-64z" fill="#fff" stroke="#243040" stroke-width="3" stroke-linejoin="round"/>'
-			. '<path d="M225 72l-48 90h48z" fill="#1d5fd1" stroke="#173f8a" stroke-width="3" stroke-linejoin="round"/>'
-			. '<path d="M160 172h156l-20 26H182z" fill="#243040"/>'
-			. '<path d="M0 190c40-10 80 10 120 0s80-10 120 0 80 10 120 0 80-10 120 0v50H0z" fill="#1d5fd1"/>'
-			. '<path d="M0 210c40-8 80 8 120 0s80-8 120 0 80 8 120 0 80-8 120 0v30H0z" fill="#173f8a"/>'
+			. '<rect width="480" height="240" fill="#dce5ea"/>'
+			. '<path d="M0 150h480v26H0z" fill="#b9a98c"/>'
+			. '<path d="M0 176h480v64H0z" fill="#3f6c87"/>'
+			. '<path d="M232 40v124" stroke="#0f2233" stroke-width="4" stroke-linecap="round"/>'
+			. '<path d="M239 50l64 106h-64z" fill="#f7f5f0"/>'
+			. '<path d="M225 66l-48 90h48z" fill="#e4eef3"/>'
+			. '<path d="M160 166h156l-20 26H182z" fill="#0f2233"/>'
 			. '</svg>';
 	}
 }

@@ -796,6 +796,8 @@ final class Icademie_Page_Categorie_View {
 			'reviews' => (int) $product->get_review_count(),
 			'price'   => $product->get_price_html(),
 			'per_day' => class_exists( 'Icademie_Dates_Produit' ) && Icademie_Dates_Produit::requires_dates( $product ),
+			// Un badge par carte, comme dans les maquettes (écologie d'abord).
+			'badges'  => method_exists( 'Icademie_Page_Accueil_Zones', 'badges' ) ? array_slice( Icademie_Page_Accueil_Zones::badges( $product ), 0, 1 ) : array(),
 		);
 	}
 

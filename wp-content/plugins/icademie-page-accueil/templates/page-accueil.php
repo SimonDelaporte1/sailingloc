@@ -141,7 +141,7 @@ $rating_format = __( '%s sur 5', 'icademie-page-accueil' );
 	<?php if ( $types ) : ?>
 		<section class="icademie-accueil__section icademie-accueil__types" aria-labelledby="icademie-accueil-types-titre">
 			<div class="icademie-accueil__section-head">
-				<h2 id="icademie-accueil-types-titre" class="icademie-accueil__section-title"><?php esc_html_e( 'Catégories de bateaux', 'icademie-page-accueil' ); ?></h2>
+				<h2 id="icademie-accueil-types-titre" class="icademie-accueil__section-title"><?php esc_html_e( 'Choisissez votre bateau', 'icademie-page-accueil' ); ?></h2>
 				<a class="icademie-accueil__section-link" href="<?php echo esc_url( $data['shop_url'] ); ?>">
 					<span class="icademie-accueil__wide"><?php esc_html_e( 'Tous les bateaux', 'icademie-page-accueil' ); ?></span>
 					<span class="icademie-accueil__narrow"><?php esc_html_e( 'Tous', 'icademie-page-accueil' ); ?><span class="icademie-accueil__sr"> <?php esc_html_e( 'les bateaux', 'icademie-page-accueil' ); ?></span></span>
@@ -200,16 +200,29 @@ $rating_format = __( '%s sur 5', 'icademie-page-accueil' );
 								<?php if ( '' !== $boat['specs'] ) : ?>
 									<p class="icademie-accueil__boat-specs"><?php echo esc_html( $boat['specs'] ); ?></p>
 								<?php endif; ?>
+								<?php if ( $boat['badges'] ) : ?>
+									<?php /* Après le titre pour les lecteurs d'écran, posé sur la photo à l'écran. */ ?>
+									<ul class="icademie-accueil__badges">
+										<?php foreach ( $boat['badges'] as $badge ) : ?>
+											<li class="icademie-accueil__badge icademie-accueil__badge--<?php echo esc_attr( $badge['kind'] ); ?>">
+												<?php echo '' !== $badge['icon'] ? call_user_func( $icon, $badge['icon'], 15 ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
+												<?php echo esc_html( $badge['label'] ); ?>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								<?php endif; ?>
 								<p class="icademie-accueil__boat-foot">
 									<?php if ( $boat['reviews'] > 0 ) : ?>
 										<span class="icademie-accueil__rating">
 											<?php echo call_user_func( $icon, 'star', 14 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
 											<span class="icademie-accueil__sr"><?php esc_html_e( 'Note :', 'icademie-page-accueil' ); ?> <?php echo esc_html( sprintf( $rating_format, number_format_i18n( $boat['rating'], 1 ) ) ); ?></span>
 											<span aria-hidden="true"><?php echo esc_html( number_format_i18n( $boat['rating'], 1 ) ); ?></span>
-											<?php
-											/* translators: %s: nombre d'avis. */
-											echo esc_html( sprintf( _n( '(%s avis)', '(%s avis)', $boat['reviews'], 'icademie-page-accueil' ), number_format_i18n( $boat['reviews'] ) ) );
-											?>
+											<span class="icademie-accueil__rating-count">
+												<?php
+												/* translators: %s: nombre d'avis. */
+												echo esc_html( sprintf( _n( '(%s avis)', '(%s avis)', $boat['reviews'], 'icademie-page-accueil' ), number_format_i18n( $boat['reviews'] ) ) );
+												?>
+											</span>
 										</span>
 									<?php else : ?>
 										<span class="icademie-accueil__rating icademie-accueil__rating--none"><?php esc_html_e( 'Pas encore d\'avis', 'icademie-page-accueil' ); ?></span>
@@ -307,6 +320,8 @@ $rating_format = __( '%s sur 5', 'icademie-page-accueil' );
 			</div>
 			<div class="icademie-accueil__owner-body">
 				<h2 id="icademie-accueil-loueur-titre" class="icademie-accueil__owner-title"><?php echo esc_html( $owner['title'] ); ?></h2>
+				<?php /* Surtitre de la maquette : après le titre dans le code, au-dessus à l'écran. */ ?>
+				<p class="icademie-accueil__owner-kicker"><?php esc_html_e( 'Propriétaires', 'icademie-page-accueil' ); ?></p>
 				<?php if ( '' !== $owner['text'] ) : ?>
 					<p class="icademie-accueil__owner-text"><?php echo esc_html( $owner['text'] ); ?></p>
 				<?php endif; ?>
@@ -328,7 +343,7 @@ $rating_format = __( '%s sur 5', 'icademie-page-accueil' );
 	<?php if ( $reviews['items'] ) : ?>
 		<section class="icademie-accueil__section icademie-accueil__reviews" aria-labelledby="icademie-accueil-avis-titre" data-carousel>
 			<div class="icademie-accueil__section-head">
-				<h2 id="icademie-accueil-avis-titre" class="icademie-accueil__section-title"><?php esc_html_e( 'Avis des membres', 'icademie-page-accueil' ); ?></h2>
+				<h2 id="icademie-accueil-avis-titre" class="icademie-accueil__section-title"><?php esc_html_e( 'Ils ont largué les amarres', 'icademie-page-accueil' ); ?></h2>
 				<?php if ( $reviews['count'] > 0 ) : ?>
 					<p class="icademie-accueil__reviews-summary">
 						<?php echo call_user_func( $icon, 'star', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
