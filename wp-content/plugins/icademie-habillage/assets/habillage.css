@@ -1,0 +1,3382 @@
+/* Icademie – Habillage des pages
+ *
+ * Charte graphique SailingLoc appliquée aux pages sans maquette : pages de contenu, articles et
+ * listes d'articles, page introuvable, compte client, pages de WC Vendors, tunnel de réservation
+ * (panier, validation, confirmation). Tout est rangé sous « .icademie-habillage », le contenu entre
+ * l'en-tête et le pied de page du site.
+ *
+ * Largeurs (requêtes de conteneur) : ordinateur à partir de 1024 px, tablette de 600 à 1023 px,
+ * smartphone en dessous. Lecture : 760 px (60 à 75 caractères) ; pages de service : 1200 px.
+ */
+
+/* Fond craie jusqu'au pied de page, même sur une page courte. */
+body.icademie-habillage-page {
+	background: #f7f5f0;
+}
+
+.icademie-habillage {
+	--ih-encre: #0f2233;
+	--ih-encre-muted: #4a5866;
+	--ih-manche: #1d5a80;
+	--ih-manche-strong: #164766;
+	--ih-ecume: #e4eef3;
+	--ih-varech: #2e6b4f;
+	--ih-varech-soft: #e3efe7;
+	--ih-balise: #b83a24;
+	--ih-balise-soft: #fbebe6;
+	--ih-ambre: #8a5a00;
+	--ih-ambre-soft: #fdf1d8;
+	--ih-craie: #f7f5f0;
+	--ih-blanc: #fff;
+	--ih-sable: #e9dfc9;
+	--ih-trait: #ddd8ce;
+	--ih-controle: #76818c;
+	--ih-shadow-card: 0 1px 2px rgba(15, 34, 51, 0.08), 0 4px 12px rgba(15, 34, 51, 0.06);
+	--ih-shadow-hover: 0 2px 4px rgba(15, 34, 51, 0.1), 0 10px 24px rgba(15, 34, 51, 0.1);
+	--ih-font: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+	--ih-font-titre: Fraunces, Georgia, "Times New Roman", serif;
+	--ih-font-code: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+	--ih-gutter: 24px;
+	--ih-max: 1200px;
+	--ih-lecture: 760px;
+
+	/* Couleurs du thème choisies dans l'éditeur (blocs « Groupe », « Bouton »…) : celles de la charte. */
+	--wp--preset--color--theme-1: var(--ih-blanc);
+	--wp--preset--color--theme-2: var(--ih-encre);
+	--wp--preset--color--theme-3: var(--ih-manche);
+	--wp--preset--color--theme-4: var(--ih-encre-muted);
+	--wp--preset--color--theme-5: var(--ih-ecume);
+	--wp--preset--color--theme-6: var(--ih-trait);
+	--wp--preset--color--theme-7: var(--ih-manche);
+
+	container: icademie-habillage / inline-size;
+	box-sizing: border-box;
+	padding-bottom: 64px;
+	background: var(--ih-craie);
+	color: var(--ih-encre);
+	font-family: var(--ih-font);
+	font-size: 17px;
+	line-height: 26px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.icademie-habillage *,
+.icademie-habillage *::before,
+.icademie-habillage *::after {
+	box-sizing: border-box;
+}
+
+/* Anneau de focus de la charte : 2px manche décalé de 2px. */
+.icademie-habillage :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+	outline: 2px solid var(--ih-manche);
+	outline-offset: 2px;
+}
+
+.icademie-habillage .icademie-habillage__sr,
+.icademie-habillage .screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.icademie-habillage__icon {
+	display: inline-block;
+	flex: none;
+	vertical-align: middle;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Boutons de la charte (principal manche, secondaire contour, assistance balise).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage .icademie-habillage__bouton,
+.icademie-habillage .wp-block-button__link,
+.icademie-habillage .search-form .search-submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	margin: 0;
+	padding: 10px 20px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-manche);
+	color: var(--ih-blanc);
+	font: 700 16px/1.25 var(--ih-font);
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.icademie-habillage .icademie-habillage__bouton:hover,
+.icademie-habillage .wp-block-button__link:hover,
+.icademie-habillage .search-form .search-submit:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-manche-strong);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage .icademie-habillage__bouton--secondaire,
+.icademie-habillage .is-style-outline > .wp-block-button__link,
+.icademie-habillage .wp-block-button__link.is-style-outline {
+	border-color: var(--ih-manche);
+	background: var(--ih-blanc);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .icademie-habillage__bouton--secondaire:hover,
+.icademie-habillage .is-style-outline > .wp-block-button__link:hover,
+.icademie-habillage .wp-block-button__link.is-style-outline:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-ecume);
+	color: var(--ih-manche-strong);
+}
+
+/* Page introuvable : « Voir les bateaux » est le bouton principal, la recherche passe en secondaire
+ * (charte : un seul bouton principal par écran). */
+.icademie-habillage .icademie-habillage__introuvable .search-form .search-submit {
+	background: var(--ih-blanc);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .icademie-habillage__introuvable .search-form .search-submit:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-ecume);
+	color: var(--ih-manche-strong);
+}
+
+.icademie-habillage .icademie-habillage__bouton--assistance {
+	flex: none;
+	border-color: var(--ih-balise);
+	background: var(--ih-balise);
+}
+
+.icademie-habillage .icademie-habillage__bouton--assistance:hover {
+	border-color: #9b2f1c;
+	background: #9b2f1c;
+}
+
+.icademie-habillage__boutons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * En-tête de page : fil d'Ariane, surtitre, titre, introduction, informations, image.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage__entete {
+	--ih-entete: var(--ih-lecture);
+}
+
+.icademie-habillage__entete--liste,
+.icademie-habillage__entete--tunnel,
+body.icademie-habillage-large .icademie-habillage__entete {
+	--ih-entete: var(--ih-max);
+}
+
+.icademie-habillage__entete-inner {
+	max-width: calc(var(--ih-entete) + 2 * var(--ih-gutter));
+	margin: 0 auto;
+	padding: 32px var(--ih-gutter) 8px;
+}
+
+.icademie-habillage__crumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 0;
+	margin: 0 0 24px;
+	padding: 0;
+	color: var(--ih-encre-muted);
+	font-size: 14px;
+	line-height: 20px;
+	list-style: none;
+}
+
+.icademie-habillage__crumb + .icademie-habillage__crumb::before {
+	content: "›";
+	margin: 0 8px;
+	color: var(--ih-encre-muted);
+}
+
+.icademie-habillage .icademie-habillage__crumb a {
+	color: var(--ih-manche);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .icademie-habillage__crumb a:hover {
+	color: var(--ih-manche-strong);
+}
+
+.icademie-habillage__crumb [aria-current] {
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage .icademie-habillage__retour {
+	display: none;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	margin: 0 0 8px;
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage__surtitre {
+	margin: 0 0 8px;
+	color: var(--ih-manche);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .icademie-habillage__surtitre a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.icademie-habillage .icademie-habillage__surtitre a:hover {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .icademie-habillage__titre {
+	margin: 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 40px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 48px;
+	text-wrap: balance;
+}
+
+.icademie-habillage__intro {
+	max-width: var(--ih-lecture);
+	margin: 16px 0 0;
+	color: var(--ih-encre);
+	font-size: 19px;
+	line-height: 29px;
+}
+
+.icademie-habillage__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	margin: 16px 0 0;
+	padding: 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+	list-style: none;
+}
+
+.icademie-habillage__meta li {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.icademie-habillage__entete-photo {
+	margin: 28px 0 0;
+}
+
+.icademie-habillage .icademie-habillage__entete-photo img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 9;
+	border-radius: 16px;
+	object-fit: cover;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Étapes de la réservation (panier, validation, confirmation).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage__etapes ol {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 28px;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage__etape {
+	display: flex;
+	flex: 1 1 0;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 20px;
+}
+
+.icademie-habillage__etape:last-child {
+	flex: 0 0 auto;
+}
+
+.icademie-habillage__etape:not(:last-child)::after {
+	content: "";
+	flex: 1 1 auto;
+	min-width: 16px;
+	height: 2px;
+	border-radius: 2px;
+	background: var(--ih-trait);
+}
+
+.icademie-habillage__etape.is-done:not(:last-child)::after {
+	background: var(--ih-manche);
+}
+
+.icademie-habillage .icademie-habillage__etape a {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 44px;
+	color: inherit;
+	text-decoration: none;
+}
+
+.icademie-habillage .icademie-habillage__etape a:hover .icademie-habillage__etape-libelle {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage__etape-numero {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 1.5px solid var(--ih-controle);
+	border-radius: 50%;
+	background: var(--ih-blanc);
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.icademie-habillage__etape.is-done,
+.icademie-habillage__etape.is-current {
+	color: var(--ih-encre);
+}
+
+.icademie-habillage__etape.is-done .icademie-habillage__etape-numero,
+.icademie-habillage__etape.is-current .icademie-habillage__etape-numero {
+	border-color: var(--ih-manche);
+	background: var(--ih-manche);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage__etape.is-current .icademie-habillage__etape-libelle {
+	font-weight: 700;
+}
+
+.icademie-habillage__etape.is-done a .icademie-habillage__etape-libelle {
+	color: var(--ih-manche);
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Contenu de la page (blocs de l'éditeur, contenu des extensions).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage .icademie-habillage__contenu {
+	--wp--style--global--content-size: var(--ih-lecture);
+	--wp--style--global--wide-size: var(--ih-max);
+
+	padding: 20px var(--ih-gutter) 0;
+}
+
+body.icademie-habillage-large .icademie-habillage .icademie-habillage__contenu {
+	--wp--style--global--content-size: var(--ih-max);
+}
+
+.icademie-habillage .icademie-habillage__contenu > * {
+	margin-block: 0;
+}
+
+.icademie-habillage .icademie-habillage__contenu > * + * {
+	margin-block-start: 20px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(h1, h2, h3, h4, h5, h6) {
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-weight: 600;
+	letter-spacing: normal;
+	text-wrap: balance;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(h1, h2, h3, h4, h5, h6) :where(strong, b) {
+	font-weight: inherit;
+}
+
+.icademie-habillage .icademie-habillage__contenu h1 {
+	font-size: 36px;
+	line-height: 44px;
+}
+
+.icademie-habillage .icademie-habillage__contenu h2 {
+	font-size: 30px;
+	line-height: 38px;
+}
+
+.icademie-habillage .icademie-habillage__contenu h3 {
+	font-size: 22px;
+	line-height: 28px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(h4, h5, h6) {
+	font-family: var(--ih-font);
+	font-size: 19px;
+	font-weight: 700;
+	line-height: 26px;
+}
+
+.icademie-habillage .icademie-habillage__contenu > :is(h2, h3) {
+	margin-block-start: 44px;
+}
+
+.icademie-habillage .icademie-habillage__contenu > h2:first-child,
+.icademie-habillage .icademie-habillage__contenu > h3:first-child {
+	margin-block-start: 8px;
+}
+
+.icademie-habillage .icademie-habillage__contenu > :is(h2, h3, h4) + * {
+	margin-block-start: 12px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(p, li, dd, dt) {
+	font-size: 17px;
+	line-height: 26px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(strong, b) {
+	font-weight: 700;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(ul, ol):not(.wc-block-components-product-details):not([class*="wc-block"]) {
+	padding-left: 1.4em;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(ul, ol) li + li {
+	margin-top: 6px;
+}
+
+.icademie-habillage .icademie-habillage__contenu li::marker {
+	color: var(--ih-manche);
+}
+
+/* Liens soulignés dans le texte courant (charte). */
+.icademie-habillage .icademie-habillage__contenu :where(p, li, td, dd, figcaption, blockquote, cite) a:where(:not(.wp-block-button__link):not(.button):not(.wp-element-button)) {
+	color: var(--ih-manche);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(p, li, td, dd, figcaption, blockquote, cite) a:where(:not(.wp-block-button__link):not(.button):not(.wp-element-button)):hover {
+	color: var(--ih-manche-strong);
+	text-decoration-thickness: 2px;
+}
+
+/* Citations : encart sable (sections d'évasion), sans filet. */
+.icademie-habillage .icademie-habillage__contenu :is(.wp-block-quote, blockquote:not([class])) {
+	padding: 24px 28px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-sable);
+	color: var(--ih-encre);
+	font-style: normal;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(.wp-block-quote, blockquote) p {
+	margin: 0;
+	font-family: var(--ih-font-titre);
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 30px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(.wp-block-quote, blockquote) p + p {
+	margin-top: 12px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(.wp-block-quote, blockquote) cite {
+	display: block;
+	margin-top: 12px;
+	color: var(--ih-encre-muted);
+	font: 700 15px/22px var(--ih-font);
+	font-style: normal;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-pullquote {
+	padding: 32px;
+	border: 0;
+	border-radius: 16px;
+	background: var(--ih-sable);
+	text-align: center;
+}
+
+/* Tableaux : carte blanche, en-tête écume, filets trait. */
+.icademie-habillage .icademie-habillage__contenu .wp-block-table {
+	overflow-x: auto;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-table table,
+.icademie-habillage .icademie-habillage__contenu > table {
+	width: 100%;
+	border: 1px solid var(--ih-trait);
+	border-collapse: separate;
+	border-radius: 8px;
+	border-spacing: 0;
+	background: var(--ih-blanc);
+	overflow: hidden;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-table :is(th, td),
+.icademie-habillage .icademie-habillage__contenu > table :is(th, td) {
+	padding: 12px 16px;
+	border: 0;
+	border-top: 1px solid var(--ih-trait);
+	font-size: 16px;
+	line-height: 24px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-table tr:first-child > *,
+.icademie-habillage .icademie-habillage__contenu > table tr:first-child > * {
+	border-top: 0;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-table thead + tbody tr:first-child > *,
+.icademie-habillage .icademie-habillage__contenu > table thead + tbody tr:first-child > * {
+	border-top: 1px solid var(--ih-trait);
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-table th,
+.icademie-habillage .icademie-habillage__contenu > table th {
+	background: var(--ih-ecume);
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-table.is-style-stripes tbody tr:nth-child(odd) {
+	background: var(--ih-craie);
+}
+
+/* Images, légendes, médias. */
+.icademie-habillage .icademie-habillage__contenu :is(.wp-block-image, .wp-block-gallery, .wp-block-media-text) img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(figcaption, .wp-element-caption) {
+	margin: 8px 0 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+	text-align: center;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-embed iframe {
+	max-width: 100%;
+	border: 0;
+	border-radius: 8px;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-embed__wrapper {
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(hr, .wp-block-separator) {
+	height: 0;
+	margin-block: 40px;
+	border: 0;
+	border-top: 1px solid var(--ih-trait);
+	background: none;
+	opacity: 1;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(code, kbd) {
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: var(--ih-ecume);
+	color: var(--ih-encre);
+	font-family: var(--ih-font-code);
+	font-size: 0.88em;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(pre, .wp-block-code, .wp-block-preformatted) {
+	padding: 16px 20px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-encre);
+	color: var(--ih-craie);
+	font-family: var(--ih-font-code);
+	font-size: 15px;
+	line-height: 22px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+}
+
+.icademie-habillage .icademie-habillage__contenu :is(pre, .wp-block-code) code {
+	padding: 0;
+	background: none;
+	color: inherit;
+	font-size: inherit;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-columns {
+	gap: 32px;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-group.has-background {
+	border-radius: 16px;
+}
+
+.icademie-habillage .icademie-habillage__contenu .wp-block-buttons {
+	gap: 12px;
+}
+
+/* Formulaires du contenu (Gutena Forms, formulaires d'inscription…) et formulaires du compte :
+   libellé au-dessus, champ de 44px, contour contrôle, focus manche (composant « Champ »). */
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu :is(input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="number"], input[type="password"], input[type="search"], input[type="date"], select, textarea),
+.icademie-habillage .comment-form :is(input[type="text"], input[type="email"], input[type="url"], textarea),
+.icademie-habillage .search-form .search-field {
+	width: 100%;
+	max-width: 100%;
+	min-height: 44px;
+	margin: 0;
+	padding: 9px 14px;
+	border: 1.5px solid var(--ih-controle);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: none;
+	color: var(--ih-encre);
+	font: 400 17px/24px var(--ih-font);
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu textarea,
+.icademie-habillage .comment-form textarea {
+	min-height: 140px;
+	resize: vertical;
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu select {
+	padding-right: 40px;
+	background: var(--ih-blanc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230f2233' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;
+	appearance: none;
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu :is(input, select, textarea)::placeholder,
+.icademie-habillage .comment-form :is(input, textarea)::placeholder,
+.icademie-habillage .search-form .search-field::placeholder {
+	color: var(--ih-encre-muted);
+	opacity: 1;
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu :is(input, select, textarea):focus,
+.icademie-habillage .comment-form :is(input, textarea):focus,
+.icademie-habillage .search-form .search-field:focus {
+	border-color: var(--ih-manche);
+	outline: 2px solid var(--ih-manche);
+	outline-offset: 2px;
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu :is(input[type="checkbox"], input[type="radio"]) {
+	width: 20px;
+	height: 20px;
+	margin: 0 8px 0 0;
+	accent-color: var(--ih-manche);
+	vertical-align: -4px;
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu :is(input[type="submit"], button[type="submit"]):not(.wp-element-button),
+.icademie-habillage .comment-form .submit {
+	min-height: 44px;
+	padding: 10px 20px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-manche);
+	color: var(--ih-blanc);
+	font: 700 16px/1.25 var(--ih-font);
+	cursor: pointer;
+}
+
+.icademie-habillage:not(.icademie-habillage--tunnel) .icademie-habillage__contenu :is(input[type="submit"], button[type="submit"]):not(.wp-element-button):hover,
+.icademie-habillage .comment-form .submit:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-manche-strong);
+}
+
+/* Recherche dans le site (page introuvable, liste vide). */
+.icademie-habillage .search-form {
+	display: flex;
+	gap: 12px;
+	max-width: 560px;
+	margin: 0;
+}
+
+.icademie-habillage .search-form label {
+	flex: 1;
+	min-width: 0;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Cartes d'articles (listes, articles liés), pagination, liste vide.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage__articles {
+	max-width: calc(var(--ih-max) + 2 * var(--ih-gutter));
+	margin: 0 auto;
+	padding: 24px var(--ih-gutter) 0;
+}
+
+.icademie-habillage__cartes {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 24px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage__carte {
+	display: flex;
+	margin: 0;
+}
+
+.icademie-habillage__carte-inner {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	overflow: hidden;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+	transition: box-shadow 0.15s ease;
+}
+
+.icademie-habillage__carte-inner:hover,
+.icademie-habillage__carte-inner:focus-within {
+	box-shadow: var(--ih-shadow-hover);
+}
+
+.icademie-habillage__carte-media {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+	background: var(--ih-sable);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .icademie-habillage__carte-media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.icademie-habillage__carte-corps {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	padding: 18px 20px 20px;
+}
+
+.icademie-habillage__carte-surtitre {
+	margin: 0;
+	color: var(--ih-manche);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .icademie-habillage__carte-titre {
+	margin: 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 28px;
+	text-wrap: balance;
+}
+
+.icademie-habillage .icademie-habillage__carte-titre a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* Toute la carte est cliquable (lien du titre étendu). */
+.icademie-habillage .icademie-habillage__carte-titre a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.icademie-habillage .icademie-habillage__carte-inner:hover .icademie-habillage__carte-titre a {
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+
+.icademie-habillage .icademie-habillage__carte-titre a:focus-visible {
+	outline: none;
+}
+
+.icademie-habillage .icademie-habillage__carte-titre a:focus-visible::after {
+	border-radius: 8px;
+	outline: 2px solid var(--ih-manche);
+	outline-offset: 2px;
+}
+
+.icademie-habillage__carte-extrait {
+	margin: 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+.icademie-habillage__carte-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: auto 0 0;
+	padding-top: 4px;
+	color: var(--ih-encre-muted);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-habillage__pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+	margin: 40px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage .icademie-habillage__pagination :is(a, span) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 14px;
+	border: 1.5px solid var(--ih-trait);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	color: var(--ih-encre);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.icademie-habillage .icademie-habillage__pagination a:hover {
+	border-color: var(--ih-manche);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .icademie-habillage__pagination .current {
+	border-color: var(--ih-manche);
+	background: var(--ih-manche);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage .icademie-habillage__pagination .dots {
+	border-color: transparent;
+	background: none;
+}
+
+.icademie-habillage__vide {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	max-width: var(--ih-lecture);
+	padding: 24px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage__vide p {
+	margin: 0;
+}
+
+/* Articles liés : bande sable (sections d'évasion), en bas de l'article. */
+.icademie-habillage--article:has(> .icademie-habillage__lies:last-child) {
+	padding-bottom: 0;
+}
+
+.icademie-habillage__lies {
+	margin-top: 64px;
+	padding: 48px max(var(--ih-gutter), calc((100% - var(--ih-max)) / 2)) 56px;
+	background: var(--ih-sable);
+}
+
+.icademie-habillage .icademie-habillage__section-titre {
+	margin: 0 0 24px;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 38px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Commentaires des articles.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage .icademie-habillage__commentaires {
+	max-width: calc(var(--ih-lecture) + 2 * var(--ih-gutter));
+	margin: 56px auto 0;
+	padding: 40px var(--ih-gutter) 0;
+	border-top: 1px solid var(--ih-trait);
+}
+
+.icademie-habillage .icademie-habillage__commentaires :is(.wp-block-comments-title, .comment-reply-title) {
+	margin: 0 0 20px;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 30px;
+}
+
+.icademie-habillage .icademie-habillage__commentaires .wp-block-comment-template {
+	margin: 0 0 32px;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage .icademie-habillage__commentaires .wp-block-comment-template li + li {
+	margin-top: 16px;
+}
+
+.icademie-habillage .icademie-habillage__commentaires .wp-block-comment-template ol {
+	margin: 16px 0 0 24px;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage .icademie-habillage__commentaire {
+	padding: 18px 20px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .icademie-habillage__commentaire-tete {
+	align-items: center;
+	gap: 12px;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-avatar img {
+	border-radius: 50%;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-comment-author-name {
+	font-weight: 700;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-comment-author-name a {
+	color: inherit;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-comment-date {
+	color: var(--ih-encre-muted);
+	font-size: 14px;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-comment-date a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-comment-content {
+	margin-top: 10px;
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.icademie-habillage .icademie-habillage__commentaire .wp-block-comment-reply-link a {
+	color: var(--ih-manche);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.icademie-habillage .comment-form {
+	display: grid;
+	gap: 16px;
+}
+
+.icademie-habillage .comment-form p {
+	margin: 0;
+}
+
+.icademie-habillage .comment-form label {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--ih-encre);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .comment-form .comment-form-cookies-consent {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+}
+
+.icademie-habillage .comment-form .comment-form-cookies-consent label {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 22px;
+	text-transform: none;
+}
+
+.icademie-habillage .comment-form :is(.comment-notes, .logged-in-as) {
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Page introuvable.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage__introuvable {
+	max-width: calc(var(--ih-lecture) + 2 * var(--ih-gutter));
+	margin: 0 auto;
+	padding: 56px var(--ih-gutter) 0;
+}
+
+.icademie-habillage__introuvable .icademie-habillage__boutons {
+	margin-top: 28px;
+}
+
+.icademie-habillage__introuvable-recherche {
+	margin-top: 48px;
+	padding: 28px;
+	border-radius: 16px;
+	background: var(--ih-ecume);
+}
+
+.icademie-habillage__introuvable-recherche .icademie-habillage__section-titre {
+	margin-bottom: 16px;
+	font-size: 22px;
+	line-height: 28px;
+}
+
+.icademie-habillage__introuvable-recherche p {
+	margin: 16px 0 0;
+}
+
+.icademie-habillage .icademie-habillage__introuvable-recherche p a {
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Bandeau d'assistance (charte : balise-soft, bouée et titre balise, numéro cliquable).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage .icademie-habillage__assistance {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 0 0 24px;
+	padding: 16px 24px;
+	border-radius: 8px;
+	background: var(--ih-balise-soft);
+	color: var(--ih-encre);
+}
+
+.icademie-habillage__assistance-icone {
+	display: flex;
+	flex: none;
+	color: var(--ih-balise);
+}
+
+.icademie-habillage__assistance-texte {
+	flex: 1;
+	min-width: 0;
+}
+
+.icademie-habillage .icademie-habillage__assistance-titre {
+	margin: 0 0 4px;
+	color: var(--ih-balise);
+	font-family: var(--ih-font);
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+.icademie-habillage .icademie-habillage__assistance p {
+	margin: 0;
+	font-size: 15px;
+	line-height: 22px;
+}
+
+.icademie-habillage .icademie-habillage__assistance p a {
+	color: var(--ih-encre);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .icademie-habillage__assistance strong {
+	display: block;
+	margin-top: 2px;
+}
+
+/* Bandeau en bas d'une page du tunnel (confirmation). */
+.icademie-habillage > .icademie-habillage__assistance {
+	max-width: 960px;
+	margin: 32px auto 0;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Suite de la réservation (confirmation).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage__suite {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 24px 0 0;
+	padding: 20px 24px;
+	border-radius: 8px;
+	background: var(--ih-ecume);
+}
+
+.icademie-habillage__suite p {
+	margin: 0;
+	font-size: 16px;
+	line-height: 24px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Compte client (WooCommerce) : menu, formulaires, tableaux, adresses, connexion.
+ * --------------------------------------------------------------------------------------------- */
+
+/* Connecté : menu à gauche (260px), contenu à droite. */
+.icademie-habillage .woocommerce:has(> .woocommerce-MyAccount-navigation) {
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr);
+	gap: 40px;
+	align-items: start;
+}
+
+.icademie-habillage .woocommerce:has(> .woocommerce-MyAccount-navigation)::before,
+.icademie-habillage .woocommerce:has(> .woocommerce-MyAccount-navigation)::after {
+	display: none;
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation {
+	position: sticky;
+	top: 24px;
+	float: none;
+	width: auto;
+	margin: 0;
+	padding: 8px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation li {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation li + li {
+	margin-top: 2px;
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation a {
+	display: flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 10px 14px;
+	border-radius: 6px;
+	color: var(--ih-encre);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 22px;
+	text-decoration: none;
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation a:hover {
+	background: var(--ih-craie);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation .is-active a,
+.icademie-habillage .woocommerce-MyAccount-navigation a[aria-current="page"] {
+	background: var(--ih-ecume);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation .woocommerce-MyAccount-navigation-link--customer-logout {
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid var(--ih-trait);
+}
+
+.icademie-habillage .woocommerce-MyAccount-navigation .woocommerce-MyAccount-navigation-link--customer-logout a {
+	color: var(--ih-encre-muted);
+	font-weight: 400;
+}
+
+.icademie-habillage .woocommerce-MyAccount-content {
+	float: none;
+	width: auto;
+	min-width: 0;
+}
+
+.icademie-habillage .woocommerce-MyAccount-content > p:first-child {
+	margin-top: 0;
+}
+
+.icademie-habillage .woocommerce :is(mark, .order-number, .order-date, .order-status) {
+	padding: 0;
+	background: none;
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage .woocommerce :is(h2, h3):not(.icademie-habillage__assistance-titre) {
+	margin: 32px 0 16px;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 30px;
+}
+
+/* Non connecté : connexion (et inscription si le site l'autorise), mot de passe oublié. */
+.icademie-habillage .woocommerce:has(> .woocommerce-form-login, > #customer_login, > .woocommerce-ResetPassword, > .lost_reset_password) {
+	max-width: 480px;
+	margin: 0 auto;
+}
+
+.icademie-habillage .woocommerce:has(> #customer_login) {
+	max-width: 1000px;
+}
+
+.icademie-habillage .woocommerce > h2:first-of-type,
+.icademie-habillage #customer_login h2 {
+	margin-top: 8px;
+	font-size: 30px;
+	line-height: 38px;
+}
+
+.icademie-habillage #customer_login {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 32px;
+}
+
+.icademie-habillage #customer_login::before,
+.icademie-habillage #customer_login::after {
+	display: none;
+}
+
+.icademie-habillage #customer_login :is(.u-column1, .u-column2) {
+	float: none;
+	width: auto;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-form-login, .woocommerce-form-register, .woocommerce-ResetPassword, .lost_reset_password) {
+	margin: 0;
+	padding: 28px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .woocommerce .woocommerce-form-login .woocommerce-form-login__rememberme {
+	display: inline-flex;
+	align-items: center;
+	margin: 0 0 16px;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-form-login__submit, .woocommerce-form-register__submit) {
+	width: 100%;
+}
+
+.icademie-habillage .woocommerce .woocommerce-LostPassword {
+	margin: 16px 0 0;
+	text-align: center;
+}
+
+/* Formulaires : libellé en surtitre au-dessus du champ, deux colonnes pour prénom et nom. */
+.icademie-habillage .woocommerce form .form-row {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	float: none;
+	width: auto;
+	margin: 0 0 18px;
+	padding: 0;
+}
+
+.icademie-habillage .woocommerce form .form-row > label,
+.icademie-habillage .woocommerce form fieldset > p > label {
+	margin: 0;
+	color: var(--ih-encre);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .woocommerce form .form-row > label.woocommerce-form__label-for-checkbox,
+.icademie-habillage .woocommerce form .woocommerce-form__label-for-checkbox {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--ih-encre);
+	font-size: 15px;
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 22px;
+	text-transform: none;
+}
+
+.icademie-habillage .woocommerce :is(.required, abbr.required) {
+	border: 0;
+	color: var(--ih-encre-muted);
+	text-decoration: none;
+}
+
+.icademie-habillage .woocommerce form .form-row :is(em, .description) {
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	font-style: normal;
+	line-height: 22px;
+}
+
+.icademie-habillage .woocommerce form .form-row.woocommerce-invalid :is(input, select, textarea) {
+	border-color: var(--ih-balise);
+	background-color: var(--ih-balise-soft);
+}
+
+.icademie-habillage .woocommerce form .form-row.woocommerce-validated :is(input, select) {
+	border-color: var(--ih-controle);
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-address-fields__field-wrapper, .woocommerce-EditAccountForm) {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 20px;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-address-fields__field-wrapper, .woocommerce-EditAccountForm) > * {
+	grid-column: 1 / -1;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-address-fields__field-wrapper, .woocommerce-EditAccountForm) > .form-row-first {
+	grid-column: 1;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-address-fields__field-wrapper, .woocommerce-EditAccountForm) > .form-row-last {
+	grid-column: 2;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-address-fields__field-wrapper, .woocommerce-EditAccountForm) > .clear {
+	display: none;
+}
+
+.icademie-habillage .woocommerce fieldset {
+	margin: 8px 0 20px;
+	padding: 4px 24px 6px;
+	border: 1.5px solid var(--ih-trait);
+	border-radius: 8px;
+}
+
+.icademie-habillage .woocommerce fieldset legend {
+	padding: 0 8px;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 28px;
+}
+
+.icademie-habillage .woocommerce .password-input {
+	position: relative;
+	display: flex;
+	width: 100%;
+}
+
+.icademie-habillage .woocommerce .password-input input {
+	padding-right: 52px;
+}
+
+.icademie-habillage .woocommerce .show-password-input {
+	position: absolute;
+	top: 50%;
+	right: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 40px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background-color: transparent;
+	color: var(--ih-encre-muted);
+	transform: translateY(-50%);
+	cursor: pointer;
+}
+
+.icademie-habillage .woocommerce .show-password-input:hover {
+	background-color: var(--ih-ecume);
+}
+
+/* Boutons de WooCommerce : principal manche ; dans les listes, secondaires. */
+.icademie-habillage .woocommerce :is(a.button, button.button, input.button, .woocommerce-Button, button.woocommerce-button) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	margin: 0;
+	padding: 10px 20px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-manche);
+	box-shadow: none;
+	color: var(--ih-blanc);
+	font: 700 16px/1.25 var(--ih-font);
+	text-decoration: none;
+	text-shadow: none;
+	cursor: pointer;
+}
+
+.icademie-habillage .woocommerce :is(a.button, button.button, input.button, .woocommerce-Button, button.woocommerce-button):hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-manche-strong);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-orders-table, .woocommerce-table--order-downloads, .woocommerce-pagination, .order-again, .woocommerce-Address) .button,
+.icademie-habillage .woocommerce .woocommerce-MyAccount-content > p a.button {
+	border-color: var(--ih-manche);
+	background: var(--ih-blanc);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-orders-table, .woocommerce-table--order-downloads, .woocommerce-pagination, .order-again, .woocommerce-Address) .button:hover,
+.icademie-habillage .woocommerce .woocommerce-MyAccount-content > p a.button:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-ecume);
+	color: var(--ih-manche-strong);
+}
+
+/* Tableaux : carte blanche, en-tête en surtitre, filets trait. */
+.icademie-habillage .woocommerce table.shop_table {
+	width: 100%;
+	margin: 0 0 28px;
+	border: 0;
+	border-collapse: separate;
+	border-radius: 8px;
+	border-spacing: 0;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+	font-size: 16px;
+	line-height: 24px;
+	overflow: hidden;
+}
+
+.icademie-habillage .woocommerce table.shop_table :is(th, td) {
+	padding: 14px 18px;
+	border: 0;
+	border-top: 1px solid var(--ih-trait);
+	background: none;
+	color: var(--ih-encre);
+	text-align: left;
+	vertical-align: middle;
+}
+
+.icademie-habillage .woocommerce table.shop_table thead th {
+	border-top: 0;
+	background: var(--ih-craie);
+	color: var(--ih-encre-muted);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .woocommerce table.shop_table tfoot :is(th, td) {
+	font-weight: 700;
+}
+
+.icademie-habillage .woocommerce table.shop_table tfoot tr:last-child :is(th, td) {
+	background: var(--ih-craie);
+}
+
+.icademie-habillage .woocommerce table.shop_table :is(.woocommerce-table__product-total, .product-total, tfoot td) {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.icademie-habillage .woocommerce table.shop_table td a:not(.button) {
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .woocommerce .woocommerce-orders-table__cell-order-actions {
+	text-align: right;
+}
+
+.icademie-habillage .woocommerce .woocommerce-orders-table__cell-order-actions .button + .button {
+	margin-left: 8px;
+}
+
+.icademie-habillage .woocommerce .woocommerce-orders-table__cell-order-status {
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-orders-table__row--status-processing, .woocommerce-orders-table__row--status-pending) .woocommerce-orders-table__cell-order-status {
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .woocommerce .woocommerce-orders-table__row--status-completed .woocommerce-orders-table__cell-order-status {
+	color: var(--ih-varech);
+}
+
+.icademie-habillage .woocommerce .woocommerce-orders-table__row--status-on-hold .woocommerce-orders-table__cell-order-status {
+	color: var(--ih-ambre);
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-orders-table__row--status-cancelled, .woocommerce-orders-table__row--status-refunded, .woocommerce-orders-table__row--status-failed) .woocommerce-orders-table__cell-order-status {
+	color: var(--ih-encre-muted);
+}
+
+.icademie-habillage__location {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.icademie-habillage__location + .icademie-habillage__location {
+	margin-top: 8px;
+}
+
+.icademie-habillage .woocommerce .icademie-habillage__location-bateau,
+.icademie-habillage .woocommerce table.shop_table td a.icademie-habillage__location-bateau {
+	color: var(--ih-encre);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.icademie-habillage .woocommerce table.shop_table td a.icademie-habillage__location-bateau:hover {
+	color: var(--ih-manche);
+	text-decoration: underline;
+}
+
+.icademie-habillage__location-dates {
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+/* Caractéristiques de la location sous le bateau (dates, durée, passagers). */
+.icademie-habillage .woocommerce ul.wc-item-meta {
+	margin: 6px 0 0;
+	padding: 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+	list-style: none;
+}
+
+.icademie-habillage .woocommerce ul.wc-item-meta li {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0;
+}
+
+.icademie-habillage .woocommerce ul.wc-item-meta .wc-item-meta-label {
+	float: none;
+	margin: 0;
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage .woocommerce ul.wc-item-meta p {
+	display: inline;
+	margin: 0;
+}
+
+/* Adresses. */
+.icademie-habillage .woocommerce .woocommerce-Addresses {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 24px;
+}
+
+.icademie-habillage .woocommerce .woocommerce-Addresses::before,
+.icademie-habillage .woocommerce .woocommerce-Addresses::after {
+	display: none;
+}
+
+.icademie-habillage .woocommerce .woocommerce-Addresses :is(.col-1, .col-2, .u-column1, .u-column2) {
+	float: none;
+	width: auto;
+	max-width: none;
+}
+
+.icademie-habillage .woocommerce .woocommerce-Address {
+	padding: 20px 24px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .woocommerce .woocommerce-Address-title {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.icademie-habillage .woocommerce .woocommerce-Address-title::before,
+.icademie-habillage .woocommerce .woocommerce-Address-title::after {
+	display: none;
+}
+
+.icademie-habillage .woocommerce .woocommerce-Address-title h2 {
+	float: none;
+	margin: 0;
+	font-size: 22px;
+	line-height: 28px;
+}
+
+.icademie-habillage .woocommerce .woocommerce-Address-title a.edit {
+	float: none;
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .woocommerce address {
+	margin: 0;
+	color: var(--ih-encre);
+	font-style: normal;
+	line-height: 26px;
+}
+
+/* Commande : adresse et e-mail du client. */
+.icademie-habillage .woocommerce .woocommerce-customer-details address {
+	padding: 20px 24px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .woocommerce .woocommerce-customer-details address p {
+	margin: 8px 0 0;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Messages (WooCommerce) : succès varech, erreur balise, information écume, avertissement ambre ;
+ * toujours une icône et un texte (charte).
+ * --------------------------------------------------------------------------------------------- */
+
+/* Messages au-dessus du contenu (bloc « Messages de la boutique ») : alignés sur le titre. */
+.icademie-habillage > .wc-block-store-notices {
+	max-width: calc(var(--ih-lecture) + 2 * var(--ih-gutter));
+	margin: 0 auto;
+	padding: 0 var(--ih-gutter);
+}
+
+.icademie-habillage--tunnel > .wc-block-store-notices,
+body.icademie-habillage-large .icademie-habillage > .wc-block-store-notices {
+	max-width: calc(var(--ih-max) + 2 * var(--ih-gutter));
+}
+
+.icademie-habillage > .wc-block-store-notices:has(.wc-block-components-notice-banner) {
+	padding-top: 16px;
+}
+
+.icademie-habillage .wc-block-components-notice-banner,
+.icademie-habillage .woocommerce :is(.woocommerce-message, .woocommerce-info, .woocommerce-error) {
+	--ih-notice: var(--ih-manche);
+
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 0 0 20px;
+	padding: 14px 18px;
+	border: 1px solid var(--ih-notice);
+	border-radius: 8px;
+	background: var(--ih-ecume);
+	color: var(--ih-encre);
+	font-size: 16px;
+	line-height: 24px;
+	list-style: none;
+}
+
+.icademie-habillage .wc-block-components-notice-banner.is-success,
+.icademie-habillage .woocommerce .woocommerce-message {
+	--ih-notice: var(--ih-varech);
+
+	background: var(--ih-varech-soft);
+}
+
+.icademie-habillage .wc-block-components-notice-banner.is-error,
+.icademie-habillage .woocommerce .woocommerce-error {
+	--ih-notice: var(--ih-balise);
+
+	background: var(--ih-balise-soft);
+}
+
+.icademie-habillage .wc-block-components-notice-banner.is-warning {
+	--ih-notice: var(--ih-ambre);
+
+	background: var(--ih-ambre-soft);
+}
+
+.icademie-habillage .wc-block-components-notice-banner > svg {
+	flex: none;
+	width: 24px;
+	height: 24px;
+	padding: 3px;
+	border-radius: 50%;
+	background-color: var(--ih-notice);
+	fill: var(--ih-blanc);
+}
+
+.icademie-habillage .wc-block-components-notice-banner__content {
+	flex: 1;
+	min-width: 0;
+	align-self: center;
+}
+
+.icademie-habillage .wc-block-components-notice-banner :is(.wc-forward, .button, a) {
+	float: right;
+	min-height: 0;
+	margin: 0 0 0 16px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--ih-encre);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	opacity: 1;
+}
+
+.icademie-habillage .wc-block-components-notice-banner :is(.wc-forward, .button, a):hover {
+	background: none;
+	color: var(--ih-manche-strong);
+}
+
+.icademie-habillage .woocommerce :is(.woocommerce-message, .woocommerce-info, .woocommerce-error)::before {
+	position: static;
+	color: var(--ih-notice);
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Tunnel de réservation : panier, validation de la commande (blocs de WooCommerce).
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage--tunnel .icademie-habillage__entete-inner {
+	padding-top: 28px;
+}
+
+.icademie-habillage--confirmation .icademie-habillage__entete {
+	--ih-entete: 960px;
+}
+
+.icademie-habillage--tunnel :is(.wc-block-components-title, .wc-block-components-checkout-step__title, .wc-block-cart__totals-title, .wc-block-components-checkout-order-summary__title-text) {
+	margin: 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 22px;
+	font-weight: 600;
+	letter-spacing: normal;
+	line-height: 28px;
+	text-transform: none;
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkout-step {
+	margin: 0 0 32px;
+	padding: 0;
+	border: 0;
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkout-step__heading {
+	margin: 0 0 16px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkout-step__description {
+	margin: 0 0 12px;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+/* Champs : libellé toujours visible au-dessus (pas de libellé flottant), 44px, contour contrôle. */
+.icademie-habillage--tunnel .wc-block-components-text-input,
+.icademie-habillage--tunnel .wc-blocks-components-select__container {
+	display: flex;
+	flex-direction: column;
+	height: auto;
+	margin-top: 16px;
+	background: none;
+	white-space: normal;
+}
+
+.icademie-habillage--tunnel .wc-block-components-text-input label,
+.icademie-habillage--tunnel .wc-blocks-components-select__label {
+	position: static;
+	order: -1;
+	max-width: none;
+	margin: 0 0 8px;
+	color: var(--ih-encre);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+	white-space: normal;
+	transform: none !important;
+	cursor: default;
+}
+
+.icademie-habillage--tunnel .wc-block-components-text-input :is(input, textarea),
+.icademie-habillage--tunnel .wc-blocks-components-select__select,
+.icademie-habillage--tunnel .wc-block-components-textarea,
+.icademie-habillage--tunnel .wc-block-components-totals-coupon__input input {
+	width: 100%;
+	height: auto;
+	min-height: 44px;
+	margin: 0;
+	padding: 9px 14px !important;
+	border: 1.5px solid var(--ih-controle);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: none;
+	color: var(--ih-encre);
+	font: 400 17px/24px var(--ih-font);
+}
+
+.icademie-habillage--tunnel .wc-blocks-components-select__select {
+	padding-right: 44px !important;
+	appearance: none;
+}
+
+.icademie-habillage--tunnel .wc-blocks-components-select__expand {
+	top: auto;
+	right: 12px;
+	bottom: 10px;
+	fill: var(--ih-encre);
+	transform: none;
+}
+
+.icademie-habillage--tunnel .wc-block-components-text-input :is(input, textarea):focus,
+.icademie-habillage--tunnel .wc-blocks-components-select__select:focus,
+.icademie-habillage--tunnel .wc-block-components-textarea:focus {
+	border-color: var(--ih-manche);
+	outline: 2px solid var(--ih-manche);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+.icademie-habillage--tunnel .wc-block-components-text-input.has-error :is(input, textarea),
+.icademie-habillage--tunnel .wc-blocks-components-select.has-error .wc-blocks-components-select__select {
+	border-color: var(--ih-balise);
+	background: var(--ih-balise-soft);
+}
+
+.icademie-habillage--tunnel .wc-block-components-text-input.has-error label,
+.icademie-habillage--tunnel .wc-blocks-components-select.has-error .wc-blocks-components-select__label {
+	color: var(--ih-balise);
+}
+
+.icademie-habillage--tunnel .wc-block-components-validation-error {
+	margin-top: 6px;
+	color: var(--ih-balise);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-validation-error > p {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	margin: 0;
+}
+
+.icademie-habillage--tunnel .wc-block-components-validation-error svg {
+	flex: none;
+	fill: currentColor;
+}
+
+/* Cases à cocher et boutons radio : contour contrôle, coche et point manche. */
+.icademie-habillage--tunnel .wc-block-components-checkbox {
+	margin-top: 16px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkbox label {
+	align-items: flex-start;
+	gap: 10px;
+	color: var(--ih-encre);
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkbox .wc-block-components-checkbox__input[type="checkbox"] {
+	width: 22px;
+	min-width: 22px;
+	height: 22px;
+	margin: 1px 0 0;
+	border: 1.5px solid var(--ih-controle);
+	border-radius: 4px;
+	background: var(--ih-blanc);
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkbox .wc-block-components-checkbox__input[type="checkbox"]:checked {
+	border-color: var(--ih-manche);
+	background: var(--ih-manche);
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkbox .wc-block-components-checkbox__mark {
+	fill: var(--ih-blanc);
+}
+
+.icademie-habillage--tunnel .wc-block-components-radio-control__option {
+	border-radius: 8px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-radio-control__input {
+	border: 1.5px solid var(--ih-controle);
+	background: var(--ih-blanc);
+}
+
+.icademie-habillage--tunnel .wc-block-components-radio-control__input:checked {
+	border-color: var(--ih-manche);
+}
+
+.icademie-habillage--tunnel .wc-block-components-radio-control__input:checked::before {
+	background: var(--ih-manche);
+}
+
+.icademie-habillage--tunnel :is(.wc-block-components-radio-control-accordion-option, .wc-block-components-radio-control--highlight-checked .wc-block-components-radio-control__option--checked-option-highlighted) {
+	box-shadow: inset 0 0 0 1.5px var(--ih-manche);
+}
+
+/* Adresse enregistrée (compte connecté). */
+.icademie-habillage--tunnel .wc-block-components-address-card {
+	padding: 16px 20px;
+	border: 1.5px solid var(--ih-trait);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	color: var(--ih-encre);
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-address-card__edit,
+.icademie-habillage--tunnel .wc-block-components-address-form__address_2-toggle,
+.icademie-habillage--tunnel :is(.wc-block-checkout__terms, .wc-block-checkout__guest-checkout-notice, .wc-block-checkout__login-prompt) a {
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage--tunnel .wc-block-checkout__terms {
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+/* Boutons : « Commander » et « Valider la commande » en principal manche, pleine largeur. */
+.icademie-habillage--tunnel .wc-block-components-button:not(.is-link):not(.wc-block-components-panel__button):not(.wc-block-components-totals-coupon__button),
+.icademie-habillage--tunnel .wc-block-cart__submit-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 48px;
+	padding: 12px 20px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-manche);
+	box-shadow: none;
+	color: var(--ih-blanc);
+	font: 700 17px/1.25 var(--ih-font);
+	letter-spacing: normal;
+	text-decoration: none;
+	text-transform: none;
+}
+
+.icademie-habillage--tunnel .wc-block-components-button:not(.is-link):not(.wc-block-components-panel__button):not(.wc-block-components-totals-coupon__button):hover,
+.icademie-habillage--tunnel .wc-block-cart__submit-button:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-manche-strong);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage--tunnel .wc-block-components-button[disabled],
+.icademie-habillage--tunnel .wc-block-components-button[aria-disabled="true"] {
+	border-color: var(--ih-trait);
+	background: var(--ih-trait);
+	color: var(--ih-encre-muted);
+	cursor: not-allowed;
+}
+
+.icademie-habillage--tunnel .wc-block-components-totals-coupon__button {
+	min-height: 44px;
+	padding: 10px 18px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	color: var(--ih-manche);
+	font: 700 16px/1.25 var(--ih-font);
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkout-return-to-cart-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkout-return-to-cart-button svg {
+	fill: currentColor;
+}
+
+.icademie-habillage--tunnel .wc-block-components-panel__button {
+	min-height: 44px;
+	padding: 10px 0;
+	color: var(--ih-encre);
+	font: 700 16px/24px var(--ih-font);
+}
+
+.icademie-habillage--tunnel .wc-block-components-panel__button:hover {
+	color: var(--ih-manche);
+}
+
+/* Récapitulatif (validation) et totaux (panier) : carte blanche dans la colonne de droite. */
+.icademie-habillage--tunnel :is(.wp-block-woocommerce-checkout-order-summary-block, .wp-block-woocommerce-cart-totals-block) {
+	padding: 20px 24px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage--tunnel .wc-block-components-checkout-order-summary__title {
+	margin: 0 0 8px;
+	padding: 0;
+	border: 0;
+}
+
+.icademie-habillage--tunnel .wc-block-components-totals-wrapper {
+	padding: 14px 0;
+	border-top: 1px solid var(--ih-trait);
+}
+
+.icademie-habillage--tunnel .wc-block-components-totals-item {
+	color: var(--ih-encre);
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-totals-item__description {
+	color: var(--ih-encre-muted);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-totals-footer-item .wc-block-components-totals-item__label {
+	font-size: 17px;
+	font-weight: 700;
+}
+
+.icademie-habillage--tunnel .wc-block-components-totals-footer-item .wc-block-components-totals-item__value {
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 28px;
+}
+
+/* Bateau loué dans le récapitulatif : photo, nom, dates et passagers sur des lignes. */
+.icademie-habillage--tunnel .wc-block-components-order-summary-item__image img,
+.icademie-habillage--tunnel .wc-block-cart-item__image img {
+	border-radius: 8px;
+	object-fit: cover;
+	aspect-ratio: 1;
+}
+
+.icademie-habillage--tunnel .wc-block-components-order-summary-item__quantity {
+	border: 2px solid var(--ih-blanc);
+	background: var(--ih-encre);
+	box-shadow: none;
+	color: var(--ih-blanc);
+	font-weight: 700;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-name {
+	color: var(--ih-encre);
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 24px;
+	text-decoration: none;
+}
+
+.icademie-habillage--tunnel a.wc-block-components-product-name:hover {
+	color: var(--ih-manche);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-metadata {
+	margin-top: 6px;
+	color: var(--ih-encre-muted);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-metadata__description {
+	display: none;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-details {
+	display: block;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-details li {
+	display: block;
+	margin: 0;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-details li::after {
+	content: none !important;
+}
+
+.icademie-habillage--tunnel .wc-block-components-product-details__name {
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage--tunnel :is(.wc-block-components-product-price, .wc-block-components-order-summary-item__total-price, .wc-block-cart-item__total) {
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage--tunnel .wc-block-components-order-summary-item__individual-prices {
+	display: none;
+}
+
+/* Panier : liste des locations en carte blanche. */
+.icademie-habillage--tunnel .wc-block-cart__main {
+	padding: 8px 24px 16px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage--tunnel .wc-block-cart-items {
+	margin: 0;
+	border: 0;
+}
+
+.icademie-habillage--tunnel .wc-block-cart-items :is(th, td) {
+	border-color: var(--ih-trait);
+}
+
+.icademie-habillage--tunnel .wc-block-cart-items__header th {
+	color: var(--ih-encre-muted);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage--tunnel .wc-block-cart-item__remove-link {
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage--tunnel .wc-block-cart-item__remove-link:hover {
+	color: var(--ih-manche);
+}
+
+.icademie-habillage--tunnel .wc-block-cart-item__remove-link svg {
+	fill: currentColor;
+}
+
+.icademie-habillage--tunnel .wc-block-cart__submit {
+	margin: 16px 0 0;
+}
+
+.icademie-habillage--tunnel .wc-block-cart__submit-button {
+	width: 100%;
+}
+
+/* Panier vide : titre, retour aux bateaux, nouveautés en cartes. */
+.icademie-habillage--tunnel .wp-block-woocommerce-empty-cart-block {
+	text-align: center;
+}
+
+.icademie-habillage--tunnel .wc-block-cart__empty-cart__title {
+	margin: 16px 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 38px;
+}
+
+.icademie-habillage--tunnel .wc-block-cart__empty-cart__title::before {
+	background-color: var(--ih-manche);
+}
+
+.icademie-habillage--tunnel .wp-block-woocommerce-empty-cart-block h2:not(.wc-block-cart__empty-cart__title) {
+	margin: 48px 0 24px;
+	font-family: var(--ih-font-titre);
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 30px;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__products {
+	gap: 24px;
+	margin: 0;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product {
+	padding: 0 0 20px;
+	overflow: hidden;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+	text-align: left;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-image {
+	margin: 0 0 12px;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-image img {
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+}
+
+.icademie-habillage--tunnel :is(.wc-block-grid__product-title, .wc-block-grid__product-price, .wc-block-grid__product-rating, .wc-block-grid__product-add-to-cart) {
+	margin-inline: 16px;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-title {
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 26px;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-link {
+	color: inherit;
+	text-decoration: none;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-price {
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-add-to-cart .wp-block-button__link {
+	width: auto;
+	border-color: var(--ih-manche);
+	background: var(--ih-blanc);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage--tunnel .wc-block-grid__product-add-to-cart .wp-block-button__link:hover {
+	background: var(--ih-ecume);
+	color: var(--ih-manche-strong);
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Confirmation de la commande.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage__confirmation {
+	max-width: calc(960px + 2 * var(--ih-gutter));
+	margin: 0 auto;
+	padding: 0 var(--ih-gutter);
+}
+
+.icademie-habillage .wc-block-order-confirmation-status h1 {
+	margin: 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 40px;
+	font-weight: 600;
+	line-height: 48px;
+}
+
+.icademie-habillage .wc-block-order-confirmation-status p {
+	margin: 12px 0 0;
+	font-size: 19px;
+	line-height: 29px;
+}
+
+.icademie-habillage .wc-block-order-confirmation-summary {
+	margin: 24px 0 0;
+}
+
+.icademie-habillage .wc-block-order-confirmation-summary-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 16px 24px;
+	margin: 0;
+	padding: 20px 24px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+	list-style: none;
+}
+
+.icademie-habillage .wc-block-order-confirmation-summary-list-item {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.icademie-habillage .wc-block-order-confirmation-summary-list-item__key {
+	color: var(--ih-encre-muted);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .wc-block-order-confirmation-summary-list-item__value {
+	color: var(--ih-encre);
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 24px;
+	overflow-wrap: anywhere;
+}
+
+.icademie-habillage .icademie-habillage__confirmation :is(.wc-block-order-confirmation-totals-wrapper, .wc-block-order-confirmation-billing-wrapper, .wc-block-order-confirmation-downloads-wrapper, .wc-block-order-confirmation-additional-fields-wrapper) {
+	margin: 40px 0 0;
+}
+
+.icademie-habillage .icademie-habillage__bloc-titre {
+	margin: 0 0 16px;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 30px;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table {
+	width: 100%;
+	margin: 0;
+	border: 0;
+	border-collapse: separate;
+	border-radius: 8px;
+	border-spacing: 0;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+	overflow: hidden;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table :is(th, td) {
+	padding: 14px 18px;
+	border: 0;
+	border-top: 1px solid var(--ih-trait);
+	color: var(--ih-encre);
+	font-size: 16px;
+	line-height: 24px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table thead th {
+	border-top: 0;
+	background: var(--ih-craie);
+	color: var(--ih-encre-muted);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table :is(.wc-block-order-confirmation-totals__total, tfoot td) {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table tfoot :is(th, td) {
+	font-weight: 700;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table tfoot tr:last-child :is(th, td) {
+	background: var(--ih-craie);
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table .wc-item-meta {
+	margin: 6px 0 0;
+	padding: 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+	list-style: none;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table .wc-item-meta li {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table .wc-item-meta-label {
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table .wc-item-meta p {
+	margin: 0;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table a {
+	color: var(--ih-encre);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.icademie-habillage .wc-block-order-confirmation-totals__table a:hover {
+	color: var(--ih-manche);
+	text-decoration: underline;
+}
+
+.icademie-habillage .wc-block-order-confirmation-billing-address {
+	padding: 20px 24px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+	font-style: normal;
+	line-height: 26px;
+}
+
+.icademie-habillage .wc-block-order-confirmation-billing-address p {
+	margin: 0;
+}
+
+.icademie-habillage .wc-block-order-confirmation-additional-information {
+	margin: 32px 0 0;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Corrections de spécificité : règles de WooCommerce plus précises que les nôtres.
+ * --------------------------------------------------------------------------------------------- */
+
+/* Compte : sur toute la largeur du contenu, aligné sur le titre (WooCommerce le limite à 1000px). */
+.icademie-habillage .icademie-habillage__contenu > .woocommerce:has(> .woocommerce-MyAccount-navigation) {
+	max-width: none;
+	margin-inline: 0;
+}
+
+/* Lien d'un message : lien souligné, pas un bouton. */
+.icademie-habillage .woocommerce .wc-block-components-notice-banner :is(.wc-forward, a.button, .button) {
+	float: right;
+	min-height: 0;
+	margin: 0 0 0 16px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--ih-encre);
+	font-size: 16px;
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.icademie-habillage .woocommerce .wc-block-components-notice-banner :is(.wc-forward, a.button, .button):hover {
+	background: none;
+	color: var(--ih-manche-strong);
+}
+
+/* Détails de la location (dates, durée, passagers) : une ligne chacun, sans « / ». */
+.icademie-habillage.icademie-habillage--tunnel .wc-block-components-product-details > span {
+	display: block;
+}
+
+.icademie-habillage.icademie-habillage--tunnel .wc-block-components-product-details > span > span[aria-hidden="true"] {
+	display: none;
+}
+
+.icademie-habillage.icademie-habillage--tunnel .wc-block-components-checkout-order-summary__title .wc-block-components-checkout-order-summary__title-text {
+	margin: 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 28px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * WC Vendors : tableau de bord des propriétaires, liste des propriétaires.
+ * --------------------------------------------------------------------------------------------- */
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper {
+	color: var(--ih-encre);
+	font-family: var(--ih-font);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper :is(.wcv-heading, .wcv-sub-heading, .wcv-tab-page-heading, .wcv-section h2, .wcv-section h3) {
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-weight: 600;
+	letter-spacing: normal;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-tab-page-heading {
+	font-size: 24px;
+	line-height: 30px;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper a:not(.wcv-button):not(.wcv-dashboard-nav-item-link):not(.wcv-store-setup-step-link) {
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .text-blue:not(.wcv-button) {
+	color: var(--ih-manche);
+}
+
+/* Menu : onglets sur carte blanche (comme le menu du compte), page affichée en écume. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation {
+	padding: 0;
+	border-radius: 8px;
+	background: none;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation #dashboard-menu-item-more-button {
+	border-left: 1px solid var(--ih-trait);
+	border-radius: 0 8px 8px 0;
+	background: var(--ih-blanc);
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation #dashboard-menu-item-more-button :is(svg, .wcv-icon) {
+	color: var(--ih-encre);
+	fill: currentColor;
+	stroke: currentColor;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-menu {
+	padding: 6px;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-nav-item {
+	background: none;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-nav-item-link {
+	min-height: 44px;
+	border-radius: 6px;
+	background: none;
+	color: var(--ih-encre);
+	font-size: 16px;
+	font-weight: 700;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-nav-item-link svg {
+	color: var(--ih-manche);
+	fill: currentColor;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper :is(.wcv-dashboard-nav-item-link:hover, .wcv-dashboard-nav-item.active > .wcv-dashboard-nav-item-link, .wcv-dashboard-nav-item-link.active, .wcv-dashboard-nav-item.current > .wcv-dashboard-nav-item-link) {
+	background: var(--ih-ecume);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-menu :is(.wcv-dashboard-menu-divider, .wcv-menu-toggle, svg) {
+	color: var(--ih-encre);
+}
+
+/* Configuration de la boutique : étape en cours en manche. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper {
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-progress-bar {
+	background: var(--ih-trait);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-progress-bar-fill {
+	background: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step-icon {
+	color: var(--ih-manche);
+	fill: currentColor;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step-icon :is(svg, .wcv-icon) {
+	color: inherit;
+	fill: currentColor;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step {
+	border: 1.5px solid var(--ih-trait);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step-title {
+	color: var(--ih-encre);
+	font-family: var(--ih-font);
+	font-weight: 700;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step-description {
+	color: var(--ih-encre-muted);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step.current {
+	border-color: var(--ih-manche);
+	background: var(--ih-manche);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step.current :is(.wcv-store-setup-step-title, .wcv-store-setup-step-description, .wcv-store-setup-step-link, .wcv-store-setup-step-proceed) {
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-step-link {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* Instantané des ventes : tuiles écume, sable et varech (au lieu des pastels), chiffres encre. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section {
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item {
+	border-radius: 8px;
+	background: var(--ih-ecume);
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item:nth-child(2) {
+	background: var(--ih-sable);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item:nth-child(3) {
+	background: var(--ih-varech-soft);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item-icon {
+	background: var(--ih-manche);
+	color: var(--ih-blanc);
+	fill: currentColor;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item:nth-child(2) .wcv-sales-snapshot-item-icon {
+	background: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item:nth-child(3) .wcv-sales-snapshot-item-icon {
+	background: var(--ih-varech);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item-icon :is(svg, .wcv-icon) {
+	color: inherit;
+	fill: currentColor;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item-value {
+	color: var(--ih-encre);
+	font-weight: 700;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper :is(.wcv-sales-snapshot-item-label, .wcv-sales-snapshot-item-comparison, .wcv-sales-snapshot-item-comparison-label) {
+	color: var(--ih-encre-muted);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-sales-snapshot-item-comparison-value {
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section .wcv-sales-snapshot-content .wcv-sales-snapshot-item:is(.gross-sales, .gross-commissions, .total-orders) {
+	background: var(--ih-ecume);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section .wcv-sales-snapshot-content .wcv-sales-snapshot-item.gross-commissions {
+	background: var(--ih-sable);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section .wcv-sales-snapshot-content .wcv-sales-snapshot-item.total-orders {
+	background: var(--ih-varech-soft);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section .wcv-sales-snapshot-content .wcv-sales-snapshot-item:is(.gross-sales, .gross-commissions, .total-orders) .wcv-sales-snapshot-item-icon {
+	background: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section .wcv-sales-snapshot-content .wcv-sales-snapshot-item.gross-commissions .wcv-sales-snapshot-item-icon {
+	background: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-section .wcv-sales-snapshot-content .wcv-sales-snapshot-item.total-orders .wcv-sales-snapshot-item-icon {
+	background: var(--ih-varech);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-content-wrapper .wcv-store-setup-steps .wcv-store-setup-step.current .wcv-store-setup-step-content {
+	background: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-steps .wcv-store-setup-step .wcv-store-setup-step-icon {
+	border-color: var(--ih-manche);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-steps .wcv-store-setup-step:not(.current) .wcv-store-setup-step-title {
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .quick-link-btn a,
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .quick-link-btn a .wcv-ql-label {
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .quick-link-btn.active a,
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .quick-link-btn.active a :is(.wcv-ql-label, .wcv-ql-count) {
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-product-media .wcv-icon {
+	color: var(--ih-manche);
+	fill: currentColor;
+}
+
+/* Boutons de WC Vendors : principal manche, contour manche, « Voir… » en secondaire. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-button,
+.icademie-habillage .wcv-vendor-list-filter .wcv-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 10px 18px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-manche);
+	box-shadow: none;
+	color: var(--ih-blanc);
+	font: 700 16px/1.25 var(--ih-font);
+	text-decoration: none;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-button:hover,
+.icademie-habillage .wcv-vendor-list-filter .wcv-button:hover {
+	border-color: var(--ih-manche-strong);
+	background: var(--ih-manche-strong);
+	color: var(--ih-blanc);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-button.wcv-button-outline,
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-view-more {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 40px;
+	padding: 8px 14px;
+	border: 1.5px solid var(--ih-manche);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	color: var(--ih-manche);
+	font: 700 15px/1.25 var(--ih-font);
+	text-decoration: none;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-button.wcv-button-outline:hover,
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-view-more:hover {
+	background: var(--ih-ecume);
+	color: var(--ih-manche-strong);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-view-more svg {
+	fill: currentColor;
+}
+
+/* Tableaux du tableau de bord. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper table :is(th, td) {
+	border-color: var(--ih-trait);
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper table th {
+	color: var(--ih-encre-muted);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+/* Formulaire d'annonce : libellés, zones de dépôt des photos. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .control-group > label,
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-form label:not([class]) {
+	color: var(--ih-encre);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-product-media {
+	border-radius: 8px;
+	background: var(--ih-ecume);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper :is(.wcv-upload-files-input, .wcv-featuredimg, .wcv-gallery-upload, [class*="drop-zone"], [class*="dropzone"]) {
+	border-color: var(--ih-manche);
+	border-radius: 8px;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-product-media :is(h3, h4, label) {
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-product-accordion {
+	border: 1.5px solid var(--ih-trait);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+}
+
+/* Champs à liste (catégories, étiquettes : select2) comme les autres champs. */
+.icademie-habillage .select2-container .select2-selection {
+	min-height: 44px;
+	border: 1.5px solid var(--ih-controle);
+	border-radius: 8px;
+	background: var(--ih-blanc);
+}
+
+.icademie-habillage .select2-container .select2-selection--single .select2-selection__rendered {
+	padding-left: 14px;
+	color: var(--ih-encre);
+	line-height: 41px;
+}
+
+.icademie-habillage .select2-container .select2-selection--single .select2-selection__arrow {
+	height: 41px;
+}
+
+.icademie-habillage .select2-container .select2-selection--multiple .select2-selection__choice {
+	border: 0;
+	border-radius: 999px;
+	background: var(--ih-ecume);
+	color: var(--ih-manche);
+	font-weight: 700;
+}
+
+.icademie-habillage .select2-container--focus .select2-selection,
+.icademie-habillage .select2-container--open .select2-selection {
+	border-color: var(--ih-manche);
+	outline: 2px solid var(--ih-manche);
+	outline-offset: 2px;
+}
+
+body.icademie-habillage-page .select2-dropdown {
+	border: 1.5px solid var(--ih-controle, #76818c);
+	border-radius: 8px;
+	font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+
+body.icademie-habillage-page .select2-results__option--highlighted[aria-selected],
+body.icademie-habillage-page .select2-results__option--highlighted[data-selected] {
+	background: #1d5a80;
+	color: #fff;
+}
+
+/* Liste des propriétaires : recherche, puis boutiques en cartes. */
+.icademie-habillage .wcv-vendor-list-filter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 24px;
+}
+
+.icademie-habillage .wcv-vendor-list-filter .search-vendors-toggle-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	min-height: 44px;
+	padding: 0;
+	border: 1.5px solid var(--ih-trait);
+	background: var(--ih-blanc);
+	color: var(--ih-encre);
+}
+
+.icademie-habillage .wcv-vendor-list-search {
+	flex: 1;
+	min-width: 240px;
+}
+
+.icademie-habillage .wcv-vendor-list-search form {
+	display: flex;
+	gap: 12px;
+}
+
+.icademie-habillage .wcv-vendor-list-switch {
+	display: flex;
+	gap: 4px;
+}
+
+.icademie-habillage .wcv-vendor-list-switch-item {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 8px;
+	color: var(--ih-encre-muted);
+}
+
+.icademie-habillage .wcv-vendor-list-switch-item.active {
+	background: var(--ih-ecume);
+	color: var(--ih-manche);
+}
+
+.icademie-habillage .wcv_vendorslist {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 24px;
+}
+
+.icademie-habillage .wcv_vendorslist .vendor_list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: auto;
+	margin: 0;
+	padding: 20px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--ih-blanc);
+	box-shadow: var(--ih-shadow-card);
+}
+
+.icademie-habillage .wcv_vendorslist .vendor_list_avatar img {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.icademie-habillage .wcv_vendorslist .vendor_list--shop-name {
+	margin: 4px 0 0;
+	color: var(--ih-encre);
+	font-family: var(--ih-font-titre);
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 28px;
+}
+
+.icademie-habillage .wcv_vendorslist .vendor_list--shop-name a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.icademie-habillage .wcv_vendorslist :is(.vendors_list--shop-phone, .vendors_list--shop-address) {
+	margin: 0;
+	color: var(--ih-encre-muted);
+	font-size: 15px;
+	line-height: 22px;
+}
+
+.icademie-habillage .wcv_vendorslist .vendors_list--shop-link {
+	align-self: flex-start;
+	margin-top: 8px;
+	color: var(--ih-manche);
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Tablette (600 à 1023 px).
+ * --------------------------------------------------------------------------------------------- */
+
+@container icademie-habillage (max-width: 1023px) {
+
+	.icademie-habillage > * {
+		--ih-gutter: 32px;
+	}
+
+	.icademie-habillage .icademie-habillage__titre,
+	.icademie-habillage .wc-block-order-confirmation-status h1 {
+		font-size: 34px;
+		line-height: 42px;
+	}
+
+	.icademie-habillage__cartes {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.icademie-habillage__lies .icademie-habillage__carte:nth-child(3) {
+		display: none;
+	}
+
+	/* Compte : menu en onglets défilants au-dessus du contenu. */
+	.icademie-habillage .woocommerce:has(> .woocommerce-MyAccount-navigation) {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 24px;
+	}
+
+	.icademie-habillage .woocommerce-MyAccount-navigation {
+		position: static;
+		overflow-x: auto;
+		scrollbar-width: thin;
+	}
+
+	.icademie-habillage .woocommerce-MyAccount-navigation ul {
+		display: flex;
+		gap: 4px;
+		width: max-content;
+	}
+
+	.icademie-habillage .woocommerce-MyAccount-navigation li + li {
+		margin-top: 0;
+	}
+
+	.icademie-habillage .woocommerce-MyAccount-navigation a {
+		white-space: nowrap;
+	}
+
+	.icademie-habillage .woocommerce-MyAccount-navigation .woocommerce-MyAccount-navigation-link--customer-logout {
+		margin: 0 0 0 4px;
+		padding: 0 0 0 4px;
+		border-top: 0;
+		border-left: 1px solid var(--ih-trait);
+	}
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Smartphone (moins de 600 px).
+ * --------------------------------------------------------------------------------------------- */
+
+@container icademie-habillage (max-width: 599px) {
+
+	.icademie-habillage > * {
+		--ih-gutter: 16px;
+	}
+
+	/* Fil d'Ariane réduit au niveau du dessus. */
+	.icademie-habillage .icademie-habillage__crumbs {
+		display: none;
+	}
+
+	.icademie-habillage .icademie-habillage__retour {
+		display: inline-flex;
+	}
+
+	.icademie-habillage__entete-inner {
+		padding-top: 16px;
+	}
+
+	.icademie-habillage .icademie-habillage__titre,
+	.icademie-habillage .wc-block-order-confirmation-status h1 {
+		font-size: 30px;
+		line-height: 36px;
+	}
+
+	.icademie-habillage__intro,
+	.icademie-habillage .wc-block-order-confirmation-status p {
+		font-size: 17px;
+		line-height: 26px;
+	}
+
+	.icademie-habillage .icademie-habillage__entete-photo img {
+		border-radius: 8px;
+	}
+
+	.icademie-habillage .icademie-habillage__contenu h2,
+	.icademie-habillage .icademie-habillage__section-titre {
+		font-size: 24px;
+		line-height: 30px;
+	}
+
+	.icademie-habillage .icademie-habillage__contenu h3 {
+		font-size: 20px;
+		line-height: 26px;
+	}
+
+	.icademie-habillage .icademie-habillage__contenu :is(.wp-block-quote, blockquote:not([class])) {
+		padding: 20px;
+	}
+
+	.icademie-habillage__cartes {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+	}
+
+	.icademie-habillage__lies {
+		margin-top: 48px;
+		padding-top: 40px;
+		padding-bottom: 40px;
+	}
+
+	.icademie-habillage__lies .icademie-habillage__carte:nth-child(3) {
+		display: flex;
+	}
+
+	.icademie-habillage__introuvable {
+		padding-top: 32px;
+	}
+
+	.icademie-habillage__introuvable-recherche {
+		padding: 20px;
+	}
+
+	.icademie-habillage .search-form {
+		flex-direction: column;
+	}
+
+	.icademie-habillage__boutons > * {
+		flex: 1 1 100%;
+	}
+
+	/* Étapes : seul le libellé de l'étape en cours reste visible. */
+	.icademie-habillage__etape:not(.is-current) .icademie-habillage__etape-libelle {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.icademie-habillage__etape {
+		flex: 0 0 auto;
+		gap: 8px;
+	}
+
+	.icademie-habillage__etape:not(:last-child) {
+		flex: 1 1 auto;
+	}
+
+	.icademie-habillage .icademie-habillage__assistance {
+		flex-wrap: wrap;
+		padding: 16px;
+	}
+
+	.icademie-habillage .icademie-habillage__assistance .icademie-habillage__bouton--assistance {
+		flex: 1 1 100%;
+	}
+
+	/* Compte : formulaires sur une colonne, tableaux en fiches. */
+	.icademie-habillage .woocommerce :is(.woocommerce-address-fields__field-wrapper, .woocommerce-EditAccountForm) > :is(.form-row-first, .form-row-last) {
+		grid-column: 1 / -1;
+	}
+
+	.icademie-habillage #customer_login {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.icademie-habillage .woocommerce :is(.woocommerce-form-login, .woocommerce-form-register, .woocommerce-ResetPassword, .lost_reset_password) {
+		padding: 20px;
+	}
+
+	.icademie-habillage .woocommerce fieldset {
+		padding: 4px 16px 6px;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive,
+	.icademie-habillage .woocommerce table.shop_table_responsive :is(tbody, tr, td) {
+		display: block;
+		width: 100%;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive thead {
+		display: none;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive tr {
+		padding: 8px 0;
+		border-top: 1px solid var(--ih-trait);
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive tbody tr:first-child {
+		border-top: 0;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive td {
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 6px 16px;
+		border: 0;
+		text-align: right;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive td[data-title]::before {
+		content: attr(data-title);
+		flex: none;
+		float: none;
+		color: var(--ih-encre-muted);
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 1px;
+		line-height: 24px;
+		text-align: left;
+		text-transform: uppercase;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive .woocommerce-orders-table__cell-order-actions {
+		justify-content: flex-end;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive .woocommerce-orders-table__cell-order-actions::before {
+		content: none;
+	}
+
+	.icademie-habillage .woocommerce table.shop_table_responsive .woocommerce-orders-table__cell-order-actions .button {
+		width: 100%;
+	}
+
+	.icademie-habillage .icademie-habillage__location {
+		align-items: flex-end;
+	}
+
+	.icademie-habillage .wc-block-components-notice-banner :is(.wc-forward, .button, a) {
+		float: none;
+		display: inline-block;
+		margin: 4px 0 0;
+	}
+
+	.icademie-habillage--tunnel .wc-block-cart__main,
+	.icademie-habillage--tunnel :is(.wp-block-woocommerce-checkout-order-summary-block, .wp-block-woocommerce-cart-totals-block) {
+		padding-inline: 16px;
+	}
+
+	.icademie-habillage .wc-block-order-confirmation-summary-list {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		padding: 16px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.icademie-habillage *,
+	.icademie-habillage *::before,
+	.icademie-habillage *::after {
+		transition: none !important;
+	}
+}
+
+@media print {
+
+	.icademie-habillage {
+		padding-bottom: 0;
+		background: #fff;
+	}
+
+	.icademie-habillage :is(.icademie-habillage__ariane, .icademie-habillage__etapes, .icademie-habillage__lies, .icademie-habillage__commentaires, .woocommerce-MyAccount-navigation) {
+		display: none;
+	}
+}
