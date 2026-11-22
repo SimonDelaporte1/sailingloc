@@ -125,6 +125,16 @@ $star      = call_user_func( $icon, 'star', 16 );
 						<?php endif; ?>
 					</span>
 				</p>
+				<?php if ( $data['header']['badges'] ) : ?>
+					<ul class="icademie-annonce__badges">
+						<?php foreach ( $data['header']['badges'] as $badge ) : ?>
+							<li class="icademie-annonce__badge icademie-annonce__badge--<?php echo esc_attr( $badge['kind'] ); ?>">
+								<?php echo '' !== $badge['icon'] ? call_user_func( $icon, $badge['icon'], 15 ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
+								<?php echo esc_html( $badge['label'] ); ?>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
 			</div>
 			<?php if ( ! $data['preview'] ) : ?>
 				<button type="button" class="icademie-annonce__share icademie-annonce__share--header" aria-haspopup="dialog" data-share-open hidden>
@@ -293,7 +303,7 @@ $star      = call_user_func( $icon, 'star', 16 );
 		<?php /* Zone 7 : description. */ ?>
 		<?php if ( '' !== $data['description'] ) : ?>
 			<section class="icademie-annonce__zone icademie-annonce__description" aria-labelledby="<?php echo esc_attr( $uid ); ?>-description" data-read-more>
-				<h2 class="icademie-annonce__zone-title" id="<?php echo esc_attr( $uid ); ?>-description"><?php esc_html_e( 'Description', 'icademie-page-annonce' ); ?></h2>
+				<h2 class="icademie-annonce__zone-title" id="<?php echo esc_attr( $uid ); ?>-description"><?php esc_html_e( 'Le mot du propriétaire', 'icademie-page-annonce' ); ?></h2>
 				<div class="icademie-annonce__description-text" id="<?php echo esc_attr( $uid ); ?>-description-texte" data-read-more-text>
 					<?php echo $data['description']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Contenu filtré par « the_content ». ?>
 				</div>
@@ -314,7 +324,7 @@ $star      = call_user_func( $icon, 'star', 16 );
 				<h2 class="icademie-annonce__zone-title" id="<?php echo esc_attr( $uid ); ?>-equipements"><?php esc_html_e( 'Équipements', 'icademie-page-annonce' ); ?></h2>
 				<ul class="icademie-annonce__equipment-list" id="<?php echo esc_attr( $uid ); ?>-equipements-liste">
 					<?php foreach ( $data['equipments'] as $equipment ) : ?>
-						<li class="icademie-annonce__equipment">
+						<li class="icademie-annonce__equipment<?php echo Icademie_Page_Annonce::is_eco_equipment( $equipment ) ? ' icademie-annonce__equipment--eco' : ''; ?>">
 							<span class="icademie-annonce__equipment-icon"><?php echo call_user_func( $icon, Icademie_Page_Annonce::equipment_icon( $equipment ), 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?></span>
 							<?php echo esc_html( $equipment ); ?>
 						</li>
@@ -431,8 +441,8 @@ $star      = call_user_func( $icon, 'star', 16 );
 					<p class="icademie-annonce__reviews-average">
 						<?php echo call_user_func( $icon, 'star', 26 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
 						<span class="icademie-annonce__sr"><?php esc_html_e( 'Note moyenne :', 'icademie-page-annonce' ); ?></span>
-						<?php /* translators: %s: note moyenne. */ ?>
-						<span><?php echo esc_html( sprintf( __( '%s / 5', 'icademie-page-annonce' ), number_format_i18n( $reviews['average'], 1 ) ) ); ?></span>
+						<span class="icademie-annonce__reviews-average-value"><?php echo esc_html( number_format_i18n( $reviews['average'], 1 ) ); ?></span>
+						<span class="icademie-annonce__reviews-average-max"><?php esc_html_e( '/ 5', 'icademie-page-annonce' ); ?></span>
 					</p>
 					<?php /* translators: %s: nombre d'avis. */ ?>
 					<p class="icademie-annonce__reviews-count"><?php echo esc_html( sprintf( _n( '%s avis', '%s avis', $reviews['count'], 'icademie-page-annonce' ), number_format_i18n( $reviews['count'] ) ) ); ?></p>

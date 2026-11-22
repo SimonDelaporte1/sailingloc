@@ -22,7 +22,7 @@
 
 .icademie-avis-criteres__titre {
 	margin: 0 0 0.2em;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .icademie-avis-criteres__aide {
@@ -36,7 +36,7 @@
 	margin: 0;
 	padding: 0.65em 0;
 	border: 0;
-	border-top: 1px solid rgba(15, 23, 42, 0.12);
+	border-top: 1px solid rgba(15, 34, 51, 0.12);
 }
 
 .icademie-avis-critere__nom {
@@ -77,39 +77,40 @@
 	justify-content: center;
 	width: 44px;
 	height: 44px;
-	border: 1px solid #7b8794;
+	border: 1.5px solid #76818c;
 	border-radius: 8px;
 	background: #fff;
-	color: #1f2933;
-	font-weight: 600;
+	color: #0f2233;
+	font-weight: 700;
 	line-height: 1;
 	transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .icademie-avis-critere__note:hover span[aria-hidden] {
-	border-color: #1d5fd1;
+	border-color: #1d5a80;
 }
 
 .icademie-avis-critere__note input:checked + span[aria-hidden] {
-	border-color: #1d5fd1;
-	background: #1d5fd1;
+	border-color: #1d5a80;
+	background: #1d5a80;
 	color: #fff;
 }
 
 .icademie-avis-critere__note input:focus-visible + span[aria-hidden] {
-	outline: 2px solid #1d5fd1;
+	outline: 2px solid #1d5a80;
 	outline-offset: 2px;
 }
 
 .icademie-avis-critere.is-invalid .icademie-avis-critere__note span[aria-hidden] {
-	border-color: #b42318;
+	border-color: #b83a24;
+	background: #fbebe6;
 }
 
 .icademie-avis-critere__erreur {
 	display: block;
 	clear: both;
 	margin-top: 0.4em;
-	color: #b42318;
+	color: #b83a24;
 	font-size: 0.875em;
 }
 
@@ -152,7 +153,7 @@
 
 .icademie-avis-notes dd {
 	margin: 0;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 /* Moyennes, sous le titre de la section des avis. */
@@ -162,7 +163,7 @@
 
 .icademie-avis-moyennes__titre {
 	margin: 0 0 0.5em;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .icademie-avis-moyennes__liste {
@@ -188,7 +189,7 @@
 	height: 6px;
 	overflow: hidden;
 	border-radius: 3px;
-	background: rgba(15, 23, 42, 0.14);
+	background: rgba(15, 34, 51, 0.14);
 }
 
 .icademie-avis-moyennes__barre > span {
@@ -199,7 +200,7 @@
 }
 
 .icademie-avis-moyennes__valeur {
-	font-weight: 600;
+	font-weight: 700;
 	text-align: right;
 }
 

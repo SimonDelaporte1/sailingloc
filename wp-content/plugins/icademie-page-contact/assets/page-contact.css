@@ -1,59 +1,55 @@
 /* Icademie – Page Contact
  *
  * Mise en page d'après le zoning « Contact · Ordinateur 1440 px » : contenu de 1200 px, formulaire
- * et colonne de 380 px, mêmes couleurs, polices, tailles et arrondis. Les couleurs et polices sont
- * réunies dans les variables de .icademie-contact.
+ * et colonne de 380 px. Habillage d'après la charte graphique et les maquettes SailingLoc : fond
+ * craie, encre marine, bleu Manche pour l'action, rouge balise pour l'assistance et les erreurs ;
+ * titres en Fraunces, texte en Atkinson Hyperlegible. Les couleurs et polices sont réunies dans les
+ * variables de .icademie-contact.
  *
  * La mise en page suit la largeur du bloc (requêtes de conteneur) plutôt que celle de l'écran :
  * elle reste juste dans l'aperçu de l'éditeur.
  */
 
-/* Police des titres, hébergée avec l'extension (pas d'appel à Google Fonts). Licence : fonts/OFL.txt. */
-@font-face {
-	font-family: "Space Grotesk";
-	font-style: normal;
-	font-weight: 300 700;
-	font-display: swap;
-	src: url("fonts/space-grotesk-latin-wght-normal.woff2") format("woff2");
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
+/* Polices (Fraunces, Atkinson Hyperlegible) : règles @font-face ajoutées par l'extension (feuille
+ * commune de l'extension de la page d'accueil, sinon fichiers de fonts/). Licences : fonts/OFL-*.txt. */
 
 .icademie-contact {
-	--ic-primary: #1d5fd1;
-	--ic-primary-dark: #173f8a;
-	--ic-primary-light: #e3ecfb;
-	--ic-navy: #243040;
-	--ic-text: #1f2933;
-	--ic-text-2: #3e4c59;
-	--ic-text-muted: #52606d;
-	--ic-placeholder: #616e7c;
-	/* Zoning : #8a96a3, un peu foncé pour un contraste de 3:1 sur le fond du formulaire (WCAG 1.4.11). */
-	--ic-field-border: #7b8794;
-	--ic-border: #cbd2d9;
-	--ic-border-soft: #e4e7eb;
-	--ic-surface: #fff;
-	--ic-panel: #fafbfc;
-	--ic-form-panel: #f5f8fe;
-	--ic-form-border: #cddbf4;
-	--ic-alert: #9a3412;
-	--ic-alert-border: #c2410c;
-	--ic-alert-bg: #fff8f3;
-	--ic-error: #b42318;
-	--ic-error-text: #7a271a;
-	--ic-error-bg: #fef3f2;
-	--ic-error-border: #fecdca;
-	--ic-success-text: #05603a;
-	--ic-success-bg: #ecfdf3;
-	--ic-success-border: #abefc6;
-	--ic-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-	--ic-font-heading: "Space Grotesk", var(--ic-font);
+	/* Couleurs de la charte (nom du jeton en commentaire). */
+	--ic-primary: #1d5a80; /* manche : action */
+	--ic-primary-dark: #164766; /* manche-strong : survol */
+	--ic-primary-light: #e4eef3; /* ecume */
+	--ic-navy: #0f2233; /* encre */
+	--ic-text: #0f2233; /* encre */
+	--ic-text-2: #0f2233;
+	--ic-text-muted: #4a5866; /* encre-muted */
+	--ic-placeholder: #4a5866;
+	--ic-field-border: #76818c; /* controle : 4,0:1 sur blanc */
+	--ic-border: #ddd8ce; /* trait */
+	--ic-border-soft: #ddd8ce;
+	--ic-surface: #fff; /* blanc */
+	--ic-page: #f7f5f0; /* craie */
+	--ic-panel: #fff;
+	--ic-form-panel: #fff;
+	--ic-form-border: #ddd8ce;
+	--ic-alert: #b83a24; /* balise : assistance */
+	--ic-alert-border: #b83a24;
+	--ic-alert-bg: #fbebe6; /* balise-soft */
+	--ic-error: #b83a24; /* balise : erreurs */
+	--ic-error-text: #b83a24;
+	--ic-error-bg: #fbebe6;
+	--ic-error-border: #b83a24;
+	--ic-success-text: #2e6b4f; /* varech : succès */
+	--ic-success-bg: #e3efe7;
+	--ic-success-border: #2e6b4f;
+	--ic-font: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+	--ic-font-heading: Fraunces, Georgia, "Times New Roman", serif;
 	--ic-gutter: 24px;
 
 	container: icademie-contact / inline-size;
-	background: var(--ic-surface);
+	background: var(--ic-page);
 	color: var(--ic-text);
 	font-family: var(--ic-font);
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 400;
 	line-height: 1.45;
 	-webkit-font-smoothing: antialiased;
@@ -126,16 +122,16 @@
 /* Rappel aux administrateurs : réglages à compléter. */
 .icademie-contact__setup {
 	padding: 10px 14px;
-	border: 1px dashed var(--ic-alert-border);
+	border: 1px dashed #8a5a00;
 	border-radius: 8px;
-	background: #fffbeb;
-	color: #78350f;
-	font-size: 12px;
+	background: #fdf1d8;
+	color: #8a5a00;
+	font-size: 14px;
 }
 
 .icademie-contact__setup a {
 	color: inherit;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 /* ---------------------------------------------------------------------------
@@ -148,8 +144,8 @@
 	align-items: center;
 	gap: 4px 8px;
 	color: var(--ic-text-muted);
-	font-size: 13px;
-	line-height: 1.4;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-contact__breadcrumb li {
@@ -158,17 +154,9 @@
 	gap: 8px;
 }
 
-.icademie-contact__breadcrumb a {
-	text-decoration: none;
-}
-
-.icademie-contact__breadcrumb a:hover {
-	text-decoration: underline;
-}
-
 .icademie-contact__breadcrumb [aria-current="page"] {
 	color: var(--ic-text);
-	font-weight: 600;
+	font-weight: 700;
 }
 
 /* ---------------------------------------------------------------------------
@@ -193,26 +181,27 @@
 .icademie-contact .icademie-contact__title {
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 28px;
+	font-size: 40px;
 	font-weight: 600;
 	letter-spacing: 0;
-	line-height: 1.15;
+	line-height: 48px;
 	text-transform: none;
 }
 
 .icademie-contact__intro {
 	max-width: 760px;
-	color: var(--ic-text-muted);
-	font-size: 13px;
-	line-height: 1.45;
+	color: var(--ic-text);
+	font-size: 17px;
+	line-height: 26px;
 }
 
 .icademie-contact__header-visual {
 	flex: none;
 	width: 240px;
+	min-height: 140px;
 	overflow: hidden;
-	border-radius: 6px;
-	background: var(--ic-primary-light);
+	border-radius: 16px;
+	background: #dce5ea;
 }
 
 .icademie-contact__header-visual > :is(img, svg) {
@@ -229,11 +218,11 @@
 .icademie-contact__panel {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 12px;
 	min-width: 0;
-	padding: 20px;
-	border: 1px solid var(--ic-border-soft);
-	border-radius: 10px;
+	padding: 24px;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
 	background: var(--ic-panel);
 }
 
@@ -247,17 +236,29 @@
 .icademie-contact .icademie-contact__panel-title {
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 14px;
+	font-size: 20px;
 	font-weight: 600;
-	letter-spacing: 0.06em;
-	line-height: 1.3;
-	text-transform: uppercase;
+	letter-spacing: 0;
+	line-height: 26px;
+	text-transform: none;
 }
 
 .icademie-contact__panel-desc {
 	color: var(--ic-text-muted);
-	font-size: 12px;
-	line-height: 1.4;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+/* Aide rapide : sans encadré, titre de section (maquette). */
+.icademie-contact .icademie-contact__help {
+	padding: 0;
+	border: 0;
+	background: none;
+}
+
+.icademie-contact .icademie-contact__help .icademie-contact__panel-title {
+	font-size: 24px;
+	line-height: 30px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -272,13 +273,13 @@
 	min-height: 44px;
 	margin: 0;
 	padding: 0 20px;
-	border: 0;
+	border: 1.5px solid var(--ic-primary);
 	border-radius: 8px;
 	background: var(--ic-primary);
 	color: #fff;
 	font-family: var(--ic-font);
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
 	line-height: 1.2;
 	text-align: center;
 	text-decoration: none;
@@ -288,6 +289,7 @@
 }
 
 .icademie-contact .icademie-contact__button:hover {
+	border-color: var(--ic-primary-dark);
 	background: var(--ic-primary-dark);
 	color: #fff;
 	text-decoration: none;
@@ -301,31 +303,32 @@
 .icademie-contact .icademie-contact__button--large {
 	min-height: 48px;
 	padding: 0 28px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .icademie-contact .icademie-contact__button--secondary {
 	padding: 0 18px;
-	border: 1.5px solid var(--ic-primary);
 	background: var(--ic-surface);
 	color: var(--ic-primary);
 }
 
 .icademie-contact .icademie-contact__button--secondary:hover {
-	border-color: var(--ic-primary-dark);
+	border-color: var(--ic-primary);
 	background: var(--ic-primary-light);
 	color: var(--ic-primary-dark);
 }
 
+/* Bouton « balise » : seulement pour joindre l'assistance (charte). */
 .icademie-contact .icademie-contact__button--alert {
 	padding: 0 18px;
-	border: 1.5px solid var(--ic-alert);
-	background: var(--ic-surface);
-	color: var(--ic-alert);
+	border-color: var(--ic-alert);
+	background: var(--ic-alert);
+	color: #fff;
 }
 
 .icademie-contact .icademie-contact__button--alert:hover {
-	background: var(--ic-alert);
+	border-color: #9c2f1c;
+	background: #9c2f1c;
 	color: #fff;
 }
 
@@ -339,14 +342,14 @@
 	max-width: none;
 	height: 44px;
 	margin: 0;
-	padding: 0 12px;
-	border: 1px solid var(--ic-field-border);
-	border-radius: 6px;
+	padding: 0 14px;
+	border: 1.5px solid var(--ic-field-border);
+	border-radius: 8px;
 	background: var(--ic-surface);
 	box-shadow: none;
 	color: var(--ic-text);
 	font-family: var(--ic-font);
-	font-size: 13px;
+	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.4;
 }
@@ -363,11 +366,13 @@
 .icademie-contact .icademie-contact__input:focus {
 	border-color: var(--ic-primary);
 	outline: 2px solid var(--ic-primary);
-	outline-offset: 0;
+	outline-offset: 2px;
 }
 
+/* Erreur (charte) : contour « balise », fond « balise-soft », icône et message sous le champ. */
 .icademie-contact .icademie-contact__input[aria-invalid="true"] {
 	border-color: var(--ic-error);
+	background-color: var(--ic-error-bg);
 }
 
 .icademie-contact .icademie-contact__input[aria-invalid="true"]:focus {
@@ -376,7 +381,7 @@
 
 .icademie-contact .icademie-contact__select {
 	padding-right: 40px;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2352606d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230f2233' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 	background-position: right 14px center;
 	background-repeat: no-repeat;
 	background-size: 12px;
@@ -387,7 +392,7 @@
 .icademie-contact .icademie-contact__textarea {
 	height: 150px;
 	min-height: 110px;
-	padding: 10px 12px;
+	padding: 10px 14px;
 	resize: vertical;
 }
 
@@ -409,12 +414,12 @@
 
 .icademie-contact .icademie-contact__label {
 	display: block;
-	color: var(--ic-primary-dark);
+	color: var(--ic-text);
 	font-family: var(--ic-font);
-	font-size: 11px;
-	font-weight: 600;
-	letter-spacing: 0.05em;
-	line-height: 1.2;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
 	text-transform: uppercase;
 }
 
@@ -442,13 +447,13 @@
 
 .icademie-contact__hint {
 	color: var(--ic-text-muted);
-	font-size: 12px;
-	line-height: 1.45;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-contact__hint--warning {
-	color: var(--ic-alert);
-	font-weight: 500;
+	color: #8a5a00;
+	font-weight: 700;
 }
 
 .icademie-contact__error {
@@ -456,13 +461,13 @@
 	align-items: flex-start;
 	gap: 6px;
 	color: var(--ic-error);
-	font-size: 12px;
-	font-weight: 500;
-	line-height: 1.4;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 22px;
 }
 
 .icademie-contact__error > .icademie-contact__icon {
-	margin-top: 1px;
+	margin-top: 3px;
 }
 
 /* Profil : choix en pastilles. */
@@ -478,12 +483,12 @@
 	gap: 8px;
 	min-height: 44px;
 	padding: 0 16px;
-	border: 1px solid var(--ic-field-border);
+	border: 1.5px solid var(--ic-field-border);
 	border-radius: 22px;
 	background: var(--ic-surface);
 	color: var(--ic-text);
-	font-size: 13px;
-	font-weight: 500;
+	font-size: 15px;
+	font-weight: 400;
 	cursor: pointer;
 	transition: border-color 0.15s, background-color 0.15s;
 }
@@ -495,8 +500,8 @@
 .icademie-contact__choice:has(:checked) {
 	border-color: var(--ic-primary);
 	background: var(--ic-primary-light);
-	box-shadow: inset 0 0 0 1px var(--ic-primary);
-	color: var(--ic-primary-dark);
+	color: var(--ic-primary);
+	font-weight: 700;
 }
 
 .icademie-contact__choice:has(:focus-visible) {
@@ -505,8 +510,8 @@
 }
 
 .icademie-contact .icademie-contact__choice input {
-	width: 16px;
-	height: 16px;
+	width: 18px;
+	height: 18px;
 	margin: 0;
 	accent-color: var(--ic-primary);
 	outline: none;
@@ -551,9 +556,9 @@
 	border: 1px solid var(--ic-border);
 	border-radius: 16px;
 	background: var(--ic-surface);
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-text);
+	font-size: 14px;
+	font-weight: 700;
 }
 
 .icademie-contact__file-chosen > [data-file-name] {
@@ -587,15 +592,15 @@
 	display: flex;
 	align-items: flex-start;
 	gap: 10px;
-	color: var(--ic-text-2);
-	font-size: 12px;
-	line-height: 1.45;
+	color: var(--ic-text);
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-contact .icademie-contact__consent input {
 	flex: none;
-	width: 16px;
-	height: 16px;
+	width: 18px;
+	height: 18px;
 	margin: 1px 0 0;
 	accent-color: var(--ic-primary);
 }
@@ -606,7 +611,7 @@
 
 .icademie-contact__consent-note,
 .icademie-contact__field[data-field="rgpd"] > .icademie-contact__error {
-	padding-left: 26px;
+	padding-left: 28px;
 }
 
 .icademie-contact__actions {
@@ -633,8 +638,8 @@
 	padding: 14px 16px;
 	border: 1px solid;
 	border-radius: 8px;
-	font-size: 13px;
-	line-height: 1.45;
+	font-size: 15px;
+	line-height: 22px;
 }
 
 .icademie-contact__notice:focus {
@@ -662,7 +667,7 @@
 }
 
 .icademie-contact__notice-title {
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .icademie-contact .icademie-contact__notice ul {
@@ -709,7 +714,7 @@
 	margin: 0;
 	padding: 0;
 	border: 0;
-	border-radius: 6px;
+	border-radius: 8px;
 	background: transparent;
 	color: var(--ic-primary);
 	cursor: pointer;
@@ -735,19 +740,18 @@
 	flex-direction: column;
 	justify-content: center;
 	gap: 8px;
-	min-height: 104px;
-	padding: 12px 14px;
-	border: 1px solid var(--ic-border-soft);
-	border-radius: 6px;
+	min-height: 120px;
+	padding: 14px 16px;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
 	background: var(--ic-surface);
 	color: var(--ic-text);
 	text-decoration: none;
-	transition: border-color 0.15s, box-shadow 0.15s;
+	transition: border-color 0.15s;
 }
 
 .icademie-contact .icademie-contact__topic:hover {
 	border-color: var(--ic-primary);
-	box-shadow: 0 2px 10px rgb(29 95 209 / 12%);
 	color: var(--ic-text);
 	text-decoration: none;
 }
@@ -755,23 +759,30 @@
 .icademie-contact__topic-icon {
 	display: grid;
 	place-items: center;
-	width: 32px;
-	height: 32px;
+	width: 44px;
+	height: 44px;
 	border-radius: 50%;
 	background: var(--ic-primary-light);
 	color: var(--ic-primary);
 }
 
+/* Pictogrammes de 22 px dans leur pastille de 44 px (maquette). */
+.icademie-contact__topic-icon svg,
+.icademie-contact__channel-icon svg {
+	width: 22px;
+	height: 22px;
+}
+
 .icademie-contact__topic-title {
-	font-size: 13px;
-	font-weight: 600;
-	line-height: 1.3;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 20px;
 }
 
 .icademie-contact__topic-meta {
 	color: var(--ic-text-muted);
-	font-size: 11px;
-	line-height: 1.3;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -786,7 +797,8 @@
 
 .icademie-contact__panel--form {
 	flex: 1;
-	padding: 24px;
+	gap: 16px;
+	padding: 32px;
 	border-color: var(--ic-form-border);
 	background: var(--ic-form-panel);
 }
@@ -808,8 +820,8 @@
 .icademie-contact__channel {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 12px;
+	gap: 14px;
+	padding: 14px;
 	border: 1px solid var(--ic-border);
 	border-radius: 8px;
 	background: var(--ic-surface);
@@ -819,8 +831,8 @@
 	display: grid;
 	flex: none;
 	place-items: center;
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	border-radius: 50%;
 	background: var(--ic-primary-light);
 	color: var(--ic-primary);
@@ -836,10 +848,10 @@
 .icademie-contact .icademie-contact__channel-title {
 	overflow-wrap: anywhere;
 	color: var(--ic-text);
-	font-family: var(--ic-font-heading);
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 1.25;
+	font-family: var(--ic-font);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 20px;
 	text-decoration: none;
 }
 
@@ -850,9 +862,9 @@
 
 .icademie-contact .icademie-contact__channel-meta {
 	color: var(--ic-text-muted);
-	font-size: 12px;
+	font-size: 14px;
 	font-style: normal;
-	line-height: 1.45;
+	line-height: 20px;
 }
 
 .icademie-contact .icademie-contact__chat {
@@ -867,9 +879,9 @@
 }
 
 .icademie-contact__social-label {
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 600;
+	color: var(--ic-text);
+	font-size: 14px;
+	font-weight: 700;
 }
 
 .icademie-contact__social ul {
@@ -881,11 +893,11 @@
 .icademie-contact .icademie-contact__social a {
 	display: grid;
 	place-items: center;
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	border-radius: 50%;
 	background: var(--ic-primary-light);
-	color: var(--ic-primary-dark);
+	color: var(--ic-primary);
 	transition: background-color 0.15s, color 0.15s;
 }
 
@@ -908,16 +920,11 @@
 .icademie-contact__map {
 	position: relative;
 	flex: 1;
-	min-height: 200px;
+	min-height: 230px;
 	overflow: hidden;
-	border-radius: 6px;
-	background-color: #e6ebf1;
-	background-image:
-		linear-gradient(112deg, transparent 47%, #fff 47%, #fff 50.5%, transparent 50.5%),
-		linear-gradient(18deg, transparent 63%, #f4f6f9 63%, #f4f6f9 65.5%, transparent 65.5%),
-		linear-gradient(#d9e0e8 1px, transparent 1px),
-		linear-gradient(90deg, #d9e0e8 1px, transparent 1px);
-	background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+	border-radius: 8px;
+	/* Aplat terre (craie) et mer (bleu gris), comme la maquette. */
+	background: linear-gradient(115deg, #ece7da 0 52%, #bfd4e0 52% 100%);
 }
 
 .icademie-contact__map-placeholder {
@@ -933,28 +940,26 @@
 }
 
 .icademie-contact__map-pin {
-	color: var(--ic-primary);
-	filter: drop-shadow(0 2px 2px rgb(31 41 51 / 20%));
+	color: var(--ic-alert);
 }
 
 .icademie-contact__chip {
 	padding: 3px 8px;
 	border-radius: 4px;
-	background: var(--ic-surface);
-	color: var(--ic-text);
-	font-size: 11px;
-	font-weight: 600;
-	line-height: 1.3;
+	background: rgba(15, 34, 51, 0.78);
+	color: var(--ic-page);
+	font-size: 13px;
+	line-height: 18px;
 }
 
 .icademie-contact__map-note {
 	max-width: 32ch;
-	padding: 2px 6px;
+	padding: 4px 8px;
 	border-radius: 4px;
-	background: rgb(255 255 255 / 85%);
-	color: var(--ic-text-2);
-	font-size: 11px;
-	line-height: 1.4;
+	background: rgb(255 255 255 / 90%);
+	color: var(--ic-text);
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-contact__map iframe {
@@ -970,8 +975,8 @@
 	align-items: center;
 	gap: 6px;
 	align-self: flex-start;
-	font-size: 12px;
-	font-weight: 500;
+	font-size: 14px;
+	font-weight: 700;
 }
 
 /* ---------------------------------------------------------------------------
@@ -981,10 +986,10 @@
 .icademie-contact__assistance {
 	display: flex;
 	align-items: center;
-	gap: 16px;
-	padding: 16px 20px;
-	border: 1.5px solid var(--ic-alert-border);
-	border-radius: 10px;
+	gap: 18px;
+	min-height: 120px;
+	padding: 16px 24px;
+	border-radius: 8px;
 	background: var(--ic-alert-bg);
 	transition: box-shadow 0.2s;
 }
@@ -1004,19 +1009,19 @@
 
 .icademie-contact .icademie-contact__assistance-title {
 	color: var(--ic-alert);
-	font-family: var(--ic-font-heading);
-	font-size: 14px;
-	font-weight: 600;
-	letter-spacing: 0.06em;
-	line-height: 1.3;
-	text-transform: uppercase;
+	font-family: var(--ic-font);
+	font-size: 17px;
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 24px;
+	text-transform: none;
 }
 
 .icademie-contact__assistance-text p {
 	color: var(--ic-text);
-	font-size: 13px;
-	font-weight: 500;
-	line-height: 1.4;
+	font-size: 15px;
+	font-weight: 400;
+	line-height: 22px;
 }
 
 .icademie-contact .icademie-contact__assistance-text a {
@@ -1039,7 +1044,7 @@
 	}
 
 	.icademie-contact__assistance.is-stuck {
-		box-shadow: 0 10px 30px rgb(31 41 51 / 16%);
+		box-shadow: 0 10px 30px rgb(15 34 51 / 16%);
 	}
 
 	/* Un champ qui reçoit le focus n'est jamais caché derrière le bandeau. */
@@ -1077,6 +1082,11 @@
 	.icademie-contact__topics {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
+
+	.icademie-contact .icademie-contact__title {
+		font-size: 34px;
+		line-height: 40px;
+	}
 }
 
 /* Mobile : une seule colonne. */
@@ -1088,7 +1098,18 @@
 	}
 
 	.icademie-contact .icademie-contact__title {
-		font-size: 24px;
+		font-size: 30px;
+		line-height: 36px;
+	}
+
+	.icademie-contact__intro {
+		font-size: 16px;
+		line-height: 24px;
+	}
+
+	.icademie-contact .icademie-contact__help .icademie-contact__panel-title {
+		font-size: 22px;
+		line-height: 28px;
 	}
 
 	.icademie-contact__header-visual {
@@ -1097,7 +1118,7 @@
 
 	.icademie-contact__panel,
 	.icademie-contact__panel--form {
-		padding: 16px;
+		padding: 20px;
 	}
 
 	.icademie-contact__search-row {

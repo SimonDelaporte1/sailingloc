@@ -1,9 +1,10 @@
 /* Icademie – Page annonce
  *
  * Mise en page d'après les zonings « Produit » : ordinateur (1440 px), tablette (768 px) et
- * smartphone (390 px). Mêmes couleurs, polices, tailles et arrondis que les pages d'accueil et
- * catégorie ; les cadres pointillés, les numéros et les descriptions des zones (repères de maquette)
- * ne sont pas repris.
+ * smartphone (390 px). Habillage d'après la charte graphique et les maquettes SailingLoc, comme les
+ * pages d'accueil et catégorie : fond craie, encre marine, bleu Manche pour l'action, vert varech
+ * pour l'écologie, rouge balise pour les erreurs et le repère de la carte ; titres en Fraunces,
+ * texte en Atkinson Hyperlegible.
  *
  * La mise en page suit la largeur du bloc (requêtes de conteneur) : « ordinateur » à partir de
  * 1024 px, « tablette » de 600 à 1023 px, « smartphone » en dessous. La classe « has-js » (posée par
@@ -13,32 +14,38 @@
 
 .icademie-annonce,
 .icademie-annonce-bar {
-	--ic-primary: #1d5fd1;
-	--ic-primary-dark: #173f8a;
-	--ic-primary-light: #e3ecfb;
-	--ic-primary-hover: #d3e1f8;
-	--ic-primary-border: #b9cdf1;
-	--ic-text: #1f2933;
-	--ic-text-2: #3e4c59;
-	--ic-muted: #52606d;
-	--ic-placeholder: #616e7c;
-	/* Zoning : #8a96a3, un peu foncé pour un contraste de 3:1 sur fond blanc (WCAG 1.4.11). */
-	--ic-field-border: #7b8794;
-	--ic-border: #cbd2d9;
-	--ic-divider: #dde2e8;
-	--ic-surface: #fff;
-	--ic-panel: #fafbfc;
-	--ic-box: #e9ecf0;
-	--ic-track: #c9d1da;
-	--ic-star: #e3a008;
-	--ic-error: #b42318;
-	--ic-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-	--ic-font-heading: "Space Grotesk", var(--ic-font);
+	/* Couleurs de la charte (nom du jeton en commentaire). */
+	--ic-primary: #1d5a80; /* manche : action */
+	--ic-primary-dark: #164766; /* manche-strong : survol */
+	--ic-primary-light: #e4eef3; /* ecume */
+	--ic-primary-hover: #d3e3eb;
+	--ic-primary-border: #b7cddb;
+	--ic-text: #0f2233; /* encre */
+	--ic-text-2: #0f2233;
+	--ic-muted: #4a5866; /* encre-muted */
+	--ic-placeholder: #4a5866;
+	--ic-field-border: #76818c; /* controle : 3,6:1 sur craie */
+	--ic-border: #ddd8ce; /* trait */
+	--ic-divider: #ddd8ce;
+	--ic-surface: #fff; /* blanc */
+	--ic-page: #f7f5f0; /* craie */
+	--ic-panel: #f7f5f0;
+	--ic-box: #ece8e0;
+	--ic-track: #ece8e0;
+	--ic-star: #8a5a00; /* ambre */
+	--ic-eco: #2e6b4f; /* varech */
+	--ic-eco-light: #e3efe7; /* varech-soft */
+	--ic-error: #b83a24; /* balise */
+	--ic-error-light: #fbebe6; /* balise-soft */
+	--ic-shadow-panel: 0 8px 24px rgba(15, 34, 51, 0.12);
+	--ic-shadow-float: 0 -4px 16px rgba(15, 34, 51, 0.14);
+	--ic-font: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+	--ic-font-heading: Fraunces, Georgia, "Times New Roman", serif;
 	--ic-gutter: 24px;
 
 	color: var(--ic-text);
 	font-family: var(--ic-font);
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 400;
 	line-height: 1.45;
 	-webkit-font-smoothing: antialiased;
@@ -46,7 +53,7 @@
 
 .icademie-annonce {
 	container: icademie-annonce / inline-size;
-	background: var(--ic-surface);
+	background: var(--ic-page);
 }
 
 .icademie-annonce,
@@ -134,10 +141,11 @@ html.icademie-annonce-barre body {
 /* Rappel aux gestionnaires : contenu à compléter. */
 .icademie-annonce__setup {
 	padding: 10px 14px;
-	border: 1px dashed #c2410c;
+	border: 1px dashed #8a5a00;
 	border-radius: 8px;
-	background: #fffbeb;
-	color: #7c2d12;
+	background: #fdf1d8;
+	color: #8a5a00;
+	font-size: 14px;
 }
 
 .icademie-annonce__setup ul {
@@ -147,7 +155,8 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce .icademie-annonce__setup a {
-	color: #7c2d12;
+	color: #8a5a00;
+	font-weight: 700;
 }
 
 /* Boutons. */
@@ -160,11 +169,11 @@ html.icademie-annonce-barre body {
 	min-height: 44px;
 	margin: 0;
 	padding: 0 20px;
-	border: 0;
+	border: 1.5px solid var(--ic-primary);
 	border-radius: 8px;
 	background: var(--ic-primary);
 	color: #fff;
-	font: 600 13px/1.2 var(--ic-font);
+	font: 700 15px/1.2 var(--ic-font);
 	text-align: center;
 	text-decoration: none;
 	cursor: pointer;
@@ -173,12 +182,13 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce .icademie-annonce__button:hover,
 .icademie-annonce-bar .icademie-annonce-bar__button:hover {
+	border-color: var(--ic-primary-dark);
 	background: var(--ic-primary-dark);
 	color: #fff;
 }
 
 .icademie-annonce .icademie-annonce__button--secondary {
-	border: 1.5px solid var(--ic-primary);
+	padding: 0 18px;
 	background: var(--ic-surface);
 	color: var(--ic-primary);
 }
@@ -198,7 +208,7 @@ html.icademie-annonce-barre body {
 	border: 0;
 	background: none;
 	color: var(--ic-primary);
-	font: 600 13px/1.3 var(--ic-font);
+	font: 700 15px/1.3 var(--ic-font);
 	text-decoration: underline;
 	text-underline-offset: 2px;
 	cursor: pointer;
@@ -212,8 +222,8 @@ html.icademie-annonce-barre body {
 .icademie-annonce .icademie-annonce__round {
 	display: grid;
 	place-items: center;
-	width: 32px;
-	height: 32px;
+	width: 44px;
+	height: 44px;
 	margin: 0;
 	padding: 0;
 	border: 1.5px solid var(--ic-primary);
@@ -229,7 +239,7 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce .icademie-annonce__round:disabled {
 	border-color: var(--ic-border);
-	color: var(--ic-placeholder);
+	color: var(--ic-field-border);
 	background: var(--ic-surface);
 	cursor: default;
 }
@@ -237,7 +247,8 @@ html.icademie-annonce-barre body {
 /* Zone 2 : fil d'Ariane. */
 .icademie-annonce__breadcrumb {
 	color: var(--ic-muted);
-	font-size: 13px;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-annonce__crumbs {
@@ -254,14 +265,15 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce__crumbs [aria-current] {
 	color: var(--ic-text);
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .icademie-annonce .icademie-annonce__back {
 	display: none;
 	align-items: center;
 	gap: 4px;
-	font-weight: 500;
+	font-size: 15px;
+	font-weight: 700;
 }
 
 /* Colonne principale et module de réservation (ordinateur). */
@@ -269,7 +281,7 @@ html.icademie-annonce-barre body {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 380px;
 	column-gap: 32px;
-	row-gap: 32px;
+	row-gap: 28px;
 	align-items: start;
 }
 
@@ -305,7 +317,7 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce .icademie-annonce__title {
 	color: var(--ic-text);
-	font: 600 26px/1.15 var(--ic-font-heading);
+	font: 600 40px/48px var(--ic-font-heading);
 	letter-spacing: 0;
 	overflow-wrap: anywhere;
 }
@@ -314,8 +326,42 @@ html.icademie-annonce-barre body {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	color: var(--ic-muted);
+	color: var(--ic-text);
+	font-size: 16px;
+}
+
+/* Badges (écologie, service, caractéristique). */
+.icademie-annonce__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.icademie-annonce__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 28px;
+	padding: 0 12px;
+	border-radius: 999px;
+	background: var(--ic-primary-light);
+	color: var(--ic-primary);
 	font-size: 13px;
+	font-weight: 700;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.icademie-annonce__badge--eco {
+	background: var(--ic-eco-light);
+	color: var(--ic-eco);
+}
+
+.icademie-annonce__badge--neutral {
+	background: var(--ic-surface);
+	box-shadow: inset 0 0 0 1px var(--ic-border);
+	color: var(--ic-text);
 }
 
 .icademie-annonce__meta > span + span::before {
@@ -327,8 +373,8 @@ html.icademie-annonce-barre body {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	color: var(--ic-text-2);
-	font-weight: 500;
+	color: var(--ic-text);
+	font-weight: 700;
 }
 
 .icademie-annonce__meta-rating .icademie-annonce__icon,
@@ -343,14 +389,14 @@ html.icademie-annonce-barre body {
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	height: 40px;
+	height: 44px;
 	margin: 0;
 	padding: 0 18px;
 	border: 1.5px solid var(--ic-primary);
 	border-radius: 8px;
 	background: var(--ic-surface);
 	color: var(--ic-primary);
-	font: 600 13px/1 var(--ic-font);
+	font: 700 15px/1 var(--ic-font);
 	cursor: pointer;
 }
 
@@ -373,14 +419,15 @@ html.icademie-annonce-barre body {
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	grid-template-rows: repeat(2, minmax(0, 1fr));
 	gap: 8px;
-	height: 420px;
+	height: 466px;
+	overflow: hidden;
+	border-radius: 16px;
 }
 
 .icademie-annonce__gallery-item {
 	min-width: 0;
 	min-height: 0;
 	overflow: hidden;
-	border-radius: 6px;
 	background: var(--ic-box);
 }
 
@@ -446,13 +493,13 @@ html.icademie-annonce-barre body {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	min-height: 36px;
-	padding: 0 12px;
+	min-height: 40px;
+	padding: 0 14px;
 	border: 1.5px solid var(--ic-primary);
 	border-radius: 8px;
 	background: var(--ic-surface);
 	color: var(--ic-primary);
-	font: 600 12px/1.2 var(--ic-font);
+	font: 700 15px/1.2 var(--ic-font);
 	text-decoration: none;
 }
 
@@ -471,7 +518,7 @@ html.icademie-annonce-barre body {
 	justify-items: center;
 	gap: 8px;
 	height: 320px;
-	border-radius: 6px;
+	border-radius: 16px;
 	background: var(--ic-box);
 	color: var(--ic-muted);
 }
@@ -480,11 +527,10 @@ html.icademie-annonce-barre body {
 .icademie-annonce__booking-card {
 	position: sticky;
 	top: calc(var(--wp-admin--admin-bar--height, 0px) + 24px);
-	padding: 20px;
-	border: 1px solid var(--ic-border);
-	border-radius: 12px;
+	padding: 24px;
+	border-radius: 16px;
 	background: var(--ic-surface);
-	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+	box-shadow: var(--ic-shadow-panel);
 }
 
 .icademie-annonce__booking-form,
@@ -492,7 +538,7 @@ html.icademie-annonce-barre body {
 .icademie-annonce__booking-side {
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: 16px;
 }
 
 .icademie-annonce__price {
@@ -503,13 +549,13 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__price-amount {
-	color: var(--ic-primary-dark);
-	font: 700 26px/1.2 var(--ic-font-heading);
+	color: var(--ic-text);
+	font: 700 26px/30px var(--ic-font);
 }
 
 .icademie-annonce__price-unit {
-	color: var(--ic-text-2);
-	font: 500 14px/1.2 var(--ic-font);
+	color: var(--ic-muted);
+	font: 400 15px/1.2 var(--ic-font);
 }
 
 .icademie-annonce__dates {
@@ -526,9 +572,9 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__field label {
-	color: var(--ic-primary-dark);
-	font: 600 11px/1.2 var(--ic-font);
-	letter-spacing: 0.05em;
+	color: var(--ic-text);
+	font: 700 12px/16px var(--ic-font);
+	letter-spacing: 1px;
 	text-transform: uppercase;
 }
 
@@ -538,29 +584,35 @@ html.icademie-annonce-barre body {
 	height: 44px;
 	margin: 0;
 	padding: 0 12px;
-	border: 1px solid var(--ic-field-border);
-	border-radius: 6px;
+	border: 1.5px solid var(--ic-field-border);
+	border-radius: 8px;
 	background-color: var(--ic-surface);
 	color: var(--ic-text);
-	font: 400 13px/1.2 var(--ic-font);
+	font: 400 16px/1.2 var(--ic-font);
 }
 
+/* Erreur (charte) : contour « balise », fond « balise-soft », message et icône sous le champ. */
 .icademie-annonce .icademie-annonce__input[aria-invalid="true"] {
 	border-color: var(--ic-error);
-	box-shadow: 0 0 0 1px var(--ic-error);
+	background-color: var(--ic-error-light);
 }
 
 .icademie-annonce__error {
 	color: var(--ic-error);
-	font-size: 12px;
-	font-weight: 500;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 22px;
+}
+
+.icademie-annonce__error::before {
+	content: "⚠ ";
 }
 
 .icademie-annonce__lines {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	padding-top: 12px;
+	padding-top: 14px;
 	border-top: 1px solid var(--ic-border);
 }
 
@@ -568,8 +620,9 @@ html.icademie-annonce-barre body {
 	display: flex;
 	justify-content: space-between;
 	gap: 12px;
-	color: var(--ic-text-2);
-	font-size: 13px;
+	color: var(--ic-text);
+	font-size: 15px;
+	line-height: 22px;
 }
 
 .icademie-annonce__line dd {
@@ -588,37 +641,36 @@ html.icademie-annonce-barre body {
 .icademie-annonce__hint,
 .icademie-annonce__note {
 	color: var(--ic-muted);
-	font-size: 12px;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-annonce__note {
-	margin-top: -6px;
+	margin-top: -8px;
 	text-align: center;
 }
 
 .icademie-annonce .icademie-annonce__submit {
 	width: 100%;
 	min-height: 48px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .icademie-annonce__unavailable {
 	margin-top: 10px;
-	color: var(--ic-text-2);
+	color: var(--ic-text);
 }
 
-/* Zones 6 à 12 : titres et séparateurs. */
+/* Zones 6 à 12 : titres de section, sans séparateur (maquette). */
 .icademie-annonce__zone {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
-	padding-top: 28px;
-	border-top: 1px solid var(--ic-divider);
+	gap: 12px;
 }
 
 .icademie-annonce .icademie-annonce__zone-title {
 	color: var(--ic-text);
-	font: 600 20px/1.25 var(--ic-font-heading);
+	font: 600 24px/30px var(--ic-font-heading);
 	letter-spacing: 0;
 }
 
@@ -636,21 +688,24 @@ html.icademie-annonce-barre body {
 	justify-content: center;
 	gap: 2px;
 	min-width: 0;
-	min-height: 58px;
-	padding: 8px 12px 8px 50px;
-	border-radius: 6px;
-	background: var(--ic-box);
+	min-height: 60px;
+	padding: 8px 12px 8px 44px;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
 }
 
 .icademie-annonce__spec dt {
 	color: var(--ic-muted);
-	font-size: 11px;
+	font-size: 13px;
+	line-height: 16px;
 }
 
 .icademie-annonce__spec dd {
 	color: var(--ic-text);
-	font-size: 12px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 20px;
 	overflow-wrap: anywhere;
 }
 
@@ -660,19 +715,22 @@ html.icademie-annonce-barre body {
 	left: 12px;
 	display: grid;
 	place-items: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 50%;
-	background: var(--ic-surface);
-	color: var(--ic-primary-dark);
+	width: 22px;
+	height: 22px;
+	color: var(--ic-primary);
 	transform: translateY(-50%);
+}
+
+.icademie-annonce__spec-icon svg {
+	width: 22px;
+	height: 22px;
 }
 
 /* Zone 7 : description, repliée au-delà de quelques lignes. */
 .icademie-annonce__description-text {
-	color: var(--ic-text-2);
-	font-size: 14px;
-	line-height: 1.65;
+	color: var(--ic-text);
+	font-size: 17px;
+	line-height: 26px;
 	overflow-wrap: break-word;
 }
 
@@ -686,7 +744,7 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce.has-js .icademie-annonce__description-text.is-clamped {
-	max-height: calc(7 * 1.65em);
+	max-height: calc(5 * 26px);
 	overflow: hidden;
 	-webkit-mask-image: linear-gradient(#000 60%, transparent);
 	mask-image: linear-gradient(#000 60%, transparent);
@@ -705,7 +763,7 @@ html.icademie-annonce-barre body {
 		"title toggle"
 		"list list";
 	align-items: center;
-	gap: 16px;
+	gap: 12px 16px;
 }
 
 .icademie-annonce__equipments > .icademie-annonce__zone-title {
@@ -720,7 +778,7 @@ html.icademie-annonce-barre body {
 	display: grid;
 	grid-area: list;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 10px 16px;
+	gap: 8px 16px;
 }
 
 .icademie-annonce__equipment {
@@ -728,19 +786,34 @@ html.icademie-annonce-barre body {
 	align-items: center;
 	gap: 10px;
 	min-width: 0;
-	color: var(--ic-text-2);
-	font-size: 13px;
+	min-height: 28px;
+	color: var(--ic-text);
+	font-size: 15px;
+	line-height: 20px;
 }
 
 .icademie-annonce__equipment-icon {
 	display: grid;
 	flex: none;
 	place-items: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 6px;
-	background: var(--ic-box);
-	color: var(--ic-primary-dark);
+	width: 22px;
+	height: 22px;
+	color: var(--ic-primary);
+}
+
+.icademie-annonce__equipment-icon svg {
+	width: 22px;
+	height: 22px;
+}
+
+/* Équipement écologique : vert « varech », en gras. */
+.icademie-annonce__equipment--eco {
+	color: var(--ic-eco);
+	font-weight: 700;
+}
+
+.icademie-annonce__equipment--eco .icademie-annonce__equipment-icon {
+	color: var(--ic-eco);
 }
 
 .icademie-annonce.has-js .is-collapsed .icademie-annonce__equipment:nth-child(n+10) {
@@ -792,15 +865,15 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce__month-head {
 	display: grid;
-	grid-template-columns: 32px minmax(0, 1fr) 32px;
+	grid-template-columns: 44px minmax(0, 1fr) 44px;
 	align-items: center;
-	min-height: 32px;
+	min-height: 44px;
 }
 
 .icademie-annonce .icademie-annonce__month-title {
 	grid-column: 2;
 	color: var(--ic-text);
-	font: 600 15px/1.25 var(--ic-font-heading);
+	font: 600 18px/24px var(--ic-font-heading);
 	text-align: center;
 }
 
@@ -827,7 +900,7 @@ html.icademie-annonce-barre body {
 	padding: 0 0 2px;
 	border: 0;
 	color: var(--ic-muted);
-	font: 600 11px/16px var(--ic-font);
+	font: 700 12px/16px var(--ic-font);
 	text-align: center;
 }
 
@@ -844,11 +917,11 @@ html.icademie-annonce-barre body {
 	height: 34px;
 	margin: 0;
 	padding: 0;
-	border: 1px solid var(--ic-divider);
+	border: 1px solid var(--ic-border);
 	border-radius: 6px;
 	background: var(--ic-surface);
 	color: var(--ic-text);
-	font: 500 12px/1 var(--ic-font);
+	font: 400 14px/1 var(--ic-font);
 	font-variant-numeric: tabular-nums;
 }
 
@@ -861,7 +934,7 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce .icademie-annonce__day.is-today {
-	border-color: var(--ic-text-2);
+	border-color: var(--ic-text);
 	font-weight: 700;
 }
 
@@ -872,8 +945,8 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce .icademie-annonce__day.is-booked {
-	border-color: var(--ic-divider);
-	background: var(--ic-divider);
+	border-color: var(--ic-box);
+	background: var(--ic-box);
 	/* Contraste de 4,9:1 sur le gris des jours réservés. */
 	color: var(--ic-muted);
 	text-decoration: line-through;
@@ -883,6 +956,7 @@ html.icademie-annonce-barre body {
 	border-color: var(--ic-primary);
 	background: var(--ic-primary);
 	color: #fff;
+	font-weight: 700;
 }
 
 .icademie-annonce .icademie-annonce__day.is-selected:focus-visible {
@@ -893,8 +967,8 @@ html.icademie-annonce-barre body {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px 20px;
-	color: var(--ic-text-2);
-	font-size: 12px;
+	color: var(--ic-text);
+	font-size: 14px;
 }
 
 .icademie-annonce__legend li {
@@ -904,16 +978,16 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__swatch {
-	width: 12px;
-	height: 12px;
-	border: 1px solid var(--ic-field-border);
+	width: 14px;
+	height: 14px;
+	border: 1px solid var(--ic-border);
 	border-radius: 3px;
 	background: var(--ic-surface);
 }
 
 .icademie-annonce__swatch--booked {
-	border-color: var(--ic-divider);
-	background: var(--ic-divider);
+	border-color: var(--ic-box);
+	background: var(--ic-box);
 }
 
 .icademie-annonce__swatch--selected {
@@ -922,7 +996,7 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__periods {
-	color: var(--ic-text-2);
+	color: var(--ic-text);
 }
 
 .icademie-annonce__periods ul {
@@ -954,18 +1028,19 @@ html.icademie-annonce-barre body {
 	grid-template-columns: auto minmax(0, 1fr);
 	align-items: baseline;
 	gap: 4px 14px;
-	min-height: 48px;
-	padding: 12px 14px;
-	border-radius: 6px;
-	background: var(--ic-box);
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	min-height: 50px;
+	padding: 14px;
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+	font-size: 15px;
+	line-height: 20px;
 }
 
 .icademie-annonce__condition dt {
 	color: var(--ic-text);
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .icademie-annonce__condition dd {
@@ -978,10 +1053,8 @@ html.icademie-annonce-barre body {
 	height: 260px;
 	overflow: hidden;
 	border-radius: 8px;
-	background:
-		linear-gradient(90deg, rgba(29, 95, 209, 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
-		linear-gradient(rgba(29, 95, 209, 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
-		var(--ic-primary-light);
+	/* Aplat terre (craie) et mer (bleu gris), comme la maquette. */
+	background: linear-gradient(115deg, #ece7da 0 52%, #bfd4e0 52% 100%);
 }
 
 .icademie-annonce__map-placeholder {
@@ -996,22 +1069,26 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__map-pin {
-	color: var(--ic-primary-dark);
+	color: var(--ic-error);
 }
 
 .icademie-annonce__chip {
-	padding: 4px 10px;
+	padding: 3px 8px;
 	border-radius: 4px;
-	background: var(--ic-surface);
-	color: var(--ic-text);
-	font-size: 12px;
-	font-weight: 600;
+	background: rgba(15, 34, 51, 0.78);
+	color: var(--ic-page);
+	font-size: 13px;
+	line-height: 18px;
 }
 
 .icademie-annonce__map-note {
 	max-width: 34ch;
-	color: var(--ic-text-2);
-	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.9);
+	color: var(--ic-text);
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-annonce .icademie-annonce__map iframe {
@@ -1026,7 +1103,9 @@ html.icademie-annonce-barre body {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	gap: 6px 16px;
-	color: var(--ic-text-2);
+	color: var(--ic-muted);
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-annonce .icademie-annonce__map-caption a {
@@ -1067,16 +1146,28 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce__reviews-average {
 	display: flex;
-	align-items: center;
+	align-items: baseline;
 	gap: 8px;
 	color: var(--ic-text);
-	font: 700 30px/1 var(--ic-font-heading);
+}
+
+.icademie-annonce__reviews-average .icademie-annonce__icon {
+	align-self: center;
+}
+
+.icademie-annonce__reviews-average-value {
+	font: 600 36px/1 var(--ic-font-heading);
+}
+
+.icademie-annonce__reviews-average-max {
+	color: var(--ic-muted);
+	font-size: 15px;
 }
 
 .icademie-annonce__reviews-count {
 	margin-top: -4px;
 	color: var(--ic-muted);
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .icademie-annonce__subnotes {
@@ -1085,45 +1176,49 @@ html.icademie-annonce-barre body {
 	gap: 10px;
 }
 
+/* Critère et note sur une ligne, barre dessous. */
 .icademie-annonce__subnote {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
 }
 
 .icademie-annonce__subnote dt {
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	padding-right: 3em;
+	color: var(--ic-text);
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-annonce__subnote dd {
 	display: flex;
 	align-items: center;
-	gap: 10px;
 }
 
 .icademie-annonce__bar {
 	flex: 1;
-	height: 6px;
+	height: 8px;
 	overflow: hidden;
-	border-radius: 3px;
+	border-radius: 4px;
 	background: var(--ic-track);
 }
 
 .icademie-annonce__bar > span {
 	display: block;
 	height: 100%;
-	border-radius: 3px;
-	background: var(--ic-text-2);
+	border-radius: 4px;
+	background: var(--ic-primary);
 }
 
 .icademie-annonce__subnote-value {
-	flex: none;
-	min-width: 2.2em;
+	position: absolute;
+	top: 0;
+	right: 0;
 	color: var(--ic-text);
-	font-size: 12px;
-	font-weight: 600;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 20px;
 	text-align: right;
 }
 
@@ -1136,15 +1231,15 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce__reviews-empty {
 	grid-column: 1 / -1;
-	color: var(--ic-text-2);
+	color: var(--ic-text);
 }
 
 .icademie-annonce__review article {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
 	height: 100%;
-	padding: 14px;
+	padding: 16px;
 	border: 1px solid var(--ic-border);
 	border-radius: 8px;
 	background: var(--ic-surface);
@@ -1157,37 +1252,39 @@ html.icademie-annonce-barre body {
 .icademie-annonce__review-head {
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	gap: 12px;
 }
 
 .icademie-annonce__avatar {
 	display: grid;
 	flex: none;
 	place-items: center;
-	width: 40px;
-	height: 40px;
+	width: 44px;
+	height: 44px;
 	border-radius: 50%;
 	background: var(--ic-primary-light);
-	color: var(--ic-primary-dark);
-	font: 600 14px/1 var(--ic-font-heading);
+	color: var(--ic-primary);
+	font: 700 16px/1 var(--ic-font);
 }
 
 .icademie-annonce__review-author {
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
+	gap: 2px;
 	min-width: 0;
 }
 
 .icademie-annonce__review-name {
 	color: var(--ic-text);
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 20px;
 }
 
 .icademie-annonce__review-date {
 	color: var(--ic-muted);
-	font-size: 11px;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-annonce__review-rating {
@@ -1196,21 +1293,21 @@ html.icademie-annonce-barre body {
 	align-items: center;
 	gap: 4px;
 	margin-left: auto;
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 600;
+	color: var(--ic-text);
+	font-size: 14px;
+	font-weight: 700;
 }
 
 .icademie-annonce__review-pending {
-	color: #7c2d12;
-	font-size: 12px;
+	color: #8a5a00;
+	font-size: 14px;
 	font-style: italic;
 }
 
 .icademie-annonce__review-text {
-	color: var(--ic-text-2);
-	font-size: 13px;
-	line-height: 1.55;
+	color: var(--ic-text);
+	font-size: 15px;
+	line-height: 22px;
 	overflow-wrap: break-word;
 }
 
@@ -1235,9 +1332,13 @@ html.icademie-annonce-barre body {
 .icademie-annonce__similar {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
-	padding-top: 28px;
-	border-top: 1px solid var(--ic-divider);
+	gap: 14px;
+	padding-top: 16px;
+}
+
+.icademie-annonce .icademie-annonce__similar .icademie-annonce__zone-title {
+	font-size: 30px;
+	line-height: 38px;
 }
 
 .icademie-annonce__similar-head {
@@ -1287,12 +1388,12 @@ html.icademie-annonce-barre body {
 	width: 8px;
 	height: 8px;
 	border-radius: 4px;
-	background: var(--ic-track);
+	background: #c9c3b6;
 	transition: width 0.2s ease;
 }
 
 .icademie-annonce__dots > span.is-active {
-	width: 20px;
+	width: 22px;
 	background: var(--ic-primary);
 }
 
@@ -1308,7 +1409,7 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__dialog::backdrop {
-	background: rgba(15, 23, 42, 0.6);
+	background: rgba(15, 34, 51, 0.6);
 }
 
 .icademie-annonce__dialog-head {
@@ -1320,7 +1421,7 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce .icademie-annonce__dialog-title {
 	color: var(--ic-text);
-	font: 600 18px/1.25 var(--ic-font-heading);
+	font: 600 22px/28px var(--ic-font-heading);
 	letter-spacing: 0;
 }
 
@@ -1356,13 +1457,13 @@ html.icademie-annonce-barre body {
 	margin: auto;
 	padding: 20px 22px 22px;
 	overflow-y: auto;
-	border-radius: 12px;
-	box-shadow: 0 16px 48px rgba(15, 23, 42, 0.25);
+	border-radius: 16px;
+	box-shadow: 0 16px 48px rgba(15, 34, 51, 0.25);
 }
 
 .icademie-annonce__share-title {
-	color: var(--ic-text-2);
-	font-size: 13px;
+	color: var(--ic-muted);
+	font-size: 15px;
 }
 
 .icademie-annonce__share-list {
@@ -1383,7 +1484,7 @@ html.icademie-annonce-barre body {
 	border-radius: 8px;
 	background: var(--ic-surface);
 	color: var(--ic-text);
-	font: 500 13px/1.25 var(--ic-font);
+	font: 700 15px/1.25 var(--ic-font);
 	text-align: left;
 	text-decoration: none;
 	cursor: pointer;
@@ -1438,13 +1539,14 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce__share-status {
 	min-height: 1.45em;
-	color: var(--ic-text-2);
-	font-size: 12px;
+	color: var(--ic-eco);
+	font-size: 14px;
+	font-weight: 700;
 }
 
 /* Visionneuse des photos. */
 .icademie-annonce .icademie-annonce__dialog--lightbox {
-	background: #0b1220;
+	background: #0f2233;
 	color: #fff;
 }
 
@@ -1458,7 +1560,7 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__dialog--lightbox::backdrop {
-	background: #0b1220;
+	background: #0f2233;
 }
 
 .icademie-annonce__lightbox-head {
@@ -1591,9 +1693,9 @@ html.icademie-annonce-barre body {
 	gap: 10px;
 	min-height: 76px;
 	padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-	border-top: 2px solid var(--ic-primary);
+	border-top: 1px solid var(--ic-border);
 	background: var(--ic-surface);
-	box-shadow: 0 -6px 18px rgba(15, 23, 42, 0.14);
+	box-shadow: var(--ic-shadow-float);
 }
 
 .icademie-annonce-bar__price {
@@ -1606,22 +1708,22 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce-bar__amount {
-	color: var(--ic-primary-dark);
-	font: 700 16px/1.2 var(--ic-font-heading);
+	color: var(--ic-text);
+	font: 700 22px/26px var(--ic-font);
 }
 
 .icademie-annonce-bar__unit {
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-muted);
+	font-size: 14px;
+	font-weight: 400;
 }
 
 .icademie-annonce-bar__dates {
 	flex-basis: 100%;
 	overflow: hidden;
 	color: var(--ic-muted);
-	font-size: 11px;
-	line-height: 1.3;
+	font-size: 14px;
+	line-height: 20px;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
@@ -1653,8 +1755,8 @@ html.icademie-annonce-barre body {
 	}
 
 	.icademie-annonce .icademie-annonce__title {
-		font-size: 22px;
-		line-height: 1.2;
+		font-size: 32px;
+		line-height: 38px;
 	}
 
 	.icademie-annonce__header {
@@ -1682,6 +1784,16 @@ html.icademie-annonce-barre body {
 		grid-template-columns: repeat(5, minmax(0, 1fr));
 		grid-template-rows: minmax(0, 1fr) 72px;
 		height: 400px;
+		overflow: visible;
+		border-radius: 0;
+	}
+
+	.icademie-annonce__gallery .icademie-annonce__gallery-item {
+		border-radius: 8px;
+	}
+
+	.icademie-annonce__gallery .icademie-annonce__gallery-item:first-child {
+		border-radius: 16px;
 	}
 
 	.icademie-annonce__gallery .icademie-annonce__gallery-item {
@@ -1716,7 +1828,6 @@ html.icademie-annonce-barre body {
 	/* Module sous la galerie, en pleine largeur, sur 2 colonnes. */
 	.icademie-annonce__booking-card {
 		position: static;
-		box-shadow: none;
 	}
 
 	.icademie-annonce__booking-form {
@@ -1731,31 +1842,32 @@ html.icademie-annonce-barre body {
 	}
 
 	.icademie-annonce__booking-side .icademie-annonce__lines {
-		padding: 12px;
+		padding: 12px 14px;
 		border: 0;
 		border-radius: 8px;
 		background: var(--ic-primary-light);
 	}
 
 	.icademie-annonce__booking-side .icademie-annonce__line--total {
-		border-top-color: #9db5e5;
+		border-top-color: var(--ic-primary-border);
 	}
 
 	.icademie-annonce__note {
 		margin-top: -4px;
 	}
 
-	.icademie-annonce__zone,
-	.icademie-annonce__similar {
-		padding-top: 24px;
+	.icademie-annonce .icademie-annonce__zone-title {
+		font-size: 24px;
+		line-height: 30px;
 	}
 
-	.icademie-annonce .icademie-annonce__zone-title {
-		font-size: 18px;
+	.icademie-annonce .icademie-annonce__similar .icademie-annonce__zone-title {
+		font-size: 26px;
+		line-height: 32px;
 	}
 
 	.icademie-annonce__spec {
-		padding-left: 46px;
+		padding-left: 42px;
 	}
 
 	.icademie-annonce__spec-icon {
@@ -1806,10 +1918,6 @@ html.icademie-annonce-barre body {
 	.icademie-annonce__reviews-average,
 	.icademie-annonce__reviews-count {
 		grid-column: 1;
-	}
-
-	.icademie-annonce__reviews-average {
-		font-size: 28px;
 	}
 
 	.icademie-annonce__reviews-count {
@@ -1932,8 +2040,8 @@ html.icademie-annonce-barre body {
 		border-radius: 4px;
 		background: rgba(255, 255, 255, 0.94);
 		color: var(--ic-text);
-		font-size: 12px;
-		font-weight: 600;
+		font-size: 14px;
+		font-weight: 700;
 		font-variant-numeric: tabular-nums;
 		pointer-events: none;
 	}
@@ -1959,8 +2067,8 @@ html.icademie-annonce-barre body {
 		border: 0;
 		border-radius: 50%;
 		background: var(--ic-surface);
-		color: var(--ic-text-2);
-		box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+		color: var(--ic-text);
+		box-shadow: 0 1px 4px rgba(15, 34, 51, 0.25);
 	}
 
 	.icademie-annonce .icademie-annonce__share--gallery[hidden] {
@@ -1968,11 +2076,12 @@ html.icademie-annonce-barre body {
 	}
 
 	.icademie-annonce .icademie-annonce__title {
-		font-size: 19px;
+		font-size: 30px;
+		line-height: 36px;
 	}
 
 	.icademie-annonce__meta {
-		font-size: 12px;
+		font-size: 15px;
 	}
 
 	/* Module de réservation : ouvert en plein écran par la barre du bas (avec le script). */
@@ -1996,13 +2105,10 @@ html.icademie-annonce-barre body {
 		background: none;
 	}
 
-	.icademie-annonce__zone,
-	.icademie-annonce__similar {
-		padding-top: 20px;
-	}
-
-	.icademie-annonce .icademie-annonce__zone-title {
-		font-size: 17px;
+	.icademie-annonce .icademie-annonce__zone-title,
+	.icademie-annonce .icademie-annonce__similar .icademie-annonce__zone-title {
+		font-size: 24px;
+		line-height: 30px;
 	}
 
 	.icademie-annonce__specs {
@@ -2011,19 +2117,19 @@ html.icademie-annonce-barre body {
 	}
 
 	.icademie-annonce__spec {
-		min-height: 52px;
+		min-height: 56px;
 		padding: 6px 10px 6px 40px;
 	}
 
 	.icademie-annonce__spec-icon {
-		left: 8px;
-		width: 24px;
-		height: 24px;
+		left: 10px;
+		width: 20px;
+		height: 20px;
 	}
 
 	.icademie-annonce__spec-icon svg {
-		width: 15px;
-		height: 15px;
+		width: 20px;
+		height: 20px;
 	}
 
 	/* Listes repliées : bouton pleine largeur sous la liste. */
@@ -2078,7 +2184,7 @@ html.icademie-annonce-barre body {
 
 	.icademie-annonce__legend {
 		gap: 6px 14px;
-		font-size: 11px;
+		font-size: 14px;
 	}
 
 	.icademie-annonce__conditions {
@@ -2114,17 +2220,17 @@ html.icademie-annonce-barre body {
 		gap: 12px 10px;
 	}
 
-	.icademie-annonce__reviews-average {
-		font-size: 26px;
-	}
-
 	.icademie-annonce__subnotes {
 		flex-basis: 100%;
 		gap: 10px 16px;
 	}
 
 	.icademie-annonce__subnote dt {
-		font-size: 11px;
+		font-size: 13px;
+	}
+
+	.icademie-annonce__subnote-value {
+		font-size: 13px;
 	}
 
 	.icademie-annonce__review-list {

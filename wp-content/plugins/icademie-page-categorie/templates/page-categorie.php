@@ -102,6 +102,7 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 	<?php if ( $search ) : ?>
 		<section class="icademie-categorie__search" aria-label="<?php esc_attr_e( 'Modifier la recherche', 'icademie-page-categorie' ); ?>" data-search>
 			<button type="button" class="icademie-categorie__summary" aria-haspopup="dialog" data-search-open hidden>
+				<span class="icademie-categorie__summary-label" aria-hidden="true"><?php esc_html_e( 'Votre recherche', 'icademie-page-categorie' ); ?></span>
 				<span class="icademie-categorie__summary-icon"><?php echo call_user_func( $icon, 'search', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?></span>
 				<span class="icademie-categorie__summary-text">
 					<span class="icademie-categorie__sr"><?php esc_html_e( 'Modifier la recherche :', 'icademie-page-categorie' ); ?> </span>
@@ -339,6 +340,8 @@ $filters_hidden = Icademie_Page_Categorie_Filters::without_filters( $data['param
 						}
 						?>
 					</p>
+					<?php $progress = $pagination['total'] ? min( 100, round( $pagination['shown'] / $pagination['total'] * 100, 1 ) ) : 100; ?>
+					<span class="icademie-categorie__more-bar" aria-hidden="true"><span data-more-bar style="width:<?php echo esc_attr( (string) $progress ); ?>%"></span></span>
 					<?php if ( '' !== $pagination['next'] ) : ?>
 						<a class="icademie-categorie__button icademie-categorie__button--secondary icademie-categorie__more-link" href="<?php echo esc_url( $pagination['next'] ); ?>" data-more-link><?php esc_html_e( 'Afficher plus de bateaux', 'icademie-page-categorie' ); ?></a>
 					<?php endif; ?>

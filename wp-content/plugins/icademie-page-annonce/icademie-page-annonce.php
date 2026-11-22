@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Page annonce
- * Description:       Fiche d'un bateau (page produit) intégrée d'après les zonings « Produit » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête (type de bateau, port de départ, note, partage sur les réseaux sociaux), galerie photos, module de réservation (dates, passagers, prix, frais de service de 10 %, caution, total mis à jour selon le nombre de jours), caractéristiques, description, équipements, calendrier des disponibilités (jours des commandes déjà passées), conditions de location, carte du port de départ, avis et bateaux similaires. Les six conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) se choisissent dans le formulaire du vendeur et sur la fiche du produit ; la position de chaque port, sur la fiche de sa catégorie. L'en-tête et le pied de page restent ceux du thème.
- * Version:           1.0.0
+ * Description:       Fiche d'un bateau (page produit) intégrée d'après les zonings « Produit » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête (type de bateau, port de départ, note, partage sur les réseaux sociaux), galerie photos, module de réservation (dates, passagers, prix, frais de service de 10 %, caution, total mis à jour selon le nombre de jours), caractéristiques, description, équipements, calendrier des disponibilités (jours des commandes déjà passées), conditions de location, carte du port de départ, avis et bateaux similaires. Les six conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) se choisissent dans le formulaire du vendeur et sur la fiche du produit ; la position de chaque port, sur la fiche de sa catégorie. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil, icademie-page-categorie, icademie-dates-produit
@@ -23,7 +23,8 @@ require_once __DIR__ . '/includes/class-icademie-annonce-view.php';
  *
  * Le bloc « Page annonce » (icademie/page-annonce) affiche tout le contenu de la fiche, du fil
  * d'Ariane aux bateaux similaires : zones 2 à 13 des zonings. L'en-tête et le pied de page (zones 1
- * et 14 ou 15, communs à tout le site) restent ceux du thème.
+ * et 14 ou 15, communs à tout le site) sont ceux du thème, ou ceux de
+ * l'extension « Icademie – En-tête et pied de page » qui les remplace.
  *
  * Les fiches des bateaux utilisent automatiquement le modèle « Annonce de bateau SailingLoc »
  * (en-tête du thème, messages de la boutique, ce bloc, pied de page du thème). Un modèle créé dans
@@ -32,7 +33,7 @@ require_once __DIR__ . '/includes/class-icademie-annonce-view.php';
  */
 final class Icademie_Page_Annonce {
 
-	const VERSION = '1.0.0';
+	const VERSION = '1.1.0';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;
@@ -78,17 +79,12 @@ final class Icademie_Page_Annonce {
 		// Cartes des bateaux similaires : celles des pages catégorie.
 		$dependencies = class_exists( 'Icademie_Page_Categorie' ) && wp_style_is( Icademie_Page_Categorie::HANDLE, 'registered' ) ? array( Icademie_Page_Categorie::HANDLE ) : array();
 
-		wp_register_style( self::HANDLE, plugins_url( 'assets/page-annonce.css', __FILE__ ), $dependencies, self::VERSION );
-
-		$font = self::font_url();
-
-		// Police déjà déclarée par la feuille des pages catégorie, chargée avant celle-ci.
-		if ( '' !== $font && ! $dependencies ) {
-			wp_add_inline_style(
-				self::HANDLE,
-				'@font-face{font-family:"Space Grotesk";font-style:normal;font-weight:300 700;font-display:swap;src:url("' . esc_url( $font ) . '") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}'
-			);
+		// Polices de la charte : feuille commune de l'extension de la page d'accueil.
+		if ( self::has_fonts() ) {
+			$dependencies[] = Icademie_Page_Accueil::FONTS_HANDLE;
 		}
+
+		wp_register_style( self::HANDLE, plugins_url( 'assets/page-annonce.css', __FILE__ ), $dependencies, self::VERSION );
 
 		wp_register_script(
 			self::HANDLE,
@@ -189,29 +185,21 @@ final class Icademie_Page_Annonce {
 	}
 
 	/**
-	 * Police des titres, hébergée par l'extension de la page d'accueil.
+	 * Polices de la charte disponibles (extension de la page d'accueil) ?
 	 *
-	 * @return string Adresse, ou vide sans cette extension.
+	 * @return bool
 	 */
-	private static function font_url() {
-		if ( ! class_exists( 'Icademie_Page_Accueil' ) ) {
-			return '';
-		}
-
-		return plugins_url( 'assets/fonts/space-grotesk-latin-wght-normal.woff2', Icademie_Page_Accueil::FILE );
+	private static function has_fonts() {
+		return class_exists( 'Icademie_Page_Accueil' ) && defined( 'Icademie_Page_Accueil::FONTS_HANDLE' );
 	}
 
 	/**
-	 * Précharge la police des titres sur les fiches des bateaux (titre visible dès l'arrivée).
+	 * Précharge les polices sur les fiches des bateaux (titre visible dès l'arrivée).
 	 */
 	public static function preload_font() {
-		$font = self::font_url();
-
-		if ( '' === $font || ! is_singular( 'product' ) ) {
-			return;
+		if ( self::has_fonts() && is_singular( 'product' ) ) {
+			Icademie_Page_Accueil::print_font_preloads();
 		}
-
-		printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( $font ) );
 	}
 
 	/**
@@ -356,7 +344,7 @@ final class Icademie_Page_Annonce {
 
 		printf(
 			'<div class="notice notice-success is-dismissible"><p>%1$s</p><p>%2$s</p></div>',
-			esc_html__( 'Les fiches des bateaux utilisent maintenant le modèle « Annonce de bateau SailingLoc ». L\'en-tête et le pied de page restent ceux du thème.', 'icademie-page-annonce' ),
+			esc_html__( 'Les fiches des bateaux utilisent maintenant le modèle « Annonce de bateau SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « Icademie – En-tête et pied de page »).', 'icademie-page-annonce' ),
 			wp_kses(
 				sprintf(
 					/* translators: %s: adresse de la liste des catégories de produits. */
@@ -425,6 +413,11 @@ final class Icademie_Page_Annonce {
 			'expand'        => '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
 		);
 
+		// Icônes des badges (écologie, skipper), communes aux pages.
+		if ( method_exists( 'Icademie_Page_Accueil_Zones', 'badge_icons' ) ) {
+			$paths += Icademie_Page_Accueil_Zones::badge_icons();
+		}
+
 		if ( ! isset( $paths[ $name ] ) ) {
 			return '';
 		}
@@ -434,6 +427,19 @@ final class Icademie_Page_Annonce {
 			(int) $size,
 			$paths[ $name ]
 		);
+	}
+
+	/**
+	 * Équipement écologique (charte : vert « varech », jamais décoratif) : panneaux solaires,
+	 * éolienne, produits d'entretien bio.
+	 *
+	 * @param string $name Équipement.
+	 * @return bool
+	 */
+	public static function is_eco_equipment( $name ) {
+		$name = remove_accents( function_exists( 'mb_strtolower' ) ? mb_strtolower( $name ) : strtolower( $name ) );
+
+		return (bool) preg_match( '/(?<![a-z])(solaire|eolien|bio)/', $name );
 	}
 
 	/**
@@ -451,6 +457,7 @@ final class Icademie_Page_Annonce {
 			'drop'     => array( 'douche', 'eau', 'dessalinisateur', 'toilette', 'wc', 'evier' ),
 			'lifebuoy' => array( 'gilet', 'bouee', 'securite', 'radeau', 'survie', 'extincteur', 'trousse' ),
 			'sun'      => array( 'bimini', 'taud', 'soleil', 'parasol', 'solarium', 'bain de soleil' ),
+			'solar'    => array( 'solaire' ),
 			'plug'     => array( 'usb', 'prise', '220', '12v', 'electrique', 'panneau', 'chargeur', 'onduleur', 'generateur' ),
 			'fish'     => array( 'peche', 'canne' ),
 			'wheel'    => array( 'pilote', 'barre', 'propulseur', 'guindeau', 'winch' ),

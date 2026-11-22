@@ -473,7 +473,7 @@ $required = '<span class="icademie-contact__required" aria-hidden="true">*</span
 
 	<?php /* Zone 8 : assistance pendant la location, toujours visible en bas de l'écran. */ ?>
 	<section class="icademie-contact__assistance" aria-labelledby="icademie-contact-assistance-titre">
-		<span class="icademie-contact__assistance-icon"><?php echo Icademie_Page_Contact::icon( 'warning', 28 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG interne. ?></span>
+		<span class="icademie-contact__assistance-icon"><?php echo Icademie_Page_Contact::icon( 'lifebuoy', 32 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG interne. ?></span>
 		<div class="icademie-contact__assistance-text">
 			<h2 class="icademie-contact__assistance-title" id="icademie-contact-assistance-titre"><?php esc_html_e( 'Assistance pendant la location', 'icademie-page-contact' ); ?></h2>
 			<p>

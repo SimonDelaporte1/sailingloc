@@ -1,9 +1,9 @@
 /* Icademie – Page catégorie
  *
  * Mise en page d'après les zonings « Catégorie » : ordinateur (1440 px), tablette (768 px) et
- * smartphone (390 px). Mêmes couleurs, polices, tailles et arrondis que la page d'accueil ; les
- * cadres pointillés, les numéros et les descriptions des zones (repères de maquette) ne sont pas
- * repris.
+ * smartphone (390 px). Habillage d'après la charte graphique et les maquettes SailingLoc, comme la
+ * page d'accueil : fond craie, encre marine, bleu Manche pour l'action, vert varech pour
+ * l'écologie ; titres en Fraunces, texte en Atkinson Hyperlegible.
  *
  * La mise en page suit la largeur du bloc (requêtes de conteneur) : « ordinateur » à partir de
  * 1024 px, « tablette » de 600 à 1023 px, « smartphone » en dessous. La classe « has-js » (posée par
@@ -12,33 +12,38 @@
  */
 
 .icademie-categorie {
-	--ic-primary: #1d5fd1;
-	--ic-primary-dark: #173f8a;
-	--ic-primary-light: #e3ecfb;
-	--ic-primary-hover: #d3e1f8;
-	--ic-primary-border: #b9cdf1;
-	--ic-text: #1f2933;
-	--ic-text-2: #3e4c59;
-	--ic-muted: #52606d;
-	--ic-placeholder: #616e7c;
-	/* Zoning : #8a96a3, un peu foncé pour un contraste de 3:1 sur fond blanc (WCAG 1.4.11). */
-	--ic-field-border: #7b8794;
-	--ic-border: #cbd2d9;
-	--ic-divider: #dde2e8;
-	--ic-surface: #fff;
-	--ic-panel: #fafbfc;
-	--ic-box: #e9ecf0;
-	--ic-track: #c9d1da;
-	--ic-star: #e3a008;
-	--ic-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-	--ic-font-heading: "Space Grotesk", var(--ic-font);
+	/* Couleurs de la charte (nom du jeton en commentaire). */
+	--ic-primary: #1d5a80; /* manche : action */
+	--ic-primary-dark: #164766; /* manche-strong : survol */
+	--ic-primary-light: #e4eef3; /* ecume */
+	--ic-primary-hover: #d3e3eb;
+	--ic-primary-border: #b7cddb;
+	--ic-text: #0f2233; /* encre */
+	--ic-text-2: #0f2233;
+	--ic-muted: #4a5866; /* encre-muted */
+	--ic-placeholder: #4a5866;
+	--ic-field-border: #76818c; /* controle : 3,6:1 sur craie */
+	--ic-border: #ddd8ce; /* trait */
+	--ic-divider: #ddd8ce;
+	--ic-surface: #fff; /* blanc */
+	--ic-page: #f7f5f0; /* craie */
+	--ic-panel: #f7f5f0;
+	--ic-box: #ece8e0;
+	--ic-track: #ddd8ce;
+	--ic-star: #8a5a00; /* ambre */
+	--ic-eco: #2e6b4f; /* varech */
+	--ic-eco-light: #e3efe7; /* varech-soft */
+	--ic-shadow-card: 0 1px 2px rgba(15, 34, 51, 0.08), 0 4px 12px rgba(15, 34, 51, 0.06);
+	--ic-shadow-card-hover: 0 2px 4px rgba(15, 34, 51, 0.1), 0 8px 20px rgba(15, 34, 51, 0.1);
+	--ic-font: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+	--ic-font-heading: Fraunces, Georgia, "Times New Roman", serif;
 	--ic-gutter: 24px;
 
 	container: icademie-categorie / inline-size;
-	background: var(--ic-surface);
+	background: var(--ic-page);
 	color: var(--ic-text);
 	font-family: var(--ic-font);
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 400;
 	line-height: 1.45;
 	-webkit-font-smoothing: antialiased;
@@ -115,11 +120,11 @@ html.icademie-categorie-panneau {
 /* Rappel aux gestionnaires : contenu à compléter. */
 .icademie-categorie__setup {
 	padding: 10px 14px;
-	border: 1px dashed #c2410c;
+	border: 1px dashed #8a5a00;
 	border-radius: 8px;
-	background: #fffbeb;
-	color: #78350f;
-	font-size: 12px;
+	background: #fdf1d8;
+	color: #8a5a00;
+	font-size: 14px;
 }
 
 .icademie-categorie__setup ul {
@@ -130,7 +135,7 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie .icademie-categorie__setup a {
 	color: inherit;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 /* Boutons. */
@@ -142,13 +147,13 @@ html.icademie-categorie-panneau {
 	min-height: 44px;
 	margin: 0;
 	padding: 0 20px;
-	border: 0;
+	border: 1.5px solid var(--ic-primary);
 	border-radius: 8px;
 	background: var(--ic-primary);
 	color: #fff;
 	font-family: var(--ic-font);
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
 	line-height: 1.2;
 	text-decoration: none;
 	white-space: nowrap;
@@ -156,29 +161,30 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie .icademie-categorie__button:hover {
+	border-color: var(--ic-primary-dark);
 	background: var(--ic-primary-dark);
 	color: #fff;
 }
 
 .icademie-categorie .icademie-categorie__button--secondary {
-	border: 1.5px solid var(--ic-primary);
+	padding: 0 18px;
 	background: var(--ic-surface);
 	color: var(--ic-primary);
 }
 
 .icademie-categorie .icademie-categorie__button--secondary:hover {
-	border-color: var(--ic-primary-dark);
+	border-color: var(--ic-primary);
 	background: var(--ic-primary-light);
 	color: var(--ic-primary-dark);
 }
 
 /* Champs. */
 .icademie-categorie .icademie-categorie__label {
-	color: var(--ic-primary-dark);
-	font-size: 11px;
-	font-weight: 600;
-	letter-spacing: 0.05em;
-	line-height: 1.2;
+	color: var(--ic-text);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
 	text-transform: uppercase;
 }
 
@@ -188,14 +194,14 @@ html.icademie-categorie-panneau {
 	height: 44px;
 	min-height: 44px;
 	margin: 0;
-	padding: 0 12px;
-	border: 1px solid var(--ic-field-border);
-	border-radius: 6px;
+	padding: 0 14px;
+	border: 1.5px solid var(--ic-field-border);
+	border-radius: 8px;
 	background-color: var(--ic-surface);
 	box-shadow: none;
 	color: var(--ic-text);
 	font-family: var(--ic-font);
-	font-size: 13px;
+	font-size: 16px;
 	font-weight: 400;
 	line-height: 1.2;
 }
@@ -208,13 +214,13 @@ html.icademie-categorie-panneau {
 .icademie-categorie .icademie-categorie__control:focus-visible {
 	border-color: var(--ic-primary);
 	outline: 2px solid var(--ic-primary);
-	outline-offset: 1px;
+	outline-offset: 2px;
 }
 
 .icademie-categorie select.icademie-categorie__control {
 	padding-right: 36px;
 	appearance: none;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e4c59' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f2233' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 	background-position: right 12px center;
 	background-repeat: no-repeat;
 	background-size: 16px;
@@ -236,8 +242,8 @@ html.icademie-categorie-panneau {
 	flex-wrap: wrap;
 	align-items: center;
 	color: var(--ic-muted);
-	font-size: 13px;
-	line-height: 1.4;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-categorie__crumb + .icademie-categorie__crumb::before {
@@ -246,27 +252,22 @@ html.icademie-categorie-panneau {
 	color: var(--ic-muted);
 }
 
-.icademie-categorie .icademie-categorie__crumb a {
-	text-decoration: none;
-}
-
 .icademie-categorie .icademie-categorie__crumb a:hover {
-	text-decoration: underline;
+	color: var(--ic-primary-dark);
 }
 
 .icademie-categorie__crumb [aria-current] {
 	color: var(--ic-text);
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .icademie-categorie .icademie-categorie__back {
 	display: none;
 	align-items: center;
 	gap: 4px;
-	min-height: 32px;
-	font-size: 13px;
-	font-weight: 500;
-	text-decoration: none;
+	min-height: 44px;
+	font-size: 15px;
+	font-weight: 700;
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -280,7 +281,7 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie__head.has-image {
-	grid-template-columns: minmax(0, 1fr) 320px;
+	grid-template-columns: minmax(0, 1fr) 240px;
 }
 
 .icademie-categorie__head-text {
@@ -288,41 +289,46 @@ html.icademie-categorie-panneau {
 	flex-wrap: wrap;
 	align-items: center;
 	align-content: center;
-	gap: 8px 14px;
+	gap: 10px 14px;
 }
 
 /* Hauteur du visuel seulement quand il y en a un (boutique, recherche : pas de blanc). */
 .icademie-categorie__head.has-image .icademie-categorie__head-text {
-	min-height: 118px;
+	min-height: 150px;
 }
 
 .icademie-categorie .icademie-categorie__title {
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 28px;
+	font-size: 40px;
 	font-weight: 600;
 	letter-spacing: 0;
-	line-height: 1.15;
+	line-height: 48px;
 	text-transform: none;
 }
 
+/* Badge « écume » : nombre de bateaux. */
 .icademie-categorie__count {
+	display: inline-flex;
 	flex: none;
-	padding: 3px 8px;
-	border-radius: 4px;
-	background: var(--ic-box);
-	color: var(--ic-text-2);
-	font-size: 11px;
-	font-weight: 500;
-	line-height: 1.3;
+	align-items: center;
+	height: 28px;
+	padding: 0 12px;
+	border-radius: 999px;
+	background: var(--ic-primary-light);
+	color: var(--ic-primary);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .icademie-categorie__intro {
 	flex-basis: 100%;
-	max-width: 760px;
-	color: var(--ic-muted);
-	font-size: 13px;
-	line-height: 1.5;
+	max-width: 720px;
+	color: var(--ic-text);
+	font-size: 17px;
+	line-height: 26px;
 }
 
 .icademie-categorie__intro > * + * {
@@ -331,13 +337,13 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie__head-media {
 	position: relative;
-	min-height: 118px;
+	min-height: 150px;
 	overflow: hidden;
-	border-radius: 6px;
+	border-radius: 16px;
 	background: var(--ic-box);
 }
 
-.icademie-categorie__head-media img {
+.icademie-categorie .icademie-categorie__head-media img {
 	position: absolute;
 	inset: 0;
 	display: block;
@@ -385,10 +391,9 @@ html.icademie-categorie-panneau {
 	display: flex;
 	align-items: flex-end;
 	gap: 12px;
-	padding: 14px 16px;
-	border: 1px solid var(--ic-border);
-	border-radius: 10px;
-	background: var(--ic-panel);
+	padding: 16px 20px 20px;
+	border-radius: 16px;
+	background: var(--ic-primary-light);
 }
 
 .icademie-categorie__field {
@@ -425,12 +430,12 @@ html.icademie-categorie-panneau {
 	overflow: hidden;
 	border: 0;
 	background: var(--ic-surface);
-	box-shadow: 0 10px 40px rgba(15, 23, 42, 0.25);
+	box-shadow: 0 10px 40px rgba(15, 34, 51, 0.25);
 	color: var(--ic-text);
 }
 
 .icademie-categorie__dialog::backdrop {
-	background: rgba(15, 23, 42, 0.45);
+	background: rgba(15, 34, 51, 0.55);
 }
 
 .icademie-categorie__dialog-head {
@@ -446,9 +451,9 @@ html.icademie-categorie-panneau {
 .icademie-categorie .icademie-categorie__dialog-title {
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: 600;
-	line-height: 1.2;
+	line-height: 26px;
 	text-transform: none;
 }
 
@@ -512,9 +517,9 @@ html.icademie-categorie-panneau {
 /* Zone 5 : filtres. */
 .icademie-categorie__sidebar {
 	min-width: 0;
-	padding: 4px 16px 16px;
+	padding: 8px 20px 20px;
 	border: 1px solid var(--ic-border);
-	border-radius: 10px;
+	border-radius: 8px;
 	background: var(--ic-surface);
 }
 
@@ -522,9 +527,9 @@ html.icademie-categorie-panneau {
 	padding: 12px 0 2px;
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 16px;
+	font-size: 20px;
 	font-weight: 600;
-	line-height: 1.2;
+	line-height: 26px;
 	text-transform: none;
 }
 
@@ -542,9 +547,9 @@ html.icademie-categorie-panneau {
 	padding: 0;
 	color: var(--ic-text);
 	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: 0.05em;
-	line-height: 1.2;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
 	text-transform: uppercase;
 }
 
@@ -560,18 +565,18 @@ html.icademie-categorie-panneau {
 .icademie-categorie__check {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	min-height: 28px;
-	color: var(--ic-text-2);
-	font-size: 13px;
-	line-height: 1.3;
+	color: var(--ic-text);
+	font-size: 15px;
+	line-height: 20px;
 	cursor: pointer;
 }
 
 .icademie-categorie__check input {
 	flex: none;
-	width: 16px;
-	height: 16px;
+	width: 18px;
+	height: 18px;
 	margin: 0;
 	accent-color: var(--ic-primary);
 	cursor: pointer;
@@ -581,8 +586,8 @@ html.icademie-categorie-panneau {
 	display: inline-block;
 	margin-top: 6px;
 	color: var(--ic-primary);
-	font-size: 12px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
 	list-style: none;
 	cursor: pointer;
 }
@@ -620,8 +625,6 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie .icademie-categorie__price-field .icademie-categorie__control {
-	height: 36px;
-	min-height: 36px;
 	padding-right: 26px;
 	-moz-appearance: textfield;
 }
@@ -635,18 +638,18 @@ html.icademie-categorie-panneau {
 .icademie-categorie__price-unit {
 	position: absolute;
 	top: 50%;
-	right: 10px;
+	right: 12px;
 	color: var(--ic-muted);
-	font-size: 12px;
+	font-size: 15px;
 	transform: translateY(-50%);
 	pointer-events: none;
 }
 
 .icademie-categorie__range-output {
 	margin-bottom: 4px;
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-muted);
+	font-size: 14px;
+	font-weight: 400;
 }
 
 /* Curseur double : deux curseurs superposés, seules les poignées reçoivent le pointeur. */
@@ -699,7 +702,7 @@ html.icademie-categorie-panneau {
 	border: 2px solid var(--ic-primary);
 	border-radius: 50%;
 	background: var(--ic-surface);
-	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+	box-shadow: 0 1px 3px rgba(15, 34, 51, 0.25);
 	cursor: pointer;
 	pointer-events: auto;
 	-webkit-appearance: none;
@@ -711,7 +714,7 @@ html.icademie-categorie-panneau {
 	border: 2px solid var(--ic-primary);
 	border-radius: 50%;
 	background: var(--ic-surface);
-	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+	box-shadow: 0 1px 3px rgba(15, 34, 51, 0.25);
 	cursor: pointer;
 	pointer-events: auto;
 }
@@ -734,23 +737,23 @@ html.icademie-categorie-panneau {
 .icademie-categorie__stepper {
 	display: inline-flex;
 	align-items: center;
-	gap: 10px;
+	gap: 12px;
 }
 
 .icademie-categorie .icademie-categorie__step {
 	display: grid;
 	place-items: center;
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	margin: 0;
 	padding: 0;
-	border: 1px solid var(--ic-field-border);
+	border: 1.5px solid var(--ic-field-border);
 	border-radius: 8px;
 	background: var(--ic-surface);
-	color: var(--ic-text-2);
+	color: var(--ic-text);
 	font-family: var(--ic-font);
 	font-size: 18px;
-	font-weight: 500;
+	font-weight: 700;
 	line-height: 1;
 	cursor: pointer;
 }
@@ -766,12 +769,10 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie .icademie-categorie__stepper-input {
-	width: 56px;
-	height: 36px;
-	min-height: 36px;
+	width: 64px;
 	padding: 0 4px;
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 16px;
+	font-weight: 700;
 	text-align: center;
 	-moz-appearance: textfield;
 }
@@ -809,14 +810,14 @@ html.icademie-categorie-panneau {
 	align-items: center;
 	justify-content: center;
 	min-width: 36px;
-	height: 32px;
-	padding: 0 10px;
-	border: 1px solid var(--ic-field-border);
-	border-radius: 16px;
+	height: 36px;
+	padding: 0 12px;
+	border: 1.5px solid var(--ic-field-border);
+	border-radius: 999px;
 	background: var(--ic-surface);
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-text);
+	font-size: 14px;
+	font-weight: 400;
 	white-space: nowrap;
 }
 
@@ -827,8 +828,8 @@ html.icademie-categorie-panneau {
 .icademie-categorie__pill input:checked + span {
 	border-color: var(--ic-primary);
 	background: var(--ic-primary-light);
-	color: var(--ic-primary-dark);
-	font-weight: 600;
+	color: var(--ic-primary);
+	font-weight: 700;
 }
 
 .icademie-categorie__pill input:focus-visible + span {
@@ -845,8 +846,8 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie .icademie-categorie__reset {
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
 }
 
 .icademie-categorie .icademie-categorie__filters-submit {
@@ -879,9 +880,7 @@ html.icademie-categorie-panneau {
 	grid-template-columns: auto minmax(0, 1fr) auto;
 	align-items: center;
 	gap: 10px 12px;
-	min-height: 44px;
-	padding-bottom: 12px;
-	border-bottom: 1px solid var(--ic-divider);
+	min-height: 72px;
 }
 
 .icademie-categorie .icademie-categorie__filters-open {
@@ -892,8 +891,8 @@ html.icademie-categorie-panneau {
 .icademie-categorie__total {
 	grid-area: total;
 	color: var(--ic-text);
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 17px;
+	font-weight: 700;
 	white-space: nowrap;
 }
 
@@ -916,14 +915,14 @@ html.icademie-categorie-panneau {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	height: 30px;
+	height: 32px;
 	padding: 0 10px 0 12px;
 	border: 1px solid var(--ic-primary);
-	border-radius: 15px;
+	border-radius: 999px;
 	background: var(--ic-primary-light);
-	color: var(--ic-primary-dark);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-primary);
+	font-size: 13px;
+	font-weight: 700;
 	text-decoration: none;
 	white-space: nowrap;
 }
@@ -935,8 +934,8 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie .icademie-categorie__clear {
 	display: none;
-	font-size: 12px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
 	white-space: nowrap;
 }
 
@@ -949,9 +948,11 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie__sort-label {
-	color: var(--ic-muted);
+	color: var(--ic-text);
 	font-size: 12px;
-	font-weight: 500;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
 	white-space: nowrap;
 }
 
@@ -961,7 +962,7 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie .icademie-categorie__sort-select {
 	width: auto;
-	min-width: 170px;
+	min-width: 180px;
 }
 
 .icademie-categorie.has-js .icademie-categorie__sort-submit {
@@ -990,20 +991,19 @@ html.icademie-categorie-panneau {
 	flex-direction: column;
 	width: 100%;
 	overflow: hidden;
-	border: 1px solid var(--ic-border);
 	border-radius: 8px;
 	background: var(--ic-surface);
-	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	box-shadow: var(--ic-shadow-card);
+	transition: box-shadow 0.15s ease;
 }
 
 .icademie-categorie__card:hover {
-	border-color: var(--ic-primary-border);
-	box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+	box-shadow: var(--ic-shadow-card-hover);
 }
 
 .icademie-categorie__card-media {
 	position: relative;
-	aspect-ratio: 4 / 3;
+	aspect-ratio: 5 / 4;
 	overflow: hidden;
 	background: var(--ic-box);
 }
@@ -1028,14 +1028,15 @@ html.icademie-categorie-panneau {
 	scroll-snap-align: start;
 }
 
-.icademie-categorie__photo a,
-.icademie-categorie__photo img {
+/* Plus précis que les règles « img { height: auto } » de WooCommerce. */
+.icademie-categorie .icademie-categorie__photo a,
+.icademie-categorie .icademie-categorie__photo img {
 	display: block;
 	width: 100%;
 	height: 100%;
 }
 
-.icademie-categorie__photo img {
+.icademie-categorie .icademie-categorie__photo img {
 	object-fit: cover;
 }
 
@@ -1052,7 +1053,7 @@ html.icademie-categorie-panneau {
 	border: 0;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.94);
-	box-shadow: 0 1px 4px rgba(15, 23, 42, 0.3);
+	box-shadow: 0 1px 4px rgba(15, 34, 51, 0.3);
 	color: var(--ic-text);
 	opacity: 0;
 	transform: translateY(-50%);
@@ -1101,7 +1102,7 @@ html.icademie-categorie-panneau {
 	height: 6px;
 	border-radius: 3px;
 	background: rgba(255, 255, 255, 0.65);
-	box-shadow: 0 0 2px rgba(15, 23, 42, 0.45);
+	box-shadow: 0 0 2px rgba(15, 34, 51, 0.45);
 	transition: width 0.2s ease;
 }
 
@@ -1123,27 +1124,30 @@ html.icademie-categorie-panneau {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: 6px;
-	padding: 12px 14px 14px;
+	gap: 5px;
+	padding: 12px 16px 16px;
 }
 
 /* Le titre vient avant dans le code (lecteurs d'écran), le type et le port s'affichent au-dessus. */
 .icademie-categorie__card-kicker {
 	order: -1;
+	overflow: hidden;
 	color: var(--ic-muted);
-	font-size: 11px;
-	font-weight: 500;
-	letter-spacing: 0.04em;
-	line-height: 1.25;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	line-height: 16px;
+	text-overflow: ellipsis;
 	text-transform: uppercase;
+	white-space: nowrap;
 }
 
 .icademie-categorie .icademie-categorie__card-title {
 	font-family: var(--ic-font-heading);
-	font-size: 15px;
+	font-size: 19px;
 	font-weight: 600;
 	letter-spacing: 0;
-	line-height: 1.25;
+	line-height: 24px;
 	text-transform: none;
 }
 
@@ -1176,27 +1180,72 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie__card-specs {
 	color: var(--ic-muted);
-	font-size: 12px;
-	line-height: 1.45;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .icademie-categorie__card-foot {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
+	align-items: baseline;
 	justify-content: space-between;
 	gap: 4px 8px;
 	margin-top: auto;
-	padding-top: 2px;
+	padding-top: 3px;
 }
 
 .icademie-categorie__rating {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	color: var(--ic-text-2);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-text);
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.icademie-categorie__rating-count {
+	color: var(--ic-muted);
+	font-weight: 400;
+}
+
+/* Badge (écologie, service ou caractéristique), posé en haut à gauche de la photo. Sélecteurs
+   précis : la fiche annonce, qui reprend ces cartes, remet à zéro les marges de ses listes. */
+.icademie-categorie .icademie-categorie__badges {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	left: 10px;
+	z-index: 2;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	pointer-events: none;
+}
+
+.icademie-categorie .icademie-categorie__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 28px;
+	padding: 0 12px;
+	border-radius: 999px;
+	background: var(--ic-primary-light);
+	color: var(--ic-primary);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.icademie-categorie .icademie-categorie__badge--eco {
+	background: var(--ic-eco-light);
+	color: var(--ic-eco);
+}
+
+.icademie-categorie .icademie-categorie__badge--neutral {
+	background: var(--ic-surface);
+	box-shadow: inset 0 0 0 1px var(--ic-border);
+	color: var(--ic-text);
 }
 
 .icademie-categorie__rating .icademie-categorie__icon {
@@ -1209,15 +1258,16 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie__price-tag {
-	color: var(--ic-primary-dark);
-	font-size: 14px;
+	color: var(--ic-text);
+	font-size: 20px;
 	font-weight: 700;
+	line-height: 24px;
 	white-space: nowrap;
 }
 
 .icademie-categorie__price-tag del {
 	color: var(--ic-muted);
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 400;
 }
 
@@ -1227,7 +1277,7 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie__price-day {
 	color: var(--ic-muted);
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 400;
 }
 
@@ -1237,10 +1287,11 @@ html.icademie-categorie-panneau {
 	align-items: flex-start;
 	gap: 12px;
 	padding: 24px;
-	border: 1px dashed var(--ic-field-border);
+	border: 1px solid var(--ic-border);
 	border-radius: 8px;
-	color: var(--ic-text-2);
-	font-size: 14px;
+	background: var(--ic-surface);
+	color: var(--ic-text);
+	font-size: 17px;
 }
 
 /* Zone 8 : pagination (ordinateur, tablette) et « Afficher plus » (smartphone). */
@@ -1255,15 +1306,15 @@ html.icademie-categorie-panneau {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 36px;
-	height: 36px;
+	min-width: 44px;
+	height: 44px;
 	padding: 0 10px;
-	border: 1px solid var(--ic-field-border);
+	border: 1.5px solid var(--ic-field-border);
 	border-radius: 8px;
 	background: var(--ic-surface);
-	color: var(--ic-text-2);
-	font-size: 13px;
-	font-weight: 500;
+	color: var(--ic-text);
+	font-size: 15px;
+	font-weight: 700;
 	text-decoration: none;
 }
 
@@ -1299,7 +1350,24 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie__more-status {
 	color: var(--ic-muted);
-	font-size: 12px;
+	font-size: 15px;
+}
+
+/* Barre de progression : bateaux vus sur le total. */
+.icademie-categorie__more-bar {
+	display: block;
+	height: 8px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: var(--ic-box);
+}
+
+.icademie-categorie__more-bar > span {
+	display: block;
+	height: 100%;
+	border-radius: 4px;
+	background: var(--ic-primary);
+	transition: width 0.2s ease;
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -1310,8 +1378,7 @@ html.icademie-categorie-panneau {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
 	gap: 24px;
-	padding-top: 24px;
-	border-top: 1px solid var(--ic-divider);
+	padding-top: 16px;
 }
 
 .icademie-categorie__editorial.has-faq {
@@ -1325,17 +1392,17 @@ html.icademie-categorie-panneau {
 	margin-bottom: 12px;
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 18px;
+	font-size: 30px;
 	font-weight: 600;
 	letter-spacing: 0;
-	line-height: 1.25;
+	line-height: 38px;
 	text-transform: none;
 }
 
 .icademie-categorie__prose {
-	color: var(--ic-text-2);
-	font-size: 14px;
-	line-height: 1.6;
+	color: var(--ic-text);
+	font-size: 17px;
+	line-height: 26px;
 }
 
 .icademie-categorie__prose > * + * {
@@ -1345,9 +1412,9 @@ html.icademie-categorie-panneau {
 .icademie-categorie .icademie-categorie__prose :where(h2, h3, h4) {
 	color: var(--ic-text);
 	font-family: var(--ic-font-heading);
-	font-size: 15px;
+	font-size: 20px;
 	font-weight: 600;
-	line-height: 1.3;
+	line-height: 26px;
 	text-transform: none;
 }
 
@@ -1364,7 +1431,7 @@ html.icademie-categorie-panneau {
 .icademie-categorie__prose img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 6px;
+	border-radius: 8px;
 }
 
 .icademie-categorie .icademie-categorie__readmore {
@@ -1375,13 +1442,15 @@ html.icademie-categorie-panneau {
 	background: none;
 	color: var(--ic-primary);
 	font-family: var(--ic-font);
-	font-size: 13px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 2px;
 	cursor: pointer;
 }
 
 .icademie-categorie .icademie-categorie__readmore:hover {
-	text-decoration: underline;
+	color: var(--ic-primary-dark);
 }
 
 .icademie-categorie__editorial-text {
@@ -1399,11 +1468,18 @@ html.icademie-categorie-panneau {
 
 .icademie-categorie .icademie-categorie__faq-title {
 	margin-bottom: 4px;
+	font-size: 20px;
+	line-height: 26px;
 }
 
 .icademie-categorie__faq-item {
-	border-radius: 6px;
-	background: var(--ic-box);
+	border: 1px solid var(--ic-border);
+	border-radius: 8px;
+	background: var(--ic-surface);
+}
+
+.icademie-categorie__faq-item:hover {
+	border-color: var(--ic-primary);
 }
 
 .icademie-categorie__faq-question {
@@ -1411,13 +1487,13 @@ html.icademie-categorie-panneau {
 	align-items: center;
 	justify-content: space-between;
 	gap: 12px;
-	min-height: 44px;
-	padding: 10px 14px;
-	border-radius: 6px;
+	min-height: 52px;
+	padding: 12px 16px;
+	border-radius: 8px;
 	color: var(--ic-text);
-	font-size: 13px;
-	font-weight: 500;
-	line-height: 1.35;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 20px;
 	list-style: none;
 	cursor: pointer;
 }
@@ -1427,7 +1503,7 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie__faq-question .icademie-categorie__icon {
-	color: var(--ic-text-2);
+	color: var(--ic-primary);
 	transition: transform 0.2s ease;
 }
 
@@ -1436,8 +1512,9 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie .icademie-categorie__faq-answer {
-	padding: 0 14px 14px;
-	font-size: 13px;
+	padding: 0 16px 16px;
+	font-size: 15px;
+	line-height: 22px;
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -1445,7 +1522,8 @@ html.icademie-categorie-panneau {
  * --------------------------------------------------------------------------------------------- */
 
 .icademie-categorie .icademie-categorie__links-title {
-	font-size: 16px;
+	font-size: 20px;
+	line-height: 26px;
 }
 
 .icademie-categorie__links-list {
@@ -1457,21 +1535,21 @@ html.icademie-categorie-panneau {
 .icademie-categorie .icademie-categorie__tag {
 	display: inline-flex;
 	align-items: center;
-	height: 30px;
+	height: 32px;
 	padding: 0 12px;
-	border: 1px solid var(--ic-primary);
-	border-radius: 15px;
+	border: 1px solid var(--ic-border);
+	border-radius: 999px;
 	background: var(--ic-surface);
-	color: var(--ic-primary-dark);
-	font-size: 12px;
-	font-weight: 500;
+	color: var(--ic-text);
+	font-size: 13px;
+	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
 }
 
 .icademie-categorie .icademie-categorie__tag:hover {
-	background: var(--ic-primary-light);
-	color: var(--ic-primary-dark);
+	border-color: var(--ic-primary);
+	color: var(--ic-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1495,7 +1573,7 @@ html.icademie-categorie-panneau {
 
 	.icademie-categorie__head.has-image {
 		grid-template-columns: minmax(0, 1fr) 180px;
-		gap: 20px;
+		gap: 24px;
 	}
 
 	.icademie-categorie__head-text {
@@ -1510,11 +1588,14 @@ html.icademie-categorie-panneau {
 	}
 
 	.icademie-categorie .icademie-categorie__title {
-		font-size: 24px;
+		font-size: 34px;
+		line-height: 40px;
 	}
 
 	.icademie-categorie__intro {
 		order: 1;
+		font-size: 16px;
+		line-height: 24px;
 	}
 
 	.icademie-categorie__count {
@@ -1522,37 +1603,52 @@ html.icademie-categorie-panneau {
 	}
 
 	/* Recherche : résumé et bouton « Modifier », le formulaire s'ouvre dans un panneau. */
+	/* Encart « écume » : la recherche résumée dans un champ blanc, et « Modifier ». */
 	.icademie-categorie.has-js .icademie-categorie__summary {
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 12px;
 		width: 100%;
 		margin: 0;
-		padding: 8px 8px 8px 14px;
-		border: 1px solid var(--ic-field-border);
-		border-radius: 10px;
-		background: var(--ic-surface);
+		padding: 20px;
+		border: 0;
+		border-radius: 16px;
+		background: var(--ic-primary-light);
 		color: var(--ic-text);
 		font-family: var(--ic-font);
-		font-size: 13px;
+		font-size: 16px;
 		line-height: 1.3;
 		text-align: left;
 		cursor: pointer;
 	}
 
-	.icademie-categorie.has-js .icademie-categorie__summary:hover {
+	.icademie-categorie.has-js .icademie-categorie__summary:hover .icademie-categorie__summary-text {
 		border-color: var(--ic-primary);
 	}
 
-	.icademie-categorie__summary-icon {
+	.icademie-categorie__summary-label {
 		display: none;
-		color: var(--ic-primary);
+	}
+
+	.icademie-categorie__summary-icon {
+		position: absolute;
+		top: 50%;
+		left: 34px;
+		color: var(--ic-text);
+		transform: translateY(-50%);
 	}
 
 	.icademie-categorie__summary-text {
 		flex: 1;
 		min-width: 0;
+		height: 44px;
+		padding: 0 14px 0 40px;
 		overflow: hidden;
+		border: 1.5px solid var(--ic-field-border);
+		border-radius: 8px;
+		background: var(--ic-surface);
+		line-height: 41px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
@@ -1575,7 +1671,8 @@ html.icademie-categorie-panneau {
 		border-radius: 8px;
 		background: var(--ic-primary);
 		color: #fff;
-		font-weight: 600;
+		font-size: 15px;
+		font-weight: 700;
 	}
 
 	.icademie-categorie.has-js .icademie-categorie__search-slot {
@@ -1674,6 +1771,10 @@ html.icademie-categorie-panneau {
 		border-bottom: 0;
 	}
 
+	.icademie-categorie__dialog--search .icademie-categorie__search-form {
+		background: none;
+	}
+
 	/* Barre : « Filtres (n) », nombre de résultats et tri ; filtres actifs en dessous. */
 	.icademie-categorie__toolbar {
 		grid-template-areas:
@@ -1700,14 +1801,14 @@ html.icademie-categorie-panneau {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.icademie-categorie .icademie-categorie__pagination .page-numbers {
-		min-width: 44px;
-		height: 44px;
-	}
-
 	.icademie-categorie__editorial.has-faq {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 24px;
+	}
+
+	.icademie-categorie .icademie-categorie__section-title {
+		font-size: 26px;
+		line-height: 32px;
 	}
 }
 
@@ -1747,26 +1848,42 @@ html.icademie-categorie-panneau {
 	}
 
 	.icademie-categorie .icademie-categorie__title {
-		font-size: 20px;
+		font-size: 30px;
+		line-height: 36px;
 	}
 
 	.icademie-categorie__intro {
-		font-size: 12px;
-		line-height: 1.4;
+		font-size: 16px;
+		line-height: 24px;
 	}
 
-	/* Recherche : résumé cliquable, la recherche s'ouvre en plein écran. */
+	/* Recherche : « Votre recherche », résumé en pastille ; la recherche s'ouvre en plein écran. */
 	.icademie-categorie.has-js .icademie-categorie__summary {
+		flex-wrap: wrap;
 		gap: 10px;
-		min-height: 44px;
-		padding: 0 14px;
-		border: 1.5px solid var(--ic-primary);
-		border-radius: 22px;
-		font-weight: 500;
+		padding: 16px;
+	}
+
+	.icademie-categorie__summary-label {
+		display: block;
+		flex-basis: 100%;
+		color: var(--ic-text);
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 1px;
+		line-height: 16px;
+		text-transform: uppercase;
 	}
 
 	.icademie-categorie__summary-icon {
-		display: block;
+		top: auto;
+		bottom: 30px;
+		left: 30px;
+		transform: none;
+	}
+
+	.icademie-categorie__summary-text {
+		border-radius: 999px;
 	}
 
 	.icademie-categorie__summary-action {
@@ -1821,8 +1938,7 @@ html.icademie-categorie-panneau {
 
 	.icademie-categorie__pill > span {
 		min-width: 44px;
-		height: 40px;
-		border-radius: 20px;
+		height: 44px;
 	}
 
 	.icademie-categorie__check {
@@ -1840,13 +1956,24 @@ html.icademie-categorie-panneau {
 			"active active";
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 8px;
-		margin: 0 -16px;
-		padding: 8px 16px;
+		min-height: 0;
+		padding: 12px 16px;
+		border: 1px solid var(--ic-border);
+		border-radius: 8px;
 		background: var(--ic-surface);
 	}
 
+	.icademie-categorie__toolbar {
+		grid-template-areas:
+			"button sort"
+			"active active"
+			"total total";
+	}
+
 	.icademie-categorie__toolbar:not(.has-chips) {
-		grid-template-areas: "button sort";
+		grid-template-areas:
+			"button sort"
+			"total total";
 	}
 
 	.icademie-categorie.has-js .icademie-categorie__filters-open {
@@ -1856,15 +1983,7 @@ html.icademie-categorie-panneau {
 	}
 
 	.icademie-categorie__total {
-		position: absolute !important;
-		width: 1px;
-		height: 1px;
-		margin: -1px;
-		padding: 0;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
-		border: 0;
+		font-size: 15px;
 	}
 
 	.icademie-categorie__active {
@@ -1912,8 +2031,8 @@ html.icademie-categorie-panneau {
 		border-radius: 8px;
 		background: var(--ic-surface);
 		color: var(--ic-primary);
-		font-size: 13px;
-		font-weight: 600;
+		font-size: 15px;
+		font-weight: 700;
 	}
 
 	.icademie-categorie.has-js .icademie-categorie__sort-select {
@@ -1958,9 +2077,15 @@ html.icademie-categorie-panneau {
 		padding-top: 20px;
 	}
 
-	.icademie-categorie .icademie-categorie__section-title,
-	.icademie-categorie .icademie-categorie__faq-title {
-		font-size: 16px;
+	.icademie-categorie .icademie-categorie__section-title {
+		font-size: 24px;
+		line-height: 30px;
+	}
+
+	.icademie-categorie .icademie-categorie__faq-title,
+	.icademie-categorie .icademie-categorie__links-title {
+		font-size: 20px;
+		line-height: 26px;
 	}
 
 	/* Texte replié après quelques lignes : « Lire la suite ». */
@@ -1972,7 +2097,8 @@ html.icademie-categorie-panneau {
 	}
 
 	.icademie-categorie__prose {
-		font-size: 13px;
+		font-size: 16px;
+		line-height: 24px;
 	}
 
 	/* Maillage : ruban horizontal. */

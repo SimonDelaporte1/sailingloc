@@ -563,6 +563,13 @@
 					more.dataset.to = String( to );
 					status.textContent = format( to );
 
+					// Barre de progression : bateaux vus sur le total.
+					var bar = more.querySelector( '[data-more-bar]' );
+
+					if ( bar && Number( more.dataset.total ) ) {
+						bar.style.width = Math.min( 100, to / Number( more.dataset.total ) * 100 ) + '%';
+					}
+
 					if ( following ) {
 						link.href = following.href;
 						link.removeAttribute( 'aria-busy' );

@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Page catégorie
- * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination) et les résultats de la recherche de produits ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page restent ceux du thème.
- * Version:           1.1.0
+ * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination) et les résultats de la recherche de produits ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Version:           1.2.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil
@@ -23,7 +23,8 @@ require_once __DIR__ . '/includes/class-icademie-page-categorie-view.php';
  *
  * Le bloc « Page catégorie » (icademie/page-categorie) affiche tout le contenu de la page, du fil
  * d'Ariane au maillage interne : zones 2 à 10 des zonings. L'en-tête et le pied de page (zones 1
- * et 11, communs à tout le site) restent ceux du thème.
+ * et 11, communs à tout le site) sont ceux du thème, ou ceux de
+ * l'extension « Icademie – En-tête et pied de page » qui les remplace.
  *
  * Les pages des catégories de produits, la boutique et les résultats de la recherche de produits
  * utilisent automatiquement le modèle « Liste de bateaux SailingLoc » (en-tête du thème, ce bloc,
@@ -32,7 +33,7 @@ require_once __DIR__ . '/includes/class-icademie-page-categorie-view.php';
  */
 final class Icademie_Page_Categorie {
 
-	const VERSION = '1.1.0';
+	const VERSION = '1.2.0';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;
@@ -82,16 +83,8 @@ final class Icademie_Page_Categorie {
 	 * Enregistre les styles, le script, le bloc et le modèle.
 	 */
 	public static function register() {
-		wp_register_style( self::HANDLE, plugins_url( 'assets/page-categorie.css', __FILE__ ), array(), self::VERSION );
-
-		$font = self::font_url();
-
-		if ( '' !== $font ) {
-			wp_add_inline_style(
-				self::HANDLE,
-				'@font-face{font-family:"Space Grotesk";font-style:normal;font-weight:300 700;font-display:swap;src:url("' . esc_url( $font ) . '") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}'
-			);
-		}
+		// Polices de la charte : feuille commune de l'extension de la page d'accueil.
+		wp_register_style( self::HANDLE, plugins_url( 'assets/page-categorie.css', __FILE__ ), self::has_fonts() ? array( Icademie_Page_Accueil::FONTS_HANDLE ) : array(), self::VERSION );
 
 		wp_register_script(
 			self::HANDLE,
@@ -257,29 +250,21 @@ final class Icademie_Page_Categorie {
 	}
 
 	/**
-	 * Police des titres, hébergée par l'extension de la page d'accueil.
+	 * Polices de la charte disponibles (extension de la page d'accueil) ?
 	 *
-	 * @return string Adresse, ou vide sans cette extension.
+	 * @return bool
 	 */
-	private static function font_url() {
-		if ( ! class_exists( 'Icademie_Page_Accueil' ) ) {
-			return '';
-		}
-
-		return plugins_url( 'assets/fonts/space-grotesk-latin-wght-normal.woff2', Icademie_Page_Accueil::FILE );
+	private static function has_fonts() {
+		return class_exists( 'Icademie_Page_Accueil' ) && defined( 'Icademie_Page_Accueil::FONTS_HANDLE' );
 	}
 
 	/**
-	 * Précharge la police des titres sur les listes de bateaux (titre visible dès l'arrivée).
+	 * Précharge les polices sur les listes de bateaux (titre visible dès l'arrivée).
 	 */
 	public static function preload_font() {
-		$font = self::font_url();
-
-		if ( '' === $font || ! self::is_listing() ) {
-			return;
+		if ( self::has_fonts() && self::is_listing() ) {
+			Icademie_Page_Accueil::print_font_preloads();
 		}
-
-		printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( $font ) );
 	}
 
 	/**
@@ -391,7 +376,7 @@ final class Icademie_Page_Categorie {
 
 		printf(
 			'<div class="notice notice-success is-dismissible"><p>%1$s</p><p>%2$s</p></div>',
-			esc_html__( 'Les pages des catégories de produits utilisent maintenant le modèle « Catégorie de bateaux SailingLoc ». L\'en-tête et le pied de page restent ceux du thème.', 'icademie-page-categorie' ),
+			esc_html__( 'Les pages des catégories de produits utilisent maintenant le modèle « Catégorie de bateaux SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « Icademie – En-tête et pied de page »).', 'icademie-page-categorie' ),
 			wp_kses(
 				sprintf(
 					/* translators: %s: adresse de la liste des catégories de produits. */
@@ -454,6 +439,11 @@ final class Icademie_Page_Categorie {
 			'star'          => '<path d="m12 3.2 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8z" fill="currentColor" stroke="none"/>',
 			'boat'          => '<path d="M12 3v13M12 4.5 18.5 14H12zM10 7.5 5.5 14H10zM3 17h18l-2.4 3.5H5.4z"/>',
 		);
+
+		// Icônes des badges (écologie, skipper), communes aux pages.
+		if ( method_exists( 'Icademie_Page_Accueil_Zones', 'badge_icons' ) ) {
+			$paths += Icademie_Page_Accueil_Zones::badge_icons();
+		}
 
 		if ( ! isset( $paths[ $name ] ) ) {
 			return '';

@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Page d'accueil
- * Description:       Page d'accueil intégrée d'après les zonings « Accueil » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : bandeau avec moteur de recherche (destination = catégorie ; type de bateau et passagers = attributs ; dates reprises sur la fiche du bateau), réassurance, catégories de bateaux (attribut « Type de bateau »), bateaux à la une, destinations populaires (catégories mises en avant), comment ça marche, devenir loueur, avis des membres et newsletter (formulaire HubSpot de la page Newsletter). L'en-tête et le pied de page restent ceux du thème. Textes, images et liens : Réglages › Page d'accueil.
- * Version:           1.0.1
+ * Description:       Page d'accueil intégrée d'après les zonings « Accueil » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : bandeau avec moteur de recherche (destination = catégorie ; type de bateau et passagers = attributs ; dates reprises sur la fiche du bateau), réassurance, catégories de bateaux (attribut « Type de bateau »), bateaux à la une, destinations populaires (catégories mises en avant), comment ça marche, devenir loueur, avis des membres et newsletter (formulaire HubSpot de la page Newsletter). L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Textes, images et liens : Réglages › Page d'accueil. Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -24,7 +24,8 @@ require_once __DIR__ . '/includes/class-icademie-page-accueil-zones.php';
  *
  * Le bloc « Page d'accueil » (icademie/page-accueil) affiche tout le contenu de la page, du
  * bandeau de recherche à la newsletter : zones 2 à 10 des zonings. L'en-tête et le pied de page
- * (zones 1 et 11, communs à tout le site) restent ceux du thème.
+ * (zones 1 et 11, communs à tout le site) sont ceux du thème, ou ceux de
+ * l'extension « Icademie – En-tête et pied de page » qui les remplace.
  *
  * La page d'accueil du site utilise automatiquement le modèle « Page d'accueil SailingLoc »
  * (en-tête du thème, ce bloc, pied de page du thème), que l'accueil affiche les derniers articles
@@ -32,7 +33,7 @@ require_once __DIR__ . '/includes/class-icademie-page-accueil-zones.php';
  */
 final class Icademie_Page_Accueil {
 
-	const VERSION = '1.0.1';
+	const VERSION = '1.1.0';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;
@@ -49,6 +50,41 @@ final class Icademie_Page_Accueil {
 
 	/** Avis affiché une fois après l'activation. */
 	const NOTICE_TRANSIENT = 'icademie_page_accueil_activation';
+
+	/**
+	 * Polices de la charte graphique, hébergées avec l'extension (pas d'appel à Google Fonts) :
+	 * Fraunces pour les titres, Atkinson Hyperlegible pour le texte. Licences : assets/fonts/OFL-*.txt.
+	 * Les pages catégorie et annonce les reprennent. « preload » : chargées dès l'en-tête de la page.
+	 */
+	const FONTS = array(
+		array(
+			'family'  => 'Fraunces',
+			'weight'  => '600',
+			'file'    => 'fraunces-latin-600-normal.woff2',
+			'preload' => true,
+		),
+		array(
+			'family'  => 'Atkinson Hyperlegible',
+			'weight'  => '400',
+			'file'    => 'atkinson-hyperlegible-latin-400-normal.woff2',
+			'preload' => true,
+		),
+		array(
+			'family'  => 'Atkinson Hyperlegible',
+			'weight'  => '700',
+			'file'    => 'atkinson-hyperlegible-latin-700-normal.woff2',
+			'preload' => false,
+		),
+	);
+
+	/**
+	 * Feuille des polices (règles @font-face seules), commune aux extensions des pages et de
+	 * l'en-tête : chaque police n'est déclarée qu'une fois par page.
+	 */
+	const FONTS_HANDLE = 'icademie-polices';
+
+	/** Caractères des fichiers de polices (sous-ensemble « latin » de Google Fonts). */
+	const FONT_RANGE = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
 
 	/**
 	 * Branche l'extension sur WordPress.
@@ -82,7 +118,10 @@ final class Icademie_Page_Accueil {
 	 * Enregistre les styles, le script, le bloc et le modèle.
 	 */
 	public static function register() {
-		wp_register_style( self::HANDLE, plugins_url( 'assets/page-accueil.css', __FILE__ ), array(), self::VERSION );
+		// Polices : feuille sans fichier, faite des seules règles @font-face.
+		wp_register_style( self::FONTS_HANDLE, false, array(), self::VERSION );
+		wp_add_inline_style( self::FONTS_HANDLE, self::font_face_css() );
+		wp_register_style( self::HANDLE, plugins_url( 'assets/page-accueil.css', __FILE__ ), array( self::FONTS_HANDLE ), self::VERSION );
 		wp_register_script(
 			self::HANDLE,
 			plugins_url( 'assets/page-accueil.js', __FILE__ ),
@@ -174,17 +213,46 @@ final class Icademie_Page_Accueil {
 	}
 
 	/**
-	 * Précharge la police des titres sur l'accueil (titre principal visible dès l'arrivée).
+	 * Règles @font-face des polices de la charte.
+	 *
+	 * @return string CSS.
+	 */
+	public static function font_face_css() {
+		$css = '';
+
+		foreach ( self::FONTS as $font ) {
+			$css .= sprintf(
+				'@font-face{font-family:"%1$s";font-style:normal;font-weight:%2$s;font-display:swap;src:url("%3$s") format("woff2");unicode-range:%4$s}',
+				$font['family'],
+				$font['weight'],
+				esc_url( plugins_url( 'assets/fonts/' . $font['file'], __FILE__ ) ),
+				self::FONT_RANGE
+			);
+		}
+
+		return $css;
+	}
+
+	/**
+	 * Préchargement des polices du titre et du texte (affichés dès l'arrivée sur la page).
+	 */
+	public static function print_font_preloads() {
+		foreach ( self::FONTS as $font ) {
+			if ( $font['preload'] ) {
+				printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( plugins_url( 'assets/fonts/' . $font['file'], __FILE__ ) ) );
+			}
+		}
+	}
+
+	/**
+	 * Précharge les polices sur l'accueil.
 	 */
 	public static function preload_font() {
 		if ( ! is_front_page() || is_paged() ) {
 			return;
 		}
 
-		printf(
-			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
-			esc_url( plugins_url( 'assets/fonts/space-grotesk-latin-wght-normal.woff2', __FILE__ ) )
-		);
+		self::print_font_preloads();
 	}
 
 	/**
@@ -285,7 +353,7 @@ final class Icademie_Page_Accueil {
 			wp_kses(
 				sprintf(
 					/* translators: %s: adresse de la page d'accueil. */
-					__( 'La <a href="%s">page d\'accueil</a> utilise maintenant le modèle « Page d\'accueil SailingLoc ». L\'en-tête et le pied de page restent ceux du thème.', 'icademie-page-accueil' ),
+					__( 'La <a href="%s">page d\'accueil</a> utilise maintenant le modèle « Page d\'accueil SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « Icademie – En-tête et pied de page »).', 'icademie-page-accueil' ),
 					esc_url( home_url( '/' ) )
 				),
 				array( 'a' => array( 'href' => true ) )
@@ -342,7 +410,7 @@ final class Icademie_Page_Accueil {
 			'type-electrique' => '<path d="M2.5 16h19l-3 4H6.5z"/><path d="M13.5 3 9 10h4l-1.5 4"/>',
 			'type-hybride'    => '<path d="M2.5 16h19l-3 4H6.5z"/><path d="M7.5 13C7.5 7.5 11 4 18 4c0 6.5-3.5 9.5-9 9.5"/><path d="m8 13 5.5-5"/>',
 			'type-rame'       => '<path d="M4 20 16 8M16.5 7.5l1.5-4.5 3 3-4.5 1.5M20 20 8 8M7.5 7.5 6 3 3 6l4.5 1.5"/>',
-		);
+		) + Icademie_Page_Accueil_Zones::badge_icons();
 
 		if ( ! isset( $paths[ $name ] ) ) {
 			return '';
@@ -356,7 +424,9 @@ final class Icademie_Page_Accueil {
 	}
 
 	/**
-	 * Illustration du bandeau (mer et voilier), affichée tant qu'aucune photo n'est choisie.
+	 * Illustration du bandeau (falaises de craie, Manche et voilier), affichée tant qu'aucune photo
+	 * n'est choisie. Aplats aux couleurs de la charte, sans dégradé : le voile « encre » du bandeau
+	 * l'assombrit comme une photo.
 	 *
 	 * Le bateau est à gauche et en bas, pour laisser le centre aux textes et au moteur de recherche.
 	 *
@@ -364,19 +434,15 @@ final class Icademie_Page_Accueil {
 	 */
 	public static function hero_illustration() {
 		return '<svg class="icademie-accueil__illustration" viewBox="0 0 1440 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'
-			. '<defs>'
-			. '<linearGradient id="icademie-accueil-ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#173f8a"/><stop offset=".62" stop-color="#3f7fe0"/><stop offset="1" stop-color="#8db4ee"/></linearGradient>'
-			. '<linearGradient id="icademie-accueil-mer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d5fd1"/><stop offset="1" stop-color="#0f2f66"/></linearGradient>'
-			. '</defs>'
-			. '<rect width="1440" height="560" fill="url(#icademie-accueil-ciel)"/>'
-			. '<circle cx="1180" cy="150" r="58" fill="#ffd9a8" opacity=".9"/>'
-			. '<path d="M0 360h1440v200H0z" fill="url(#icademie-accueil-mer)"/>'
-			. '<path d="M0 392c60-12 120 12 180 0s120-12 180 0 120 12 180 0 120-12 180 0 120 12 180 0 120-12 180 0 120 12 180 0 120-12 180 0" fill="none" stroke="#8db4ee" stroke-width="3" opacity=".5"/>'
-			. '<path d="M0 452c60-12 120 12 180 0s120-12 180 0 120 12 180 0 120-12 180 0 120 12 180 0 120-12 180 0 120 12 180 0 120-12 180 0" fill="none" stroke="#8db4ee" stroke-width="3" opacity=".35"/>'
-			. '<path d="M196 202v166" stroke="#0f2f66" stroke-width="5" stroke-linecap="round"/>'
-			. '<path d="M204 214l84 142h-84z" fill="#f4f8fe"/>'
-			. '<path d="M188 236l-62 120h62z" fill="#cfdffa"/>'
-			. '<path d="M104 372h196l-26 32H130z" fill="#0f2f66"/>'
+			. '<rect width="1440" height="560" fill="#d4e1e8"/>'
+			. '<path d="M0 214 120 196 250 210 380 188 470 204V340H0z" fill="#f1eee6"/>'
+			. '<path d="M1010 200 1120 184 1250 198 1360 180 1440 190V340H1010z" fill="#f1eee6"/>'
+			. '<path d="M0 334h1440v226H0z" fill="#4f7e99"/>'
+			. '<path d="M0 420h1440v140H0z" fill="#3f6c87"/>'
+			. '<path d="M196 196v166" stroke="#0f2233" stroke-width="5" stroke-linecap="round"/>'
+			. '<path d="M204 208l84 142h-84z" fill="#f7f5f0"/>'
+			. '<path d="M188 230l-62 120h62z" fill="#e4eef3"/>'
+			. '<path d="M104 366h196l-26 32H130z" fill="#0f2233"/>'
 			. '</svg>';
 	}
 
@@ -387,18 +453,13 @@ final class Icademie_Page_Accueil {
 	 */
 	public static function owner_illustration() {
 		return '<svg class="icademie-accueil__illustration" viewBox="0 0 480 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'
-			. '<defs><linearGradient id="icademie-accueil-ciel-clair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfdffa"/><stop offset="1" stop-color="#f4f8fe"/></linearGradient></defs>'
-			. '<rect width="480" height="260" fill="url(#icademie-accueil-ciel-clair)"/>'
-			. '<circle cx="390" cy="66" r="28" fill="#ffd9a8"/>'
-			. '<path d="M0 196h480v64H0z" fill="#1d5fd1"/>'
-			. '<path d="M300 150h180v18H300z" fill="#8a6a4a"/>'
-			. '<path d="M318 168v60M362 168v60M406 168v60M450 168v60" stroke="#6b5038" stroke-width="8"/>'
-			. '<path d="M182 62v124" stroke="#243040" stroke-width="4" stroke-linecap="round"/>'
-			. '<path d="M189 72l62 102h-62z" fill="#fff" stroke="#243040" stroke-width="3" stroke-linejoin="round"/>'
-			. '<path d="M175 88l-46 86h46z" fill="#1d5fd1" stroke="#173f8a" stroke-width="3" stroke-linejoin="round"/>'
-			. '<path d="M112 186h152l-20 26H132z" fill="#243040"/>'
-			. '<path d="M264 182c10-8 26-8 36 0" fill="none" stroke="#243040" stroke-width="3" stroke-linecap="round"/>'
-			. '<path d="M0 222c40-8 80 8 120 0s80-8 120 0 80 8 120 0 80-8 120 0v38H0z" fill="#173f8a"/>'
+			. '<rect width="480" height="260" fill="#dce5ea"/>'
+			. '<path d="M0 150h480v30H0z" fill="#b9a98c"/>'
+			. '<path d="M0 180h480v80H0z" fill="#3f6c87"/>'
+			. '<path d="M182 52v124" stroke="#0f2233" stroke-width="4" stroke-linecap="round"/>'
+			. '<path d="M189 62l62 102h-62z" fill="#f7f5f0"/>'
+			. '<path d="M175 78l-46 86h46z" fill="#e4eef3"/>'
+			. '<path d="M112 176h152l-20 26H132z" fill="#0f2233"/>'
 			. '</svg>';
 	}
 }
