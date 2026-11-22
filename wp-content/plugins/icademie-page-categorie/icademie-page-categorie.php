@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Icademie – Page catégorie
- * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination) et les résultats de la recherche de produits ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
- * Version:           1.2.0
+ * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination), les résultats de la recherche de produits et la boutique de chaque propriétaire (WC Vendors : son nom, ses bateaux, ses filtres) ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Version:           1.2.1
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil
@@ -33,7 +33,7 @@ require_once __DIR__ . '/includes/class-icademie-page-categorie-view.php';
  */
 final class Icademie_Page_Categorie {
 
-	const VERSION = '1.2.0';
+	const VERSION = '1.2.1';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;
@@ -65,6 +65,8 @@ final class Icademie_Page_Categorie {
 		// Après WooCommerce (priorité 10), qui ajoute « product-search-results ».
 		add_filter( 'search_template_hierarchy', array( __CLASS__, 'search_template_hierarchy' ), 20 );
 		add_filter( 'loop_shop_per_page', array( __CLASS__, 'per_page' ), 20 );
+		// Boutique d'un propriétaire (WC Vendors) : « Accueil › Boutique › Nom de la boutique ».
+		add_filter( 'woocommerce_get_breadcrumb', array( 'Icademie_Page_Categorie_View', 'vendor_breadcrumb' ) );
 		add_action( 'wp_head', array( __CLASS__, 'preload_font' ), 2 );
 		add_action( 'admin_init', array( __CLASS__, 'add_privacy_policy_content' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'activation_notice' ) );

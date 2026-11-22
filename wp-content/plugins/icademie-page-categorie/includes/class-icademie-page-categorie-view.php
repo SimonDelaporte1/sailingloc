@@ -94,8 +94,8 @@ final class Icademie_Page_Categorie_View {
 	 * Liste affichée : catégorie (ou autre taxonomie de produits), boutique ou résultats d'une
 	 * recherche de produits, et requête.
 	 *
-	 * @return array|null « term », « query », « type » (category, shop, search), « preview », ou null
-	 *                    hors d'une liste de produits.
+	 * @return array|null « term », « query », « type » (category, shop, search, vendor : boutique
+	 *                    d'un propriétaire WC Vendors), « preview », ou null hors d'une liste de produits.
 	 */
 	private static function context() {
 		global $wp_query;
@@ -113,8 +113,10 @@ final class Icademie_Page_Categorie_View {
 
 		if ( $term ) {
 			$type = 'category';
+		} elseif ( Icademie_Page_Categorie_Filters::is_search() ) {
+			$type = 'search';
 		} else {
-			$type = Icademie_Page_Categorie_Filters::is_search() ? 'search' : 'shop';
+			$type = Icademie_Page_Categorie_Filters::vendor_id() ? 'vendor' : 'shop';
 		}
 
 		return array(
@@ -264,11 +266,12 @@ final class Icademie_Page_Categorie_View {
 	 * (miniature de la catégorie).
 	 *
 	 * Boutique : titre de la page de la boutique. Résultats d'une recherche : « Résultats pour « … » »
-	 * et nombre de bateaux trouvés.
+	 * et nombre de bateaux trouvés. Boutique d'un propriétaire : son nom, sa présentation (si WC Vendors
+	 * l'affiche sur les boutiques) et le nombre de ses bateaux.
 	 *
 	 * @param WP_Term|null $term  Catégorie.
 	 * @param array        $stats Bateaux de la liste.
-	 * @param string       $type  Liste affichée : category, shop ou search.
+	 * @param string       $type  Liste affichée : category, shop, search ou vendor.
 	 * @return array
 	 */
 	private static function header( $term, $stats, $type ) {
@@ -283,6 +286,11 @@ final class Icademie_Page_Categorie_View {
 			/* translators: %s: mots cherchés. */
 			$title       = '' !== $query ? sprintf( __( 'Résultats pour « %s »', 'icademie-page-categorie' ), $query ) : __( 'Résultats de la recherche', 'icademie-page-categorie' );
 			$description = '';
+			$image_id    = 0;
+		} elseif ( 'vendor' === $type ) {
+			$vendor      = Icademie_Page_Categorie_Filters::vendor_id();
+			$title       = (string) WCV_Vendors::get_vendor_shop_name( $vendor );
+			$description = self::vendor_description( $vendor );
 			$image_id    = 0;
 		} else {
 			$shop_id     = wc_get_page_id( 'shop' );
@@ -320,6 +328,67 @@ final class Icademie_Page_Categorie_View {
 			'count_text'  => $count_text,
 			'image'       => $image,
 		);
+	}
+
+	/**
+	 * Présentation de la boutique d'un propriétaire, comme WC Vendors l'affiche : seulement si
+	 * l'option « Shop Description » est activée (Réglages de WC Vendors, Affichage), en HTML si le
+	 * propriétaire ou le site l'autorise, sinon en texte simple.
+	 *
+	 * @param int $vendor Propriétaire.
+	 * @return string
+	 */
+	private static function vendor_description( $vendor ) {
+		$text = trim( (string) get_user_meta( $vendor, 'pv_shop_description', true ) );
+
+		if ( '' === $text || ! wc_string_to_bool( get_option( 'wcvendors_display_shop_description', 'no' ) ) ) {
+			return '';
+		}
+
+		$html = wc_string_to_bool( get_user_meta( $vendor, 'pv_shop_html_enabled', true ) ) || wc_string_to_bool( get_option( 'wcvendors_display_shop_description_html', 'no' ) );
+
+		return $html ? wpautop( wptexturize( wp_kses_post( $text ) ) ) : '<p>' . esc_html( sanitize_text_field( $text ) ) . '</p>';
+	}
+
+	/**
+	 * Fil d'Ariane de la boutique d'un propriétaire : « Accueil › Boutique › Nom de la boutique ».
+	 *
+	 * Sur ces pages, WC Vendors fait pointer le niveau « Boutique » vers la boutique du propriétaire :
+	 * il retrouve le lien de tous les bateaux, et la boutique du propriétaire vient après lui. Aussi
+	 * pour les données structurées du fil d'Ariane (même filtre).
+	 *
+	 * @param array[] $crumbs Niveaux : libellé et adresse.
+	 * @return array[]
+	 */
+	public static function vendor_breadcrumb( $crumbs ) {
+		$vendor = Icademie_Page_Categorie_Filters::vendor_id();
+
+		if ( ! $vendor || ! is_array( $crumbs ) || ! $crumbs ) {
+			return $crumbs;
+		}
+
+		$shop  = untrailingslashit( (string) WCV_Vendors::get_vendor_shop_page( $vendor ) );
+		$name  = (string) WCV_Vendors::get_vendor_shop_name( $vendor );
+		$crumb = array( $name, trailingslashit( $shop ) );
+
+		foreach ( $crumbs as $index => $item ) {
+			if ( isset( $item[0], $item[1] ) && untrailingslashit( (string) $item[1] ) === $shop ) {
+				// Déjà fait (le filtre peut passer deux fois sur les mêmes niveaux).
+				if ( $name === $item[0] ) {
+					return $crumbs;
+				}
+
+				$crumbs[ $index ][1] = wc_get_page_permalink( 'shop' );
+				array_splice( $crumbs, $index + 1, 0, array( $crumb ) );
+
+				return $crumbs;
+			}
+		}
+
+		// Pas de niveau « Boutique » (boutique en page d'accueil) : après l'accueil.
+		array_splice( $crumbs, min( 1, count( $crumbs ) ), 0, array( $crumb ) );
+
+		return $crumbs;
 	}
 
 	/**

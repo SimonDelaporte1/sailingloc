@@ -497,6 +497,33 @@ final class Icademie_Page_Categorie_Filters {
 	}
 
 	/**
+	 * Boutique d'un propriétaire (WC Vendors, « /vendors/nom-de-la-boutique/ ») affichée ?
+	 *
+	 * WC Vendors la sert comme la liste de tous les bateaux, réduite aux bateaux du propriétaire.
+	 *
+	 * @return int Identifiant du propriétaire ; 0 ailleurs.
+	 */
+	public static function vendor_id() {
+		static $cache = array();
+
+		if ( ! class_exists( 'WCV_Vendors' ) || ! function_exists( 'is_shop' ) || ! is_shop() || self::is_search() ) {
+			return 0;
+		}
+
+		$slug = urldecode( (string) get_query_var( 'vendor_shop' ) );
+
+		if ( '' === $slug ) {
+			return 0;
+		}
+
+		if ( ! isset( $cache[ $slug ] ) ) {
+			$cache[ $slug ] = (int) WCV_Vendors::get_vendor_id( $slug );
+		}
+
+		return $cache[ $slug ];
+	}
+
+	/**
 	 * Paramètres de la recherche à garder dans toutes les adresses de la liste (mots cherchés).
 	 *
 	 * @return string[] « s » et « post_type » sur les résultats d'une recherche, sinon rien.
@@ -544,6 +571,17 @@ final class Icademie_Page_Categorie_Filters {
 			$link = get_term_link( $term );
 
 			if ( ! is_wp_error( $link ) ) {
+				return $link;
+			}
+		}
+
+		// Boutique d'un propriétaire : les filtres et le tri restent dans sa boutique.
+		$vendor = self::vendor_id();
+
+		if ( $vendor ) {
+			$link = (string) WCV_Vendors::get_vendor_shop_page( $vendor );
+
+			if ( '' !== $link ) {
 				return $link;
 			}
 		}
@@ -1062,14 +1100,15 @@ final class Icademie_Page_Categorie_Filters {
 	 */
 	public static function stats( $term ) {
 		$search = self::is_search() ? (string) get_search_query( false ) : '';
-		$key    = 'stats:' . ( $term instanceof WP_Term ? $term->term_taxonomy_id : 0 ) . ':' . md5( $search ) . ':' . wp_cache_get_last_changed( 'posts' ) . ':' . wp_cache_get_last_changed( 'terms' );
+		$vendor = $term instanceof WP_Term ? 0 : self::vendor_id();
+		$key    = 'stats:' . ( $term instanceof WP_Term ? $term->term_taxonomy_id : 0 ) . ':' . md5( $search ) . ':' . $vendor . ':' . wp_cache_get_last_changed( 'posts' ) . ':' . wp_cache_get_last_changed( 'terms' );
 		$stats = wp_cache_get( $key, self::CACHE_GROUP );
 
 		if ( false !== $stats ) {
 			return $stats;
 		}
 
-		$ids   = self::product_ids( $term, $search );
+		$ids   = self::product_ids( $term, $search, $vendor );
 		$stats = array(
 			'count' => count( $ids ),
 			'terms' => array(),
@@ -1133,9 +1172,10 @@ final class Icademie_Page_Categorie_Filters {
 	 *
 	 * @param WP_Term|null $term   Catégorie ; null pour toute la boutique.
 	 * @param string       $search Mots cherchés (résultats d'une recherche), ou vide.
+	 * @param int          $vendor Propriétaire (sa boutique WC Vendors), ou 0.
 	 * @return int[]
 	 */
-	private static function product_ids( $term, $search = '' ) {
+	private static function product_ids( $term, $search = '', $vendor = 0 ) {
 		$visibility = wc_get_product_visibility_term_ids();
 
 		// Recherche : bateaux masqués des résultats de recherche, comme la liste de WooCommerce.
@@ -1183,6 +1223,10 @@ final class Icademie_Page_Categorie_Filters {
 
 		if ( '' !== $search ) {
 			$args['s'] = $search;
+		}
+
+		if ( $vendor > 0 ) {
+			$args['author'] = (int) $vendor;
 		}
 
 		return array_map( 'intval', get_posts( $args ) );
