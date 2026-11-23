@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Icademie – Page catégorie
  * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination), les résultats de la recherche de produits et la boutique de chaque propriétaire (WC Vendors : son nom, ses bateaux, ses filtres) ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
- * Version:           1.2.1
+ * Version:           1.3.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil
@@ -33,7 +33,7 @@ require_once __DIR__ . '/includes/class-icademie-page-categorie-view.php';
  */
 final class Icademie_Page_Categorie {
 
-	const VERSION = '1.2.1';
+	const VERSION = '1.3.0';
 
 	/** Fichier principal de l'extension. */
 	const FILE = __FILE__;
@@ -54,6 +54,9 @@ final class Icademie_Page_Categorie {
 	/** Avis affiché une fois après l'activation. */
 	const NOTICE_TRANSIENT = 'icademie_page_categorie_activation';
 
+	/** Anciennes adresses de la boutique (page renommée), redirigées vers l'adresse actuelle. */
+	const OLD_PATHS_OPTION = 'icademie_page_categorie_anciennes_adresses';
+
 	/**
 	 * Branche l'extension sur WordPress.
 	 */
@@ -67,6 +70,15 @@ final class Icademie_Page_Categorie {
 		add_filter( 'loop_shop_per_page', array( __CLASS__, 'per_page' ), 20 );
 		// Boutique d'un propriétaire (WC Vendors) : « Accueil › Boutique › Nom de la boutique ».
 		add_filter( 'woocommerce_get_breadcrumb', array( 'Icademie_Page_Categorie_View', 'vendor_breadcrumb' ) );
+		// Boutique filtrée : le nom des filtres choisis (« Rame ») à la place de « Boutique ».
+		add_filter( 'woocommerce_get_breadcrumb', array( 'Icademie_Page_Categorie_View', 'filters_breadcrumb' ) );
+		add_filter( 'document_title_parts', array( 'Icademie_Page_Categorie_View', 'document_title_parts' ) );
+		add_filter( 'wpseo_title', array( 'Icademie_Page_Categorie_View', 'seo_title' ) );
+		add_filter( 'wpseo_opengraph_title', array( 'Icademie_Page_Categorie_View', 'seo_title' ) );
+		// Boutique renommée (« /boutique/ » devenue « /location/ ») : les anciennes adresses redirigées,
+		// avant la redirection « devinée » de WordPress (priorité 10), qui irait vers un article.
+		add_action( 'post_updated', array( __CLASS__, 'remember_shop_path' ), 10, 3 );
+		add_action( 'template_redirect', array( __CLASS__, 'redirect_old_shop_path' ), 1 );
 		add_action( 'wp_head', array( __CLASS__, 'preload_font' ), 2 );
 		add_action( 'admin_init', array( __CLASS__, 'add_privacy_policy_content' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'activation_notice' ) );
@@ -323,6 +335,73 @@ final class Icademie_Page_Categorie {
 		 * @param int $term_id Catégorie.
 		 */
 		do_action( 'icademie_page_categorie_vider_cache', (int) $term_id );
+	}
+
+	/**
+	 * Note l'ancienne adresse de la boutique quand sa page change d'adresse (« boutique » renommée
+	 * « location »), pour la rediriger.
+	 *
+	 * @param int     $post_id Page enregistrée.
+	 * @param WP_Post $after   Page après l'enregistrement.
+	 * @param WP_Post $before  Page avant l'enregistrement.
+	 */
+	public static function remember_shop_path( $post_id, $after, $before ) {
+		if ( ! function_exists( 'wc_get_page_id' ) || (int) $post_id !== (int) wc_get_page_id( 'shop' ) || ! $before instanceof WP_Post || ! $after instanceof WP_Post || 'publish' !== $before->post_status ) {
+			return;
+		}
+
+		$old = trim( (string) get_page_uri( $before ), '/' );
+		$new = trim( (string) get_page_uri( $after ), '/' );
+
+		if ( '' === $old || $old === $new ) {
+			return;
+		}
+
+		$paths   = (array) get_option( self::OLD_PATHS_OPTION, array() );
+		$paths[] = $old;
+
+		// L'adresse reprise par la boutique n'est plus une ancienne adresse.
+		update_option( self::OLD_PATHS_OPTION, array_values( array_diff( array_unique( $paths ), array( $new ) ) ), false );
+	}
+
+	/**
+	 * Ancienne adresse de la boutique (page introuvable) : redirection permanente vers l'adresse
+	 * actuelle, avec la suite de l'adresse (« page/2 ») et les filtres (« ?filter_type-de-bateau=… »).
+	 *
+	 * Anciennes adresses : celles notées par remember_shop_path(), et celle de la boutique créée par
+	 * WooCommerce (« boutique » en français), même si la page a été renommée avant cette version.
+	 */
+	public static function redirect_old_shop_path() {
+		global $wp;
+
+		if ( ! is_404() || ! function_exists( 'wc_get_page_id' ) || ! $wp instanceof WP ) {
+			return;
+		}
+
+		$shop_id = (int) wc_get_page_id( 'shop' );
+		$current = $shop_id > 0 && 'publish' === get_post_status( $shop_id ) ? trim( (string) get_page_uri( $shop_id ), '/' ) : '';
+
+		if ( '' === $current ) {
+			return;
+		}
+
+		$request = trim( (string) $wp->request, '/' );
+		$olds    = (array) get_option( self::OLD_PATHS_OPTION, array() );
+		$olds[]  = _x( 'shop', 'Page slug', 'woocommerce' );
+
+		foreach ( array_unique( $olds ) as $old ) {
+			$old = trim( (string) $old, '/' );
+
+			if ( '' === $old || $old === $current || ( $request !== $old && 0 !== strpos( $request, $old . '/' ) ) ) {
+				continue;
+			}
+
+			$url   = home_url( user_trailingslashit( $current . substr( $request, strlen( $old ) ) ) );
+			$query = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Repris tel quel dans l'adresse de redirection (même site).
+
+			wp_safe_redirect( '' !== $query ? $url . '?' . $query : $url, 301, 'Icademie - Page categorie' );
+			exit;
+		}
 	}
 
 	/**

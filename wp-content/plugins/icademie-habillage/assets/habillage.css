@@ -1274,6 +1274,13 @@ body.icademie-habillage-large .icademie-habillage .icademie-habillage__contenu {
 	font-weight: 400;
 }
 
+/* Pas d'icône devant les entrées : WC Vendors met devant « Espace propriétaire » un caractère de la
+ * police Font Awesome (absente du site), qui s'affiche comme un symbole inconnu. */
+.icademie-habillage .woocommerce-MyAccount-navigation li[class*="woocommerce-MyAccount-navigation-link--"] a::before {
+	content: none;
+	display: none;
+}
+
 .icademie-habillage .woocommerce-MyAccount-content {
 	float: none;
 	width: auto;
@@ -2560,10 +2567,17 @@ body.icademie-habillage-large .icademie-habillage > .wc-block-store-notices {
  * Corrections de spécificité : règles de WooCommerce plus précises que les nôtres.
  * --------------------------------------------------------------------------------------------- */
 
-/* Compte : sur toute la largeur du contenu, aligné sur le titre (WooCommerce le limite à 1000px). */
+/* Compte : même espace sous le titre que les autres pages (le thème ajoute 70px au-dessus et 90px
+ * au-dessous du compte). */
+.icademie-habillage .icademie-habillage__contenu > .woocommerce {
+	padding-block: 0;
+}
+
+/* Compte : largeur des autres pages du site (1200px), aligné sur le titre (WooCommerce le limite à 1000px). */
 .icademie-habillage .icademie-habillage__contenu > .woocommerce:has(> .woocommerce-MyAccount-navigation) {
-	max-width: none;
-	margin-inline: 0;
+	width: 100%;
+	max-width: var(--ih-max);
+	margin-inline: auto;
 }
 
 /* Lien d'un message : lien souligné, pas un bouton. */
@@ -2653,6 +2667,21 @@ body.icademie-habillage-large .icademie-habillage > .wc-block-store-notices {
 	stroke: currentColor;
 }
 
+/* Bouton « plus » (trois traits) : traits encre (blancs chez WC Vendors), fond écume au survol. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation #dashboard-menu-item-more-button span {
+	background: var(--ih-encre);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation #dashboard-menu-item-more-button:is(:hover, .show) {
+	background: var(--ih-ecume);
+}
+
+/* Icônes du menu et des étapes de configuration : blanches dans le fichier d'icônes de WC Vendors,
+ * repeintes en manche par le filtre SVG du pied de page (Icademie_Habillage::print_icon_filter). */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper :is(.wcv-dashboard-nav-item-link, .wcv-store-setup-step:not(.current, .completed) .wcv-store-setup-step-icon) svg use {
+	filter: url(#icademie-habillage-manche);
+}
+
 .icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-menu {
 	padding: 6px;
 	border-radius: 8px;
@@ -2685,6 +2714,43 @@ body.icademie-habillage-large .icademie-habillage > .wc-block-store-notices {
 
 .icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-dashboard-menu :is(.wcv-dashboard-menu-divider, .wcv-menu-toggle, svg) {
 	color: var(--ih-encre);
+}
+
+/* Menu déroulant du bouton « plus » (à partir de 768px, largeurs de WC Vendors) : carte blanche
+ * comme le menu, au lieu du gris foncé de WC Vendors. */
+@media (min-width: 768px) {
+
+	.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation .wcv-dashboard-menu.horizontal.secondary {
+		min-width: 220px;
+		margin-top: 6px;
+		padding: 6px;
+		border-radius: 8px;
+		background: var(--ih-blanc);
+		box-shadow: var(--ih-shadow-hover);
+	}
+
+	.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation .wcv-dashboard-menu.horizontal.secondary .wcv-dashboard-nav-item .wcv-dashboard-nav-item-link {
+		padding: 10px 14px;
+		border-radius: 6px;
+		background: none;
+		color: var(--ih-encre);
+	}
+
+	.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation .wcv-dashboard-menu.horizontal.secondary .wcv-dashboard-nav-item :is(.wcv-dashboard-nav-item-link:hover, .wcv-dashboard-nav-item-link.active),
+	.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation .wcv-dashboard-menu.horizontal.secondary .wcv-dashboard-nav-item.active .wcv-dashboard-nav-item-link {
+		background: var(--ih-ecume);
+		color: var(--ih-manche);
+	}
+}
+
+/* Smartphone (moins de 768px) : WC Vendors affiche déjà toutes les entrées en liste ; son bouton
+ * « plus » n'y a ni traits ni rôle (barre vide), il est masqué. Le script de WC Vendors l'affiche
+ * par un style en ligne, d'où !important. */
+@media (max-width: 767px) {
+
+	.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-navigation #dashboard-menu-item-more-button {
+		display: none !important;
+	}
 }
 
 /* Configuration de la boutique : étape en cours en manche. */
@@ -2832,6 +2898,20 @@ body.icademie-habillage-large .icademie-habillage > .wc-block-store-notices {
 	color: var(--ih-manche);
 }
 
+/* Étape en cours ou faite : rond manche foncé cerclé de blanc, icône blanche (bleu vif de WC Vendors). */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-steps .wcv-store-setup-step:is(.current, .completed) .wcv-store-setup-step-icon {
+	border-color: var(--ih-blanc);
+	background: var(--ih-manche-strong);
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-steps .wcv-store-setup-step .wcv-store-setup-step-content .wcv-store-setup-step-proceed {
+	color: inherit;
+}
+
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-steps .wcv-store-setup-step .wcv-store-setup-step-content .wcv-store-setup-step-proceed svg {
+	border-color: currentColor;
+}
+
 .icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-store-setup-steps-wrapper .wcv-store-setup-steps .wcv-store-setup-step:not(.current) .wcv-store-setup-step-title {
 	color: var(--ih-encre);
 }
@@ -2915,9 +2995,14 @@ body.icademie-habillage-large .icademie-habillage > .wc-block-store-notices {
 	text-transform: uppercase;
 }
 
-/* Formulaire d'annonce : libellés, zones de dépôt des photos. */
+/* Formulaires (annonce, réglages) : libellés en surtitre au-dessus du champ, sans les majuscules à
+ * chaque mot de WC Vendors (« Nom De La Page »). Libellé autour d'une case à cocher : texte courant. */
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-form label {
+	text-transform: none;
+}
+
 .icademie-habillage .wcvendors-pro-dashboard-wrapper .control-group > label,
-.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-form label:not([class]) {
+.icademie-habillage .wcvendors-pro-dashboard-wrapper .wcv-form label:is(:not([class]), [class=""]):not(:has(input, select, textarea)):not(input + label) {
 	color: var(--ih-encre);
 	font-size: 13px;
 	font-weight: 700;

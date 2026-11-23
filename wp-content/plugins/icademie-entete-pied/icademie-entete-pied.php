@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Icademie – En-tête et pied de page
  * Description:       En-tête et pied de page de tout le site d'après la charte graphique et les maquettes SailingLoc : fond encre, logo typographique, menu principal (le menu de navigation du site, avec ses sous-menus), bouton « Top destinations » (un clic déplie l'arborescence des catégories d'annonces), « Proposer mon bateau », connexion, recherche de bateaux ; pied de page avec assistance, réseaux sociaux, trois colonnes de liens et liens légaux. Remplace l'en-tête et le pied de page du thème tant que l'extension est active. Réglages › En-tête et pied de page.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Requires Plugins:  icademie-page-accueil
@@ -27,7 +27,7 @@ require_once __DIR__ . '/includes/class-icademie-entete-pied-view.php';
  */
 final class Icademie_Entete_Pied {
 
-	const VERSION = '1.0.0';
+	const VERSION = '1.1.0';
 
 	/** Fichier principal. */
 	const FILE = __FILE__;

@@ -637,14 +637,16 @@ final class Icademie_Page_Categorie_Filters {
 	 *
 	 * @param array  $params Paramètres (voir current_params()).
 	 * @param string $base   Adresse de la liste, sans paramètres.
-	 * @return array[] Libellé (« label »), libellé pour les lecteurs d'écran (« sr »), adresse (« url »).
+	 * @return array[] Libellé (« label »), adresse (« url »), valeur connue de l'attribut (« known »).
 	 */
 	public static function chips( $params, $base ) {
 		$chips = array();
-		$add   = static function ( $label, $without ) use ( &$chips, $base ) {
+		$add   = static function ( $label, $without, $known = true ) use ( &$chips, $base ) {
 			$chips[] = array(
 				'label' => $label,
 				'url'   => self::url( $base, $without ),
+				// Valeur inconnue de l'attribut (adresse modifiée à la main) : libellé = slug.
+				'known' => $known,
 			);
 		};
 
@@ -687,7 +689,7 @@ final class Icademie_Page_Categorie_Filters {
 					$less = self::reorder( $less, $params );
 				}
 
-				$add( isset( $values[ $slug ] ) ? $values[ $slug ]['name'] : $slug, $less );
+				$add( isset( $values[ $slug ] ) ? $values[ $slug ]['name'] : $slug, $less, isset( $values[ $slug ] ) );
 			}
 		}
 
