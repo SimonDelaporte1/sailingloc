@@ -19,6 +19,12 @@ final class Icademie_Entete_Pied_View {
 	/** Niveaux de catégories du menu des destinations (pays, région, port…). */
 	const DESTINATIONS_DEPTH = 3;
 
+	/** Centre d'aide du pied de page : catégorie d'articles (slug). */
+	const HELP_CATEGORY = 'aide';
+
+	/** « Assurance propriétaire » du pied de page : article ou page (slug). */
+	const INSURANCE_POST = 'aide-assistance-assurance-caution';
+
 	/**
 	 * Logo typographique de la charte : « Sailing » et « Loc » de deux couleurs.
 	 *
@@ -518,6 +524,16 @@ final class Icademie_Entete_Pied_View {
 			}
 		}
 
+		// Assistance, assurance et caution des propriétaires : l'article d'aide, s'il est publié.
+		$insurance = get_page_by_path( self::INSURANCE_POST, OBJECT, array( 'post', 'page' ) );
+
+		if ( $insurance instanceof WP_Post && 'publish' === $insurance->post_status ) {
+			$offer[] = array(
+				'label' => __( 'Assurance propriétaire', 'icademie-entete-pied' ),
+				'url'   => get_permalink( $insurance ),
+			);
+		}
+
 		$help    = array();
 		$contact = self::contact_page();
 
@@ -533,6 +549,20 @@ final class Icademie_Entete_Pied_View {
 				'label' => __( 'Mon compte', 'icademie-entete-pied' ),
 				'url'   => wc_get_page_permalink( 'myaccount' ),
 			);
+		}
+
+		// Centre d'aide : la catégorie d'articles « Aide », si elle a des articles.
+		$help_category = get_term_by( 'slug', self::HELP_CATEGORY, 'category' );
+
+		if ( $help_category instanceof WP_Term && $help_category->count > 0 ) {
+			$link = get_term_link( $help_category );
+
+			if ( ! is_wp_error( $link ) ) {
+				$help[] = array(
+					'label' => __( 'Centre d\'aide', 'icademie-entete-pied' ),
+					'url'   => $link,
+				);
+			}
 		}
 
 		return array(

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Icademie – Habillage des pages
  * Description:       Habillage d'après la charte graphique SailingLoc des pages qui n'ont pas de maquette : pages de contenu et articles (fil d'Ariane, titre, typographie de lecture, tableaux, citations, formulaires), listes d'articles, page introuvable, compte client (« Mes locations » avec le bandeau d'assistance, adresses, détails du compte, connexion), tableau de bord et liste des propriétaires (WC Vendors), et tunnel de réservation (panier, validation, confirmation, avec les étapes). Modèles de page propres à l'extension, entre l'en-tête et le pied de page du site.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil
@@ -16,6 +16,7 @@ defined( 'ABSPATH' ) || exit;
 require_once __DIR__ . '/includes/class-icademie-habillage-templates.php';
 require_once __DIR__ . '/includes/class-icademie-habillage-blocks.php';
 require_once __DIR__ . '/includes/class-icademie-habillage-compte.php';
+require_once __DIR__ . '/includes/class-icademie-habillage-textes.php';
 
 /**
  * Extension « Habillage des pages ».
@@ -23,7 +24,7 @@ require_once __DIR__ . '/includes/class-icademie-habillage-compte.php';
 final class Icademie_Habillage {
 
 	/** Version (feuille de styles). */
-	const VERSION = '1.0.0';
+	const VERSION = '1.1.0';
 
 	/** Feuille de styles. */
 	const HANDLE = 'icademie-habillage';
@@ -35,12 +36,28 @@ final class Icademie_Habillage {
 		Icademie_Habillage_Templates::init();
 		Icademie_Habillage_Blocks::init();
 		Icademie_Habillage_Compte::init();
+		Icademie_Habillage_Textes::init();
 
 		add_action( 'init', array( __CLASS__, 'register_assets' ) );
 		// Tard : après les feuilles de WooCommerce, de WC Vendors et du thème.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 100 );
 		add_filter( 'body_class', array( __CLASS__, 'body_class' ) );
 		add_action( 'wp_head', array( __CLASS__, 'preload_fonts' ), 2 );
+		add_action( 'wp_footer', array( __CLASS__, 'print_icon_filter' ) );
+	}
+
+	/**
+	 * Filtre SVG qui repeint en manche les icônes de WC Vendors posées sur un fond clair.
+	 *
+	 * Le fichier d'icônes de WC Vendors les dessine en blanc (pour son menu gris foncé) : le CSS ne
+	 * peut pas changer la couleur d'une icône tirée de ce fichier, un filtre SVG le peut.
+	 */
+	public static function print_icon_filter() {
+		if ( ! self::is_active() || ! Icademie_Habillage_Templates::is_vendor_page() ) {
+			return;
+		}
+
+		echo '<svg class="icademie-habillage__filtres" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><filter id="icademie-habillage-manche" color-interpolation-filters="sRGB"><feFlood flood-color="#1d5a80"/><feComposite in2="SourceAlpha" operator="in"/></filter></svg>' . "\n";
 	}
 
 	/**
