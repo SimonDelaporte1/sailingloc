@@ -11,11 +11,13 @@ auth.json
 sftp-config.json
 .vscode/sftp.json
 .ftpconfig
+.playwright-mcp
 wp-cli.local.yml
 
 # Données
 *.sql
 *.sql.gz
+audits
 wp-content/uploads/
 wp-content/backups/
 wp-content/updraft/

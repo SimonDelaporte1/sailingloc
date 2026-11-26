@@ -449,6 +449,7 @@ final class Icademie_Habillage_Blocks {
 		return self::view(
 			'page-introuvable',
 			array(
+				'code'    => Icademie_Habillage_Templates::is_forbidden() ? 403 : 404,
 				'shop'    => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : '',
 				'home'    => home_url( '/' ),
 				'contact' => $contact && 'publish' === get_post_status( $contact ) ? get_permalink( $contact ) : '',

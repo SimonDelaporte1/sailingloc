@@ -1,0 +1,105 @@
+/*
+ * Compte client › Mes données personnelles. Couleurs de la charte (variables de l'extension
+ * « Habillage des pages », avec leur valeur par défaut si elle est désactivée).
+ */
+
+.icademie-comptes__section {
+	margin: 32px 0 0;
+	padding: 24px;
+	border: 1px solid var(--ih-trait, #ddd8ce);
+	border-radius: 12px;
+	background: var(--ih-blanc, #fff);
+}
+
+.icademie-comptes__section > :last-child {
+	margin-bottom: 0;
+}
+
+/* Plus précis que « .icademie-habillage .icademie-habillage__contenu h2 » (titres de page, 30px). */
+.icademie-comptes .icademie-comptes__section h2.icademie-comptes__titre {
+	margin: 0 0 12px;
+	font-family: var(--ih-font-titre, Fraunces, Georgia, "Times New Roman", serif);
+	font-size: 24px;
+	line-height: 1.25;
+}
+
+.icademie-comptes__liste {
+	margin: 0 0 16px;
+	padding-left: 1.25em;
+}
+
+.icademie-comptes__aide,
+.icademie-comptes__erreur {
+	display: block;
+	margin-top: 6px;
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+.icademie-comptes__aide {
+	color: var(--ih-encre-muted, #4a5866);
+}
+
+.icademie-comptes__erreur {
+	color: var(--ih-balise, #b83a24);
+	font-weight: 700;
+}
+
+.icademie-comptes .woocommerce-invalid input[aria-invalid="true"] {
+	border-color: var(--ih-balise, #b83a24);
+}
+
+.icademie-comptes__erreurs ul {
+	margin: 8px 0 0;
+	padding-left: 1.25em;
+}
+
+.icademie-comptes__erreurs a {
+	color: inherit;
+}
+
+.icademie-comptes__blocage p {
+	margin: 0 0 8px;
+}
+
+.icademie-comptes__blocage p:last-child {
+	margin-bottom: 0;
+}
+
+.icademie-comptes__actions {
+	margin: 24px 0 8px;
+}
+
+/*
+ * Action définitive : bouton balise (rouge de la charte). Sélecteur plus précis que ceux des
+ * boutons d'envoi de l'habillage (« .icademie-habillage:not(…) .icademie-habillage__contenu
+ * :is(…button[type="submit"]):not(…) »), chargés après cette feuille.
+ */
+.icademie-comptes .icademie-comptes__formulaire .icademie-comptes__actions button.icademie-comptes__supprimer.woocommerce-Button[type="submit"] {
+	border-color: var(--ih-balise, #b83a24);
+	background: var(--ih-balise, #b83a24);
+	color: var(--ih-blanc, #fff);
+}
+
+.icademie-comptes .icademie-comptes__formulaire .icademie-comptes__actions button.icademie-comptes__supprimer.woocommerce-Button[type="submit"]:hover {
+	border-color: #8f2c1b;
+	background: #8f2c1b;
+	color: var(--ih-blanc, #fff);
+}
+
+.icademie-comptes__legende {
+	color: var(--ih-encre-muted, #4a5866);
+	font-size: 15px;
+}
+
+@media (max-width: 600px) {
+	.icademie-comptes__section {
+		padding: 16px;
+	}
+}
+
+@media print {
+	.icademie-comptes form {
+		display: none;
+	}
+}

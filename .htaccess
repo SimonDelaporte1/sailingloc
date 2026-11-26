@@ -5,6 +5,35 @@ AddOutputFilterByType DEFLATE "application/atom+xml" "application/javascript" "a
 RedirectMatch 404 /\.git
 # SECTION END GIT PROTECTION
 
+# BEGIN SailingLoc sécurité
+# Audit Opquast (règles 25, 206, 210, 211, 212, 213 et 224). Bloc écrit à la main : WordPress et
+# WP Super Cache ne modifient que leurs propres blocs.
+
+# Accès refusé : la page du site (extension « Habillage des pages », code 403) au lieu de la page
+# d'Apache en anglais.
+ErrorDocument 403 /index.php
+
+# Fichiers qui donnent la version de WordPress, et script de test d'envoi d'e-mail : inaccessibles.
+<FilesMatch "^(readme\.html|license\.txt|wp-config-sample\.php|testmail\.php)$">
+	Require all denied
+</FilesMatch>
+
+# En-têtes de sécurité. « Header unset » retire ceux que WordPress envoie déjà sur certaines pages
+# (connexion, compte client), pour qu'ils ne soient pas en double.
+<IfModule mod_headers.c>
+	Header unset X-Content-Type-Options
+	Header always set X-Content-Type-Options "nosniff"
+	Header always set Referrer-Policy "strict-origin-when-cross-origin"
+	Header always set X-XSS-Protection "1; mode=block"
+	Header unset X-Frame-Options
+	Header always set X-Frame-Options "SAMEORIGIN"
+	# Contenus seulement en HTTPS (ou du site lui-même), aucun objet Flash/Java, formulaires envoyés
+	# au site ou en HTTPS, pages intégrables seulement par le site lui-même.
+	Header unset Content-Security-Policy
+	Header always set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; media-src 'self' blob: https:; frame-src 'self' blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'self'"
+</IfModule>
+# END SailingLoc sécurité
+
 
 # BEGIN WPSuperCache
 # The directives (lines) between "BEGIN WPSuperCache" and "END WPSuperCache" are

@@ -52,6 +52,58 @@ final class Icademie_Habillage_Templates {
 		foreach ( array( 'category', 'tag', 'author', 'date' ) as $type ) {
 			add_filter( $type . '_template_hierarchy', array( __CLASS__, 'list_hierarchy' ), 20 );
 		}
+
+		// Accès refusé (erreur 403 d'Apache, « ErrorDocument 403 /index.php » dans le .htaccess).
+		add_action( 'wp', array( __CLASS__, 'forbidden' ) );
+		add_filter( 'pre_get_document_title', array( __CLASS__, 'forbidden_title' ), 99 );
+	}
+
+	// ------------------------------------------------------------------------------------------
+	// Accès refusé.
+	// ------------------------------------------------------------------------------------------
+
+	/**
+	 * La page est-elle la page d'erreur d'un accès refusé par le serveur ?
+	 *
+	 * Apache passe la main à WordPress (« ErrorDocument 403 /index.php ») en gardant l'adresse
+	 * demandée et en notant le code d'origine dans REDIRECT_STATUS (variable du serveur, qu'un
+	 * visiteur ne peut pas fixer).
+	 *
+	 * @return bool
+	 */
+	public static function is_forbidden() {
+		return isset( $_SERVER['REDIRECT_STATUS'] ) && '403' === (string) $_SERVER['REDIRECT_STATUS'];
+	}
+
+	/**
+	 * Accès refusé : modèle de la page introuvable (texte propre au 403), code HTTP 403, sans
+	 * redirection vers un contenu au nom proche de l'adresse demandée.
+	 */
+	public static function forbidden() {
+		global $wp_query;
+
+		if ( ! self::is_forbidden() ) {
+			return;
+		}
+
+		$wp_query->set_404();
+		status_header( 403 );
+		nocache_headers();
+		remove_action( 'template_redirect', 'redirect_canonical' );
+	}
+
+	/**
+	 * Titre du document : « Accès refusé - SailingLoc ».
+	 *
+	 * @param string $title Titre (vide, ou celui de Yoast SEO).
+	 * @return string
+	 */
+	public static function forbidden_title( $title ) {
+		if ( ! self::is_forbidden() ) {
+			return $title;
+		}
+
+		return __( 'Accès refusé', 'icademie-habillage' ) . ' - ' . get_bloginfo( 'name', 'display' );
 	}
 
 	/**

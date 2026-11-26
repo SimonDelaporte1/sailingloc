@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       SailingLoc – Habillage des pages
- * Description:       Habillage d'après la charte graphique SailingLoc des pages qui n'ont pas de maquette : pages de contenu et articles (fil d'Ariane, titre, typographie de lecture, tableaux, citations, formulaires), listes d'articles, page introuvable, compte client (« Mes locations » avec le bandeau d'assistance, adresses, détails du compte, connexion), tableau de bord et liste des propriétaires (WC Vendors), et tunnel de réservation (panier, validation, confirmation, avec les étapes). Modèles de page propres à l'extension, entre l'en-tête et le pied de page du site.
- * Version:           1.1.0
+ * Description:       Habillage d'après la charte graphique SailingLoc des pages qui n'ont pas de maquette : pages de contenu et articles (fil d'Ariane, titre, typographie de lecture, tableaux, citations, formulaires), listes d'articles, page introuvable et accès refusé (erreur 403), compte client (« Mes locations » avec le bandeau d'assistance, adresses, détails du compte, connexion), tableau de bord et liste des propriétaires (WC Vendors), et tunnel de réservation (panier, validation, confirmation, avec les étapes). Modèles de page propres à l'extension, entre l'en-tête et le pied de page du site.
+ * Version:           1.2.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce, icademie-page-accueil
@@ -24,7 +24,7 @@ require_once __DIR__ . '/includes/class-icademie-habillage-textes.php';
 final class Icademie_Habillage {
 
 	/** Version (feuille de styles). */
-	const VERSION = '1.1.0';
+	const VERSION = '1.2.0';
 
 	/** Feuille de styles. */
 	const HANDLE = 'icademie-habillage';
