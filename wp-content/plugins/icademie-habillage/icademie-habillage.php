@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Icademie – Habillage des pages
+ * Plugin Name:       SailingLoc – Habillage des pages
  * Description:       Habillage d'après la charte graphique SailingLoc des pages qui n'ont pas de maquette : pages de contenu et articles (fil d'Ariane, titre, typographie de lecture, tableaux, citations, formulaires), listes d'articles, page introuvable, compte client (« Mes locations » avec le bandeau d'assistance, adresses, détails du compte, connexion), tableau de bord et liste des propriétaires (WC Vendors), et tunnel de réservation (panier, validation, confirmation, avec les étapes). Modèles de page propres à l'extension, entre l'en-tête et le pied de page du site.
  * Version:           1.1.0
  * Requires at least: 6.7

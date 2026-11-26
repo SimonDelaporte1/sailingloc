@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Icademie – Dates de début et de fin
+ * Plugin Name:       SailingLoc – Dates de début et de fin
  * Description:       Sur les produits qui ont l'attribut « date », affiche deux sélecteurs de date (début et fin) dans le formulaire d'ajout au panier, puis enregistre les dates choisies dans le panier et la commande. Le prix de ces produits est un prix par jour : dans le panier, il est multiplié par le nombre de jours choisis.
  * Version:           1.1.0
  * Requires at least: 6.5

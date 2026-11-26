@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Icademie – Avis sur les produits
+ * Plugin Name:       SailingLoc – Avis sur les produits
  * Description:       Active les avis (commentaire et note) sur chaque nouveau produit : produit créé par un vendeur depuis son tableau de bord WC Vendors, ajouté dans l'administration ou dupliqué. La case « Activer les avis » (onglet « Avancé » du produit) reste modifiable dans l'administration. Les produits existants ne sont pas modifiés. Notes détaillées : en plus de la note générale, l'avis note de 0 à 5 la conformité de l'annonce, la propreté, la communication et le rapport qualité-prix ; chaque avis affiche ses notes et la fiche du produit la moyenne de chaque critère.
  * Version:           1.2.0
  * Requires at least: 6.5

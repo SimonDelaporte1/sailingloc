@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Icademie – Page annonce
- * Description:       Fiche d'un bateau (page produit) intégrée d'après les zonings « Produit » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête (type de bateau, port de départ, note, partage sur les réseaux sociaux), galerie photos, module de réservation (dates, passagers, prix, frais de service de 10 %, caution, total mis à jour selon le nombre de jours), caractéristiques, description, équipements, calendrier des disponibilités (jours des commandes déjà passées), conditions de location, carte du port de départ, avis et bateaux similaires. Les six conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) se choisissent dans le formulaire du vendeur et sur la fiche du produit ; la position de chaque port, sur la fiche de sa catégorie. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Plugin Name:       SailingLoc – Page annonce
+ * Description:       Fiche d'un bateau (page produit) intégrée d'après les zonings « Produit » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête (type de bateau, port de départ, note, partage sur les réseaux sociaux), galerie photos, module de réservation (dates, passagers, prix, frais de service de 10 %, caution, total mis à jour selon le nombre de jours), caractéristiques, description, équipements, calendrier des disponibilités (jours des commandes déjà passées), conditions de location, carte du port de départ, avis et bateaux similaires. Les six conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) se choisissent dans le formulaire du vendeur et sur la fiche du produit ; la position de chaque port, sur la fiche de sa catégorie. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « SailingLoc – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
  * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
@@ -344,7 +344,7 @@ final class Icademie_Page_Annonce {
 
 		printf(
 			'<div class="notice notice-success is-dismissible"><p>%1$s</p><p>%2$s</p></div>',
-			esc_html__( 'Les fiches des bateaux utilisent maintenant le modèle « Annonce de bateau SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « Icademie – En-tête et pied de page »).', 'icademie-page-annonce' ),
+			esc_html__( 'Les fiches des bateaux utilisent maintenant le modèle « Annonce de bateau SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « SailingLoc – En-tête et pied de page »).', 'icademie-page-annonce' ),
 			wp_kses(
 				sprintf(
 					/* translators: %s: adresse de la liste des catégories de produits. */
@@ -366,7 +366,7 @@ final class Icademie_Page_Annonce {
 
 		$content = '<p>' . __( 'Sur la fiche d\'un bateau, la carte du port de départ est fournie par OpenStreetMap : elle n\'est chargée, et OpenStreetMap n\'est contacté, que si vous cliquez sur « Afficher la carte ». Les boutons de partage ouvrent le site du réseau choisi (Facebook, X, WhatsApp, LinkedIn, Pinterest) seulement quand vous cliquez dessus ; aucun de leurs scripts n\'est chargé sur nos pages. Les dates et le nombre de passagers choisis pour une réservation sont gardés dans votre panier, puis dans votre commande.', 'icademie-page-annonce' ) . '</p>';
 
-		wp_add_privacy_policy_content( __( 'Icademie – Page annonce', 'icademie-page-annonce' ), wp_kses_post( $content ) );
+		wp_add_privacy_policy_content( __( 'SailingLoc – Page annonce', 'icademie-page-annonce' ), wp_kses_post( $content ) );
 	}
 
 	/**

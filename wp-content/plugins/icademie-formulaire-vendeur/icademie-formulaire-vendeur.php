@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Icademie – Formulaire produit des vendeurs
- * Description:       Simplifie le formulaire produit du tableau de bord WC Vendors : produit toujours simple et virtuel (sans choix pour le vendeur), prix de vente placé sous le nom du produit (sans les dates « De » / « À »), encart « Général » supprimé. Sous le prix, les six conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) quand l'extension « Icademie – Page annonce » est active.
+ * Plugin Name:       SailingLoc – Formulaire produit des vendeurs
+ * Description:       Simplifie le formulaire produit du tableau de bord WC Vendors : produit toujours simple et virtuel (sans choix pour le vendeur), prix de vente placé sous le nom du produit (sans les dates « De » / « À »), encart « Général » supprimé. Sous le prix, les six conditions de location (caution, annulation, embarquement, débarquement, permis, carburant) quand l'extension « SailingLoc – Page annonce » est active.
  * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
