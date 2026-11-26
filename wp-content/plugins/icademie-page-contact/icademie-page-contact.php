@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Icademie – Page Contact
+ * Plugin Name:       SailingLoc – Page Contact
  * Description:       Page Contact intégrée d'après le zoning « Contact · Ordinateur 1440 px » : fil d'Ariane, aide rapide (recherche et thèmes fréquents), formulaire adapté au profil avec pièce jointe et accusé de réception par e-mail, coordonnées, plan d'accès et bandeau d'assistance pendant la location. Les coordonnées se règlent dans Réglages › Page contact ; à l'activation, la page « Contact » est créée en brouillon. Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
  * Version:           1.1.0
  * Requires at least: 7.0
@@ -588,7 +588,7 @@ final class Icademie_Page_Contact {
 			. '<p>' . __( 'Ces informations ne sont pas enregistrées dans la base de données du site : elles sont transmises par e-mail à notre équipe, et un accusé de réception est envoyé à l\'adresse que vous indiquez. Elles sont conservées dans notre messagerie le temps nécessaire au traitement de votre demande.', 'icademie-page-contact' ) . '</p>'
 			. '<p>' . __( 'Le plan d\'accès est une carte OpenStreetMap : elle ne se charge, et ne contacte les serveurs d\'OpenStreetMap, que si vous cliquez sur « Afficher la carte ».', 'icademie-page-contact' ) . '</p>';
 
-		wp_add_privacy_policy_content( __( 'Icademie – Page Contact', 'icademie-page-contact' ), wp_kses_post( $content ) );
+		wp_add_privacy_policy_content( __( 'SailingLoc – Page Contact', 'icademie-page-contact' ), wp_kses_post( $content ) );
 	}
 
 	/**

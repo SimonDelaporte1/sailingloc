@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Icademie – Page d'accueil
- * Description:       Page d'accueil intégrée d'après les zonings « Accueil » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : bandeau avec moteur de recherche (destination = catégorie ; type de bateau et passagers = attributs ; dates reprises sur la fiche du bateau), réassurance, catégories de bateaux (attribut « Type de bateau »), bateaux à la une, destinations populaires (catégories mises en avant), comment ça marche, devenir loueur, avis des membres et newsletter (formulaire HubSpot de la page Newsletter). L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Textes, images et liens : Réglages › Page d'accueil. Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Plugin Name:       SailingLoc – Page d'accueil
+ * Description:       Page d'accueil intégrée d'après les zonings « Accueil » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : bandeau avec moteur de recherche (destination = catégorie ; type de bateau et passagers = attributs ; dates reprises sur la fiche du bateau), réassurance, catégories de bateaux (attribut « Type de bateau »), bateaux à la une, destinations populaires (catégories mises en avant), comment ça marche, devenir loueur, avis des membres et newsletter (formulaire HubSpot de la page Newsletter). L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « SailingLoc – En-tête et pied de page ». Textes, images et liens : Réglages › Page d'accueil. Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
  * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
@@ -353,7 +353,7 @@ final class Icademie_Page_Accueil {
 			wp_kses(
 				sprintf(
 					/* translators: %s: adresse de la page d'accueil. */
-					__( 'La <a href="%s">page d\'accueil</a> utilise maintenant le modèle « Page d\'accueil SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « Icademie – En-tête et pied de page »).', 'icademie-page-accueil' ),
+					__( 'La <a href="%s">page d\'accueil</a> utilise maintenant le modèle « Page d\'accueil SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « SailingLoc – En-tête et pied de page »).', 'icademie-page-accueil' ),
 					esc_url( home_url( '/' ) )
 				),
 				array( 'a' => array( 'href' => true ) )
@@ -382,7 +382,7 @@ final class Icademie_Page_Accueil {
 		$content = '<p>' . __( 'La page d\'accueil affiche le formulaire d\'inscription à la newsletter de la page Newsletter. Ce formulaire est fourni par HubSpot : l\'adresse e-mail saisie est envoyée directement à HubSpot, notre outil d\'envoi de la newsletter, et traitée selon sa politique de confidentialité. Vous pouvez vous désinscrire à tout moment grâce au lien présent dans chaque lettre.', 'icademie-page-accueil' ) . '</p>'
 			. '<p>' . __( 'Les dates saisies dans le moteur de recherche de la page d\'accueil sont gardées dans votre navigateur (stockage de session, sans cookie) pour pré-remplir la fiche du bateau. Elles ne nous sont pas envoyées et sont effacées à la fermeture de l\'onglet.', 'icademie-page-accueil' ) . '</p>';
 
-		wp_add_privacy_policy_content( __( 'Icademie – Page d\'accueil', 'icademie-page-accueil' ), wp_kses_post( $content ) );
+		wp_add_privacy_policy_content( __( 'SailingLoc – Page d\'accueil', 'icademie-page-accueil' ), wp_kses_post( $content ) );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Icademie – Données de démonstration
+ * Plugin Name:       SailingLoc – Données de démonstration
  * Description:       Remplit le site de démonstration SailingLoc : comptes propriétaires fictifs (vendeurs WC Vendors, avec boutique) et leurs annonces complètes (photos libres de droits, attributs, conditions de location), comptes locataires fictifs, réservations datées (calendriers de disponibilité, commissions) et avis des locataires avec notes détaillées. Tout ce qui est créé est marqué et se supprime en un clic. Aucun e-mail n'est envoyé pendant la génération ni aux comptes fictifs (adresses en « .invalid »). Outils › Données de démonstration.
  * Version:           1.0.0
  * Requires at least: 6.5

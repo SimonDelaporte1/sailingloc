@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Icademie – Page catégorie
- * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination), les résultats de la recherche de produits et la boutique de chaque propriétaire (WC Vendors : son nom, ses bateaux, ses filtres) ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « Icademie – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
+ * Plugin Name:       SailingLoc – Page catégorie
+ * Description:       Pages des catégories de produits (liste des bateaux) intégrées d'après les zonings « Catégorie » ordinateur (1440 px), tablette (768 px) et smartphone (390 px) : fil d'Ariane, en-tête de la catégorie, moteur de recherche de la page d'accueil, filtres (prix par jour, attributs des bateaux, note), tri, résultats, pagination, contenu éditorial avec 5 questions fréquentes et maillage interne. La boutique (tous les bateaux, où mène une recherche sans destination), les résultats de la recherche de produits et la boutique de chaque propriétaire (WC Vendors : son nom, ses bateaux, ses filtres) ont la même présentation. Le contenu éditorial, les questions et les liens se remplissent sur la fiche de chaque catégorie (Produits › Catégories). Le prix des bateaux enregistrés par les vendeurs (WC Vendors) est repris par WooCommerce pour le filtre et le tri par prix. L'en-tête et le pied de page sont ceux du site : ceux du thème, ou ceux de l'extension « SailingLoc – En-tête et pied de page ». Habillage d'après la charte graphique et les maquettes SailingLoc (couleurs craie, encre et bleu Manche, titres en Fraunces, texte en Atkinson Hyperlegible, polices hébergées avec l'extension).
  * Version:           1.2.1
  * Requires at least: 7.0
  * Requires PHP:      7.4
@@ -378,7 +378,7 @@ final class Icademie_Page_Categorie {
 
 		printf(
 			'<div class="notice notice-success is-dismissible"><p>%1$s</p><p>%2$s</p></div>',
-			esc_html__( 'Les pages des catégories de produits utilisent maintenant le modèle « Catégorie de bateaux SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « Icademie – En-tête et pied de page »).', 'icademie-page-categorie' ),
+			esc_html__( 'Les pages des catégories de produits utilisent maintenant le modèle « Catégorie de bateaux SailingLoc ». L\'en-tête et le pied de page restent ceux du site (thème, ou extension « SailingLoc – En-tête et pied de page »).', 'icademie-page-categorie' ),
 			wp_kses(
 				sprintf(
 					/* translators: %s: adresse de la liste des catégories de produits. */
@@ -419,7 +419,7 @@ final class Icademie_Page_Categorie {
 
 		$content = '<p>' . __( 'Les pages des catégories de bateaux reprennent le moteur de recherche de la page d\'accueil : les dates saisies sont gardées dans votre navigateur (stockage de session, sans cookie) pour pré-remplir la fiche du bateau. Elles ne nous sont pas envoyées et sont effacées à la fermeture de l\'onglet. Les filtres choisis restent dans l\'adresse de la page.', 'icademie-page-categorie' ) . '</p>';
 
-		wp_add_privacy_policy_content( __( 'Icademie – Page catégorie', 'icademie-page-categorie' ), wp_kses_post( $content ) );
+		wp_add_privacy_policy_content( __( 'SailingLoc – Page catégorie', 'icademie-page-categorie' ), wp_kses_post( $content ) );
 	}
 
 	/**

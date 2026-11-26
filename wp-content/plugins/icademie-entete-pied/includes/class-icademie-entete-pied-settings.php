@@ -367,7 +367,7 @@ final class Icademie_Entete_Pied_Settings {
 										esc_url( admin_url( 'options-general.php?page=' . Icademie_Page_Contact_Settings::PAGE ) )
 									);
 								} else {
-									esc_html_e( 'Le numéro d\'assistance et les réseaux sociaux viennent des réglages de l\'extension « Icademie – Page Contact », inactive.', 'icademie-entete-pied' );
+									esc_html_e( 'Le numéro d\'assistance et les réseaux sociaux viennent des réglages de l\'extension « SailingLoc – Page Contact », inactive.', 'icademie-entete-pied' );
 								}
 								?>
 							</p>
