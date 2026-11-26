@@ -349,6 +349,15 @@ final class Icademie_Habillage_Templates {
 			return true;
 		}
 
+		return self::is_vendor_page();
+	}
+
+	/**
+	 * Page de WC Vendors : tableau de bord des propriétaires, liste des propriétaires.
+	 *
+	 * @return bool
+	 */
+	public static function is_vendor_page() {
 		$page = is_page() ? get_queried_object() : null;
 
 		if ( ! $page instanceof WP_Post ) {

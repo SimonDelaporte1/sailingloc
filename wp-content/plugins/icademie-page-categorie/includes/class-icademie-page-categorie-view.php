@@ -59,7 +59,7 @@ final class Icademie_Page_Categorie_View {
 			'base_args'   => Icademie_Page_Categorie_Filters::base_args(),
 			'params'      => $params,
 			'breadcrumb'  => self::breadcrumb( $context ),
-			'header'      => self::header( $term, $stats, $context['type'] ),
+			'header'      => self::header( $term, $stats, $context['type'], 'shop' === $context['type'] ? self::filters_title( $chips ) : '', (int) $query->found_posts ),
 			// Résultats d'une recherche : le champ de la recherche à la place du moteur de recherche.
 			'search'      => $is_search ? null : self::search( $term, $params ),
 			'text_search' => $is_search ? array(
@@ -265,17 +265,20 @@ final class Icademie_Page_Categorie_View {
 	 * Zone 3 : titre (nom de la catégorie), introduction (description), nombre de bateaux, visuel
 	 * (miniature de la catégorie).
 	 *
-	 * Boutique : titre de la page de la boutique. Résultats d'une recherche : « Résultats pour « … » »
-	 * et nombre de bateaux trouvés. Boutique d'un propriétaire : son nom, sa présentation (si WC Vendors
+	 * Boutique : titre de la page de la boutique ; filtrée, le nom des filtres choisis (« Rame ») et le
+	 * nombre de bateaux qui y répondent. Résultats d'une recherche : « Résultats pour « … » » et nombre
+	 * de bateaux trouvés. Boutique d'un propriétaire : son nom, sa présentation (si WC Vendors
 	 * l'affiche sur les boutiques) et le nombre de ses bateaux.
 	 *
-	 * @param WP_Term|null $term  Catégorie.
-	 * @param array        $stats Bateaux de la liste.
-	 * @param string       $type  Liste affichée : category, shop, search ou vendor.
+	 * @param WP_Term|null $term     Catégorie.
+	 * @param array        $stats    Bateaux de la liste.
+	 * @param string       $type     Liste affichée : category, shop, search ou vendor.
+	 * @param string       $filtered Boutique : nom des filtres choisis (voir filters_title()).
+	 * @param int          $found    Bateaux qui répondent aux filtres.
 	 * @return array
 	 */
-	private static function header( $term, $stats, $type ) {
-		$count = (int) $stats['count'];
+	private static function header( $term, $stats, $type, $filtered = '', $found = 0 ) {
+		$count = '' !== $filtered ? (int) $found : (int) $stats['count'];
 
 		if ( $term instanceof WP_Term ) {
 			$title       = $term->name;
@@ -292,9 +295,12 @@ final class Icademie_Page_Categorie_View {
 			$title       = (string) WCV_Vendors::get_vendor_shop_name( $vendor );
 			$description = self::vendor_description( $vendor );
 			$image_id    = 0;
+		} elseif ( '' !== $filtered ) {
+			$title       = $filtered;
+			$description = '';
+			$image_id    = 0;
 		} else {
-			$shop_id     = wc_get_page_id( 'shop' );
-			$title       = $shop_id > 0 ? get_the_title( $shop_id ) : __( 'Tous les bateaux', 'icademie-page-categorie' );
+			$title       = self::shop_title();
 			$description = '';
 			$image_id    = 0;
 		}
@@ -389,6 +395,119 @@ final class Icademie_Page_Categorie_View {
 		array_splice( $crumbs, min( 1, count( $crumbs ) ), 0, array( $crumb ) );
 
 		return $crumbs;
+	}
+
+	/**
+	 * Titre de la page de la boutique (tous les bateaux).
+	 *
+	 * @return string
+	 */
+	private static function shop_title() {
+		$shop_id = function_exists( 'wc_get_page_id' ) ? wc_get_page_id( 'shop' ) : 0;
+
+		return $shop_id > 0 ? get_the_title( $shop_id ) : __( 'Tous les bateaux', 'icademie-page-categorie' );
+	}
+
+	/**
+	 * Boutique (tous les bateaux) affichée : ni catégorie, ni recherche, ni boutique d'un
+	 * propriétaire, ni aperçu de l'éditeur.
+	 *
+	 * @return bool
+	 */
+	private static function is_plain_shop() {
+		return function_exists( 'is_shop' ) && is_shop() && ! is_product_taxonomy() && ! Icademie_Page_Categorie_Filters::is_search() && ! Icademie_Page_Categorie_Filters::vendor_id() && ! Icademie_Page_Categorie::is_editor_preview();
+	}
+
+	/**
+	 * Nom des filtres choisis sur la boutique : « Rame », « Rame, Voile », « Voile, 8 à 12 m ». Il
+	 * remplace « Boutique » dans le titre de la page, le fil d'Ariane et le titre de l'onglet.
+	 *
+	 * @param array[]|null $chips Pastilles des filtres actifs (voir chips()) ; null : celles de la
+	 *                            boutique affichée.
+	 * @return string Vide sans filtre, ou hors de la boutique (une catégorie garde son nom).
+	 */
+	public static function filters_title( $chips = null ) {
+		if ( null === $chips ) {
+			if ( ! self::is_plain_shop() ) {
+				return '';
+			}
+
+			$chips = Icademie_Page_Categorie_Filters::chips( Icademie_Page_Categorie_Filters::current_params(), Icademie_Page_Categorie_Filters::base_url( null ) );
+		}
+
+		$labels = array();
+
+		foreach ( (array) $chips as $chip ) {
+			// Valeur inconnue (adresse modifiée à la main) : pas dans le titre.
+			if ( ! empty( $chip['known'] ) && '' !== (string) $chip['label'] ) {
+				$labels[] = (string) $chip['label'];
+			}
+		}
+
+		return implode( ', ', array_unique( $labels ) );
+	}
+
+	/**
+	 * Fil d'Ariane de la boutique filtrée : « Accueil › Boutique › Rame », « Boutique » menant à
+	 * tous les bateaux. Aussi pour les données structurées du fil d'Ariane (même filtre).
+	 *
+	 * @param array[] $crumbs Niveaux : libellé et adresse.
+	 * @return array[]
+	 */
+	public static function filters_breadcrumb( $crumbs ) {
+		$title = self::filters_title();
+
+		if ( '' === $title || ! is_array( $crumbs ) ) {
+			return $crumbs;
+		}
+
+		$last = end( $crumbs );
+
+		// Déjà fait (le filtre peut passer deux fois sur les mêmes niveaux).
+		if ( is_array( $last ) && isset( $last[0] ) && $title === $last[0] ) {
+			return $crumbs;
+		}
+
+		$crumbs[] = array( $title, '' );
+
+		return $crumbs;
+	}
+
+	/**
+	 * Titre de l'onglet de la boutique filtrée (titre de WordPress) : « Rame – SailingLoc ».
+	 *
+	 * @param string[] $parts Parties du titre.
+	 * @return string[]
+	 */
+	public static function document_title_parts( $parts ) {
+		$title = self::filters_title();
+
+		if ( '' !== $title && is_array( $parts ) ) {
+			$parts['title'] = $title;
+		}
+
+		return $parts;
+	}
+
+	/**
+	 * Titre de l'onglet et du partage de la boutique filtrée, quand Yoast SEO l'écrit : le titre de
+	 * la boutique y est remplacé par le nom des filtres (« Boutique - SailingLoc » devient
+	 * « Rame - SailingLoc »). Le reste du modèle de titre de Yoast est gardé.
+	 *
+	 * @param string $title Titre de Yoast SEO.
+	 * @return string
+	 */
+	public static function seo_title( $title ) {
+		$filtered = self::filters_title();
+		$shop     = self::shop_title();
+
+		if ( '' === $filtered || '' === $shop || ! is_string( $title ) ) {
+			return $title;
+		}
+
+		$position = strpos( $title, $shop );
+
+		return false === $position ? $title : substr_replace( $title, $filtered, $position, strlen( $shop ) );
 	}
 
 	/**
