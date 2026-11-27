@@ -281,8 +281,20 @@ $required = '<span class="icademie-contact__required" aria-hidden="true">*</span
 					</div>
 
 					<div class="icademie-contact__field" data-field="message">
-						<label class="icademie-contact__label" for="icademie-contact-message"><?php esc_html_e( 'Message', 'icademie-page-contact' ); ?> <?php echo $required; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Balise fixe. ?></label>
+						<?php $message_max = number_format_i18n( Icademie_Page_Contact_Form::MESSAGE_MAX ); ?>
+						<label class="icademie-contact__label" for="icademie-contact-message">
+							<?php esc_html_e( 'Message', 'icademie-page-contact' ); ?>
+							<?php /* Opquast 74 : la limite dans l'étiquette du champ. translators: %s: nombre maximal de caractères (« 5 000 »). */ ?>
+							<span class="icademie-contact__label-hint"><?php echo esc_html( sprintf( __( '(%s caractères maximum)', 'icademie-page-contact' ), $message_max ) ); ?></span>
+							<?php echo $required; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Balise fixe. ?>
+						</label>
 						<textarea class="icademie-contact__input icademie-contact__textarea" id="icademie-contact-message" name="icademie_contact[message]" rows="6" maxlength="<?php echo esc_attr( Icademie_Page_Contact_Form::MESSAGE_MAX ); ?>" placeholder="<?php esc_attr_e( 'Décrivez votre demande', 'icademie-page-contact' ); ?>" required<?php echo $field_aria( 'message' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Attributs échappés. ?>><?php echo esc_textarea( $values['message'] ); ?></textarea>
+						<?php /* Compteur affiché par le script ; les lecteurs d'écran entendent le nombre de caractères restants près de la limite. */ ?>
+						<p class="icademie-contact__hint icademie-contact__counter" data-counter hidden>
+							<?php /* translators: 1: nombre de caractères saisis, 2: nombre maximal (« 5 000 »). */ ?>
+							<span aria-hidden="true"><?php echo wp_kses( sprintf( __( '%1$s / %2$s caractères', 'icademie-page-contact' ), '<span data-counter-value>' . esc_html( number_format_i18n( mb_strlen( $values['message'] ) ) ) . '</span>', esc_html( $message_max ) ), array( 'span' => array( 'data-counter-value' => true ) ) ); ?></span>
+							<span class="icademie-contact__sr" aria-live="polite" data-counter-status></span>
+						</p>
 						<?php $field_error( 'message' ); ?>
 					</div>
 
@@ -484,7 +496,7 @@ $required = '<span class="icademie-contact__required" aria-hidden="true">*</span
 				<strong>
 					<?php esc_html_e( 'Urgence en mer :', 'icademie-page-contact' ); ?>
 					<a href="tel:196">196</a>
-					<?php esc_html_e( '(CROSS) ou VHF canal 16.', 'icademie-page-contact' ); ?>
+					<?php echo wp_kses( __( '(<abbr title="Centre régional opérationnel de surveillance et de sauvetage">CROSS</abbr>) ou <abbr title="Very high frequency">VHF</abbr> canal 16.', 'icademie-page-contact' ), array( 'abbr' => array( 'title' => true ) ) ); ?>
 				</strong>
 			</p>
 		</div>

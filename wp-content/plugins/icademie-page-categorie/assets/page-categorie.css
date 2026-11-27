@@ -76,6 +76,11 @@
 	color: var(--ic-primary-dark);
 }
 
+/* Liens déjà visités du contenu éditorial et des questions fréquentes (Opquast 141). */
+.icademie-categorie :where(.icademie-categorie__editorial) a:visited {
+	color: #5b3f8c;
+}
+
 .icademie-categorie :where(a, button, input, select, summary, [tabindex]):focus-visible {
 	outline: 2px solid var(--ic-primary);
 	outline-offset: 2px;
@@ -247,7 +252,9 @@ html.icademie-categorie-panneau {
 }
 
 .icademie-categorie__crumb + .icademie-categorie__crumb::before {
+	/* Séparateur décoratif : texte de remplacement vide, non lu par les lecteurs d'écran (Opquast 189). */
 	content: "›";
+	content: "›" / "";
 	margin: 0 8px;
 	color: var(--ic-muted);
 }

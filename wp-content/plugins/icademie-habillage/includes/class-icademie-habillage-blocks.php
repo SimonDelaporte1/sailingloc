@@ -187,7 +187,7 @@ final class Icademie_Habillage_Blocks {
 			$data['meta'] = $count > 0 ? array(
 				array(
 					'icon' => '',
-					'text' => sprintf( $text, number_format_i18n( $count ) ),
+					'text' => is_search() ? self::search_count_text( $wp_query ) : sprintf( $text, number_format_i18n( $count ) ),
 				),
 			) : array();
 		} elseif ( is_singular() ) {
@@ -208,6 +208,39 @@ final class Icademie_Habillage_Blocks {
 		}
 
 		return self::view( 'entete-page', $data );
+	}
+
+	/**
+	 * Résultats de la recherche (Opquast 13) : nombre de résultats, résultats de la page et nombre
+	 * de pages : « Résultats 1 à 10 sur 37 – page 1 sur 4 ».
+	 *
+	 * @param WP_Query $query Recherche.
+	 * @return string
+	 */
+	public static function search_count_text( $query ) {
+		$total = (int) $query->found_posts;
+		$shown = (int) $query->post_count;
+
+		if ( $total <= 1 || $shown < 1 ) {
+			/* translators: %s: nombre de résultats. */
+			return sprintf( _n( '%s résultat', '%s résultats', $total, 'icademie-habillage' ), number_format_i18n( $total ) );
+		}
+
+		$per_page = (int) $query->get( 'posts_per_page' );
+		$per_page = $per_page > 0 ? $per_page : $shown;
+		$page     = max( 1, (int) $query->get( 'paged' ) );
+		$pages    = max( 1, (int) $query->max_num_pages );
+		$first    = ( $page - 1 ) * $per_page + 1;
+
+		return sprintf(
+			/* translators: 1: premier résultat de la page, 2: dernier, 3: nombre de résultats, 4: page, 5: nombre de pages. */
+			__( 'Résultats %1$s à %2$s sur %3$s – page %4$s sur %5$s', 'icademie-habillage' ),
+			number_format_i18n( $first ),
+			number_format_i18n( $first + $shown - 1 ),
+			number_format_i18n( $total ),
+			number_format_i18n( $page ),
+			number_format_i18n( $pages )
+		);
 	}
 
 	/**

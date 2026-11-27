@@ -10,6 +10,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Quatre notes de 0 à 5, en complément de la note générale de WooCommerce (étoiles de 1 à 5).
  *
+ * - Aperçu de l'avis avant sa publication (Opquast 10) : le premier envoi affiche un récapitulatif
+ *   (note, notes détaillées, texte, nom affiché) avec « Modifier mon avis » et « Publier mon avis ».
  * - Formulaire d'avis de la fiche produit : une ligne par critère, choix de 0 à 5. Les notes sont
  *   obligatoires quand la note générale l'est (WooCommerce › Réglages › Produits : « Les évaluations
  *   par étoiles doivent être obligatoires, et non facultatives »). Elles ne sont demandées que si les
@@ -198,12 +200,18 @@ final class Icademie_Avis_Criteres {
 	 * @return array
 	 */
 	public static function add_fields( $form ) {
-		if ( ! self::enabled() || ! isset( $form['comment_field'] ) ) {
+		if ( ! isset( $form['comment_field'] ) ) {
 			return $form;
 		}
 
+		// Aperçu avant publication (Opquast 10) : avec ou sans notes détaillées.
 		wp_enqueue_style( self::HANDLE );
 		wp_enqueue_script( self::HANDLE );
+		wp_localize_script( self::HANDLE, 'icademieAvisApercu', self::preview_texts() );
+
+		if ( ! self::enabled() ) {
+			return $form;
+		}
 
 		$fields = self::fields_html();
 		$anchor = '<p class="comment-form-comment">';
@@ -212,6 +220,28 @@ final class Icademie_Avis_Criteres {
 		$form['comment_field'] = false !== strpos( $field, $anchor ) ? str_replace( $anchor, $fields . $anchor, $field ) : $field . $fields;
 
 		return $form;
+	}
+
+	/**
+	 * Textes de l'aperçu de l'avis, affiché par le script avant la publication (Opquast 10).
+	 *
+	 * @return array
+	 */
+	private static function preview_texts() {
+		return array(
+			'check'      => __( 'Vérifier mon avis', 'icademie-avis-produits' ),
+			'title'      => __( 'Vérifiez votre avis avant de le publier', 'icademie-avis-produits' ),
+			'intro'      => __( 'Voici votre avis tel qu\'il sera publié sur la fiche du bateau. Votre adresse e-mail ne sera pas publiée.', 'icademie-avis-produits' ),
+			'moderation' => get_option( 'comment_moderation' ) ? __( 'Il sera visible après sa validation par notre équipe.', 'icademie-avis-produits' ) : '',
+			'rating'     => __( 'Note générale', 'icademie-avis-produits' ),
+			'criteria'   => __( 'Notes détaillées', 'icademie-avis-produits' ),
+			'text'       => __( 'Votre avis', 'icademie-avis-produits' ),
+			'name'       => __( 'Nom affiché', 'icademie-avis-produits' ),
+			/* translators: %s: note de 0 à 5. */
+			'outOf'      => __( '%s sur 5', 'icademie-avis-produits' ),
+			'edit'       => __( 'Modifier mon avis', 'icademie-avis-produits' ),
+			'publish'    => __( 'Publier mon avis', 'icademie-avis-produits' ),
+		);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       SailingLoc – En-tête et pied de page
- * Description:       En-tête et pied de page de tout le site d'après la charte graphique et les maquettes SailingLoc : fond encre, logo typographique, menu principal (le menu de navigation du site, avec ses sous-menus), bouton « Top destinations » (un clic déplie l'arborescence des catégories d'annonces), « Proposer mon bateau », connexion, recherche de bateaux ; pied de page avec assistance, réseaux sociaux, trois colonnes de liens et liens légaux. Remplace l'en-tête et le pied de page du thème tant que l'extension est active. Réglages › En-tête et pied de page.
+ * Description:       En-tête et pied de page de tout le site d'après la charte graphique et les maquettes SailingLoc : fond encre, logo typographique, menu principal (le menu de navigation du site, avec ses sous-menus), bouton « Top destinations » (un clic déplie l'arborescence des catégories d'annonces), « Proposer mon bateau », connexion, recherche de bateaux ; pied de page avec assistance, réseaux sociaux, trois colonnes de liens, liens légaux et plan du site (page « Plan du site » créée et mise à jour en un clic dans les réglages). Liens vers l'espace propriétaire signalés « connexion requise » (cadenas). Remplace l'en-tête et le pied de page du thème tant que l'extension est active. Réglages › En-tête et pied de page.
  * Version:           1.1.0
  * Requires at least: 7.0
  * Requires PHP:      7.4
@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/includes/class-icademie-entete-pied-settings.php';
 require_once __DIR__ . '/includes/class-icademie-entete-pied-view.php';
+require_once __DIR__ . '/includes/class-icademie-entete-pied-plan.php';
 
 /**
  * En-tête et pied de page : blocs, remplacement de ceux du thème, styles.
@@ -64,6 +65,7 @@ final class Icademie_Entete_Pied {
 		}
 
 		Icademie_Entete_Pied_Settings::init();
+		Icademie_Entete_Pied_Plan::init();
 	}
 
 	/**
@@ -311,6 +313,7 @@ final class Icademie_Entete_Pied {
 			'chevron-down' => '<path d="m6 9 6 6 6-6"/>',
 			'lifebuoy'     => '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m5.6 5.6 3.6 3.6m5.6 5.6 3.6 3.6m0-12.8-3.6 3.6m-5.6 5.6-3.6 3.6"/>',
 			'external'     => '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+			'lock'         => '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
 		);
 
 		if ( ! isset( $paths[ $name ] ) ) {

@@ -63,7 +63,15 @@ $contact = $data['contact'];
 							<h2 class="icademie-pied__heading" data-pied-heading><?php echo esc_html( $column['title'] ); ?></h2>
 							<ul class="icademie-pied__links" id="<?php echo esc_attr( $uid . '-' . $index ); ?>">
 								<?php foreach ( $column['links'] as $link ) : ?>
-									<li><a href="<?php echo esc_url( $link['url'] ); ?>"><?php echo esc_html( $link['label'] ); ?></a></li>
+									<li>
+										<a href="<?php echo esc_url( $link['url'] ); ?>">
+											<?php echo esc_html( $link['label'] ); ?>
+											<?php if ( ! empty( $link['note'] ) ) : ?>
+												<?php /* Opquast 143 : espace réservé, signalé par un cadenas et le texte. */ ?>
+												<span class="icademie-pied__acces"><?php echo call_user_func( $icon, 'lock', 14 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?><?php echo esc_html( '(' . $link['note'] . ')' ); ?></span>
+											<?php endif; ?>
+										</a>
+									</li>
 								<?php endforeach; ?>
 							</ul>
 						</div>

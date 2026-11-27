@@ -1,3 +1,11 @@
+# BEGIN HTTPS Redirection Plugin
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+# END HTTPS Redirection Plugin
 SetOutputFilter DEFLATE
 AddOutputFilterByType DEFLATE "application/atom+xml" "application/javascript" "application/json" "application/ld+json" "application/manifest+json" "application/rdf+xml" "application/rss+xml" "application/schema+json" "application/vnd.geo+json" "application/vnd.ms-fontobject" "application/x-font-ttf" "application/x-javascript" "application/x-web-app-manifest+json" "application/xhtml+xml" "application/xml" "font/eot" "font/opentype" "image/bmp" "image/svg+xml" "image/vnd.microsoft.icon" "image/x-icon" "text/cache-manifest" "text/css" "text/html" "text/javascript" "text/plain" "text/vcard" "text/vnd.rim.location.xloc" "text/vtt" "text/x-component" "text/x-cross-domain-policy" "text/xml"
 
@@ -6,7 +14,7 @@ RedirectMatch 404 /\.git
 # SECTION END GIT PROTECTION
 
 # BEGIN SailingLoc sécurité
-# Audit Opquast (règles 25, 206, 210, 211, 212, 213 et 224). Bloc écrit à la main : WordPress et
+# Audit Opquast (règles 25, 206, 210, 211, 212, 213, 214 et 224). Bloc écrit à la main : WordPress et
 # WP Super Cache ne modifient que leurs propres blocs.
 
 # Accès refusé : la page du site (extension « Habillage des pages », code 403) au lieu de la page
@@ -30,7 +38,22 @@ ErrorDocument 403 /index.php
 	# Contenus seulement en HTTPS (ou du site lui-même), aucun objet Flash/Java, formulaires envoyés
 	# au site ou en HTTPS, pages intégrables seulement par le site lui-même.
 	Header unset Content-Security-Policy
-	Header always set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; media-src 'self' blob: https:; frame-src 'self' blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'self'"
+	<If "%{REQUEST_URI} =~ m#^/(wp-admin/|wp-login\.php)#">
+		# Administration et connexion : scripts de tout service en HTTPS (extensions de
+		# l'administration : Jetpack, Site Kit, WooCommerce, médiathèques en ligne…).
+		Header always set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; media-src 'self' blob: https:; frame-src 'self' blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'self'"
+	</If>
+	<Else>
+		# Pages publiques (Opquast 214) : les scripts tiers n'ont pas de version figée (Cookiebot,
+		# Google, HubSpot, Stripe et Jetpack les modifient sans changer leur adresse), un contrôle
+		# d'intégrité (SRI) les bloquerait à leur première mise à jour. À la place, seuls les
+		# services utilisés peuvent fournir des scripts : consentement aux cookies (Cookiebot),
+		# mesure d'audience (Google Tag Manager ; Jetpack, servi par les sous-domaines de wp.com :
+		# statistiques, barre d'outils des administrateurs connectés), formulaire de la newsletter
+		# (HubSpot), reCAPTCHA (Google) et paiement (Stripe). Liste relevée sur toutes les pages le
+		# 27/11/2026 : un nouveau service qui charge un script doit y être ajouté.
+		Header always set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' blob: https://consent.cookiebot.com https://consentcdn.cookiebot.com https://www.googletagmanager.com https://*.wp.com https://js.hsforms.net https://js-eu1.hsforms.net https://www.google.com https://google.com https://www.gstatic.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; media-src 'self' blob: https:; frame-src 'self' blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'self'"
+	</Else>
 </IfModule>
 # END SailingLoc sécurité
 

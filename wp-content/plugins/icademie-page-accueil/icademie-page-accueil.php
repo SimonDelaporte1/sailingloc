@@ -17,6 +17,7 @@ require_once __DIR__ . '/includes/class-icademie-page-accueil-settings.php';
 require_once __DIR__ . '/includes/class-icademie-page-accueil-search.php';
 require_once __DIR__ . '/includes/class-icademie-page-accueil-terms.php';
 require_once __DIR__ . '/includes/class-icademie-page-accueil-newsletter.php';
+require_once __DIR__ . '/includes/class-icademie-page-accueil-desinscription.php';
 require_once __DIR__ . '/includes/class-icademie-page-accueil-zones.php';
 
 /**
@@ -110,6 +111,7 @@ final class Icademie_Page_Accueil {
 		add_action( 'wp_update_comment_count', array( __CLASS__, 'clear_cache_on_review' ) );
 
 		Icademie_Page_Accueil_Settings::init();
+		Icademie_Page_Accueil_Desinscription::init();
 		Icademie_Page_Accueil_Search::init();
 		Icademie_Page_Accueil_Terms::init();
 	}

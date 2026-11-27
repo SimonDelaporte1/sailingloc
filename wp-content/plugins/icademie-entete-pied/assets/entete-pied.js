@@ -27,8 +27,10 @@
 		const bar = header.querySelector( '.icademie-entete__bar' );
 		const nav = header.querySelector( '[data-nav]' );
 		const panel = header.querySelector( '[data-menu-panel]' );
-		const opener = header.querySelector( '[data-menu-open]' );
-		const panelReady = !! ( panel && opener && 'function' === typeof window.HTMLDialogElement );
+		// Deux boutons « Menu » (avant le logo sur smartphone, après les boutons ailleurs) : un seul
+		// est affiché à chaque largeur.
+		const openers = Array.from( header.querySelectorAll( '[data-menu-open]' ) );
+		const panelReady = !! ( panel && openers.length && 'function' === typeof window.HTMLDialogElement );
 		const destinations = header.querySelector( '.icademie-entete__destinations--barre' );
 		const searchToggle = header.querySelector( '[data-search-toggle]' );
 		const searchPanel = header.querySelector( '[data-search-panel]' );
@@ -41,18 +43,22 @@
 
 		// Panneau du menu : fenêtre modale plein écran.
 		if ( panelReady ) {
-			opener.hidden = false;
-			opener.addEventListener( 'click', () => {
-				closeSearch();
-				closeDestinations();
-				document.documentElement.classList.add( 'icademie-entete-panneau' );
-				panel.showModal();
+			openers.forEach( ( opener ) => {
+				opener.hidden = false;
+				opener.addEventListener( 'click', () => {
+					closeSearch();
+					closeDestinations();
+					document.documentElement.classList.add( 'icademie-entete-panneau' );
+					panel.showModal();
+				} );
 			} );
 			panel.querySelector( '[data-menu-close]' ).addEventListener( 'click', () => panel.close() );
 			panel.addEventListener( 'close', () => {
+				const visible = openers.find( ( opener ) => opener.offsetParent );
+
 				document.documentElement.classList.remove( 'icademie-entete-panneau' );
-				if ( opener.offsetParent ) {
-					opener.focus();
+				if ( visible ) {
+					visible.focus();
 				}
 			} );
 		}

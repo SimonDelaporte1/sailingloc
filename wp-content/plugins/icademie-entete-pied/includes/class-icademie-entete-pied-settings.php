@@ -402,6 +402,8 @@ final class Icademie_Entete_Pied_Settings {
 
 				<?php submit_button(); ?>
 			</form>
+
+			<?php Icademie_Entete_Pied_Plan::render_box(); ?>
 		</div>
 		<?php
 	}

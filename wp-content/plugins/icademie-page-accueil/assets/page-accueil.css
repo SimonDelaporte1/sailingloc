@@ -141,6 +141,12 @@
 }
 
 /* Boutons. */
+/* Lien vers l'espace réservé aux propriétaires : « (connexion requise) » (Opquast 143). */
+.icademie-accueil .icademie-accueil__acces {
+	font-size: 13px;
+	font-weight: 400;
+}
+
 .icademie-accueil .icademie-accueil__button {
 	display: inline-flex;
 	align-items: center;

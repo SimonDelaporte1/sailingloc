@@ -19,6 +19,7 @@ body.icademie-habillage-page {
 	--ih-encre-muted: #4a5866;
 	--ih-manche: #1d5a80;
 	--ih-manche-strong: #164766;
+	--ih-visite: #5b3f8c;
 	--ih-ecume: #e4eef3;
 	--ih-varech: #2e6b4f;
 	--ih-varech-soft: #e3efe7;
@@ -203,7 +204,9 @@ body.icademie-habillage-large .icademie-habillage__entete {
 }
 
 .icademie-habillage__crumb + .icademie-habillage__crumb::before {
+	/* Séparateur décoratif : texte de remplacement vide, non lu par les lecteurs d'écran (Opquast 189). */
 	content: "›";
+	content: "›" / "";
 	margin: 0 8px;
 	color: var(--ih-encre-muted);
 }
@@ -492,6 +495,11 @@ body.icademie-habillage-large .icademie-habillage .icademie-habillage__contenu {
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 3px;
+}
+
+.icademie-habillage .icademie-habillage__contenu :where(p, li, td, dd, figcaption, blockquote, cite) a:where(:not(.wp-block-button__link):not(.button):not(.wp-element-button)):visited {
+	/* Liens déjà visités : violet, distinct du bleu Manche (Opquast 141) ; contraste 7,6:1 sur craie. */
+	color: var(--ih-visite);
 }
 
 .icademie-habillage .icademie-habillage__contenu :where(p, li, td, dd, figcaption, blockquote, cite) a:where(:not(.wp-block-button__link):not(.button):not(.wp-element-button)):hover {

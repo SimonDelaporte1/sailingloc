@@ -8,6 +8,11 @@
  * destinations » et « Proposer mon bateau » y sont rangés, au-dessus de la connexion.
  * Sans script, le menu reste affiché dans la barre, à toutes les largeurs.
  *
+ * Ordre du code = ordre visuel (Opquast 167) : le bouton « Menu » est à gauche du logo sur
+ * smartphone, à droite des boutons sur tablette et ordinateur ; il est donc écrit aux deux places,
+ * une seule étant affichée à chaque largeur. Les boutons sans texte visible (recherche, panier)
+ * montrent leur nom dans une infobulle au survol et au focus (Opquast 159).
+ *
  * @package Icademie_Entete_Pied
  *
  * @var array    $data Données préparées par Icademie_Entete_Pied_View::header().
@@ -143,14 +148,45 @@ $icademie_entete_search = static function ( $id, $data, $icon ) {
 
 $logo      = $data['logo'];
 $has_panel = $data['menu'] || $data['destinations'];
+
+/**
+ * Bouton « Menu » (icône et libellé visible), qui ouvre le panneau.
+ *
+ * @param string   $place « debut » (smartphone) ou « fin » (tablette, ordinateur).
+ * @param string   $uid   Préfixe des identifiants.
+ * @param callable $icon  Icônes.
+ */
+$icademie_entete_menu_button = static function ( $place, $uid, $icon ) {
+	?>
+	<button type="button" class="icademie-entete__icon-button icademie-entete__menu-open icademie-entete__menu-open--<?php echo esc_attr( $place ); ?>" aria-haspopup="dialog" aria-controls="<?php echo esc_attr( $uid ); ?>-panneau" data-menu-open hidden>
+		<?php echo call_user_func( $icon, 'menu', 22 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
+		<span class="icademie-entete__menu-label"><?php esc_html_e( 'Menu', 'icademie-entete-pied' ); ?></span>
+	</button>
+	<?php
+};
+
+/**
+ * Mention d'un lien vers l'espace réservé (Opquast 143) : cadenas, texte pour les lecteurs d'écran
+ * et en infobulle (barre), ou visible (panneau).
+ *
+ * @param string   $note    Mention (« connexion requise »), vide : rien.
+ * @param bool     $visible Texte visible.
+ * @param callable $icon    Icônes.
+ */
+$icademie_entete_access = static function ( $note, $visible, $icon ) {
+	if ( '' === $note ) {
+		return;
+	}
+
+	echo call_user_func( $icon, 'lock', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe.
+	// Espace avant la mention : nom du lien « Proposer mon bateau (connexion requise) ».
+	echo ' <span class="' . ( $visible ? 'icademie-entete__acces' : 'icademie-ep__sr icademie-entete__infobulle' ) . '">' . esc_html( '(' . $note . ')' ) . '</span>';
+};
 ?>
 <header class="icademie-entete<?php echo $data['compact'] ? ' is-compact' : ''; ?>" data-entete>
 	<div class="icademie-entete__bar">
 		<?php if ( $has_panel ) : ?>
-			<button type="button" class="icademie-entete__icon-button icademie-entete__menu-open" aria-haspopup="dialog" aria-controls="<?php echo esc_attr( $uid ); ?>-panneau" data-menu-open hidden>
-				<?php echo call_user_func( $icon, 'menu', 22 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
-				<span class="icademie-ep__sr"><?php esc_html_e( 'Menu', 'icademie-entete-pied' ); ?></span>
-			</button>
+			<?php $icademie_entete_menu_button( 'debut', $uid, $icon ); ?>
 		<?php endif; ?>
 
 		<a class="icademie-ep__logo icademie-entete__logo" href="<?php echo esc_url( $data['home'] ); ?>"<?php echo is_front_page() ? ' aria-current="page"' : ''; ?>>
@@ -170,27 +206,31 @@ $has_panel = $data['menu'] || $data['destinations'];
 			<?php if ( $data['search'] ) : ?>
 				<button type="button" class="icademie-entete__icon-button icademie-entete__search-open" aria-expanded="false" aria-controls="<?php echo esc_attr( $uid ); ?>-recherche" data-search-toggle hidden>
 					<?php echo call_user_func( $icon, 'search', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
-					<span class="icademie-ep__sr"><?php esc_html_e( 'Rechercher un bateau', 'icademie-entete-pied' ); ?></span>
+					<span class="icademie-ep__sr icademie-entete__infobulle"><?php esc_html_e( 'Rechercher un bateau', 'icademie-entete-pied' ); ?></span>
 				</button>
 			<?php endif; ?>
 			<?php if ( '' !== $data['cart_url'] ) : ?>
 				<?php /* Affiché par le script quand le panier n'est pas vide (cookie de WooCommerce) : pages en cache justes. */ ?>
 				<a class="icademie-entete__icon-button icademie-entete__cart" href="<?php echo esc_url( $data['cart_url'] ); ?>" data-cart hidden>
 					<?php echo call_user_func( $icon, 'cart', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
-					<span class="icademie-ep__sr"><?php esc_html_e( 'Panier', 'icademie-entete-pied' ); ?></span>
+					<span class="icademie-ep__sr icademie-entete__infobulle"><?php esc_html_e( 'Panier', 'icademie-entete-pied' ); ?></span>
 				</a>
 			<?php endif; ?>
 			<?php if ( $data['destinations'] ) : ?>
 				<?php $icademie_entete_destinations( $data['destinations'], 'barre', $icon ); ?>
 			<?php endif; ?>
 			<?php if ( '' !== $data['propose'] ) : ?>
-				<a class="icademie-entete__button icademie-entete__button--outline icademie-entete__propose" href="<?php echo esc_url( $data['propose'] ); ?>"><?php esc_html_e( 'Proposer mon bateau', 'icademie-entete-pied' ); ?></a>
+				<a class="icademie-entete__button icademie-entete__button--outline icademie-entete__propose" href="<?php echo esc_url( $data['propose'] ); ?>"><?php esc_html_e( 'Proposer mon bateau', 'icademie-entete-pied' ); ?><?php $icademie_entete_access( $data['propose_note'], false, $icon ); ?></a>
 			<?php endif; ?>
 			<a class="icademie-entete__button icademie-entete__button--light icademie-entete__account" href="<?php echo esc_url( $data['account_url'] ); ?>">
 				<?php echo call_user_func( $icon, 'user', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
 				<span class="icademie-entete__account-label"><?php echo esc_html( $data['account_label'] ); ?></span>
 			</a>
 		</div>
+
+		<?php if ( $has_panel ) : ?>
+			<?php $icademie_entete_menu_button( 'fin', $uid, $icon ); ?>
+		<?php endif; ?>
 	</div>
 
 	<?php if ( $data['search'] ) : ?>
@@ -203,9 +243,9 @@ $has_panel = $data['menu'] || $data['destinations'];
 		<dialog class="icademie-entete__panel" id="<?php echo esc_attr( $uid ); ?>-panneau" aria-label="<?php esc_attr_e( 'Menu', 'icademie-entete-pied' ); ?>" data-menu-panel>
 			<div class="icademie-entete__panel-head">
 				<span class="icademie-ep__logo" aria-hidden="true"><?php echo esc_html( $logo['first'] ); ?><?php if ( '' !== $logo['last'] ) : ?><b><?php echo esc_html( $logo['last'] ); ?></b><?php endif; ?></span>
-				<button type="button" class="icademie-entete__icon-button" data-menu-close>
+				<button type="button" class="icademie-entete__icon-button icademie-entete__menu-close" data-menu-close>
 					<?php echo call_user_func( $icon, 'close', 22 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
-					<span class="icademie-ep__sr"><?php esc_html_e( 'Fermer le menu', 'icademie-entete-pied' ); ?></span>
+					<span class="icademie-ep__sr icademie-entete__infobulle"><?php esc_html_e( 'Fermer le menu', 'icademie-entete-pied' ); ?></span>
 				</button>
 			</div>
 			<?php if ( $data['menu'] ) : ?>
@@ -219,7 +259,7 @@ $has_panel = $data['menu'] || $data['destinations'];
 					<?php $icademie_entete_destinations( $data['destinations'], 'panneau', $icon ); ?>
 				<?php endif; ?>
 				<?php if ( '' !== $data['propose'] ) : ?>
-					<a class="icademie-entete__button icademie-entete__button--outline" href="<?php echo esc_url( $data['propose'] ); ?>"><?php esc_html_e( 'Proposer mon bateau', 'icademie-entete-pied' ); ?></a>
+					<a class="icademie-entete__button icademie-entete__button--outline" href="<?php echo esc_url( $data['propose'] ); ?>"><?php esc_html_e( 'Proposer mon bateau', 'icademie-entete-pied' ); ?><?php $icademie_entete_access( $data['propose_note'], true, $icon ); ?></a>
 				<?php endif; ?>
 				<a class="icademie-entete__button icademie-entete__button--light" href="<?php echo esc_url( $data['account_url'] ); ?>">
 					<?php echo call_user_func( $icon, 'user', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>

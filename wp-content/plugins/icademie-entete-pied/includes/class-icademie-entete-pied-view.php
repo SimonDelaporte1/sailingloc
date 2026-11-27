@@ -413,6 +413,81 @@ final class Icademie_Entete_Pied_View {
 	}
 
 	/**
+	 * Chemins de l'espace réservé aux propriétaires (tableau de bord WC Vendors et ses pages).
+	 *
+	 * @return string[]
+	 */
+	private static function restricted_paths() {
+		static $paths = null;
+
+		if ( null !== $paths ) {
+			return $paths;
+		}
+
+		$paths = array();
+
+		foreach ( (array) get_option( 'wcvendors_vendor_dashboard_page_id', array() ) as $page_id ) {
+			$page_id = (int) $page_id;
+			$path    = $page_id && 'publish' === get_post_status( $page_id ) ? self::path( (string) get_permalink( $page_id ) ) : null;
+
+			if ( null !== $path && '' !== $path ) {
+				$paths[] = $path;
+			}
+		}
+
+		/**
+		 * Chemins des pages à accès limité, signalées « connexion requise » dans l'en-tête et le
+		 * pied de page.
+		 *
+		 * @param string[] $paths Chemins (« /panneau-vendeur »), sans barre finale.
+		 */
+		$paths = array_values( array_filter( (array) apply_filters( 'icademie_entete_pied_acces_limite', $paths ), 'is_string' ) );
+
+		return $paths;
+	}
+
+	/**
+	 * Mention d'un lien vers un contenu à accès limité (Opquast 143) : espace des propriétaires,
+	 * pour qui n'y a pas accès.
+	 *
+	 * @param string $url Adresse du lien.
+	 * @return string « connexion requise » (visiteur), « réservé aux propriétaires » (client
+	 *                connecté), vide (lien libre, ou propriétaire connecté).
+	 */
+	public static function access_note( $url ) {
+		$path = '' !== (string) $url ? self::path( (string) $url ) : null;
+
+		if ( null === $path ) {
+			return '';
+		}
+
+		$restricted = false;
+
+		foreach ( self::restricted_paths() as $base ) {
+			if ( $path === $base || 0 === strpos( $path . '/', untrailingslashit( $base ) . '/' ) ) {
+				$restricted = true;
+				break;
+			}
+		}
+
+		if ( ! $restricted ) {
+			return '';
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return __( 'connexion requise', 'icademie-entete-pied' );
+		}
+
+		$user_id = get_current_user_id();
+
+		if ( ( class_exists( 'WCV_Vendors' ) && WCV_Vendors::is_vendor( $user_id ) ) || user_can( $user_id, 'manage_woocommerce' ) ) {
+			return '';
+		}
+
+		return __( 'réservé aux propriétaires', 'icademie-entete-pied' );
+	}
+
+	/**
 	 * Adresse du bouton « Proposer mon bateau ».
 	 *
 	 * @return string Vide : pas de bouton.
@@ -450,6 +525,7 @@ final class Icademie_Entete_Pied_View {
 			'lang'          => Icademie_Entete_Pied_Settings::get( 'langue', 'FR · €' ),
 			'destinations'  => $destinations,
 			'propose'       => $compact ? '' : self::propose_url(),
+			'propose_note'  => $compact ? '' : self::access_note( self::propose_url() ),
 			'account_url'   => $account,
 			'account_label' => $logged_in ? __( 'Mon compte', 'icademie-entete-pied' ) : __( 'Connexion', 'icademie-entete-pied' ),
 			'cart_url'      => function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '',
@@ -674,13 +750,36 @@ final class Icademie_Entete_Pied_View {
 			)
 		);
 
+		// Liens vers l'espace des propriétaires : « connexion requise » (Opquast 143).
+		foreach ( $columns as $index => $column ) {
+			foreach ( $column['links'] as $key => $link ) {
+				$columns[ $index ]['links'][ $key ]['note'] = self::access_note( $link['url'] );
+			}
+		}
+
+		// Plan du site (Opquast 171) : à la suite des liens légaux, s'il n'y est pas déjà.
+		$legal = self::legal_links();
+		$plan  = Icademie_Entete_Pied_Plan::url();
+		$paths = array();
+
+		foreach ( $legal as $link ) {
+			$paths[] = self::path( $link['url'] );
+		}
+
+		if ( '' !== $plan && ! in_array( self::path( $plan ), $paths, true ) ) {
+			$legal[] = array(
+				'label' => __( 'Plan du site', 'icademie-entete-pied' ),
+				'url'   => $plan,
+			);
+		}
+
 		return array(
 			'logo'     => self::logo(),
 			'home'     => home_url( '/' ),
 			'baseline' => Icademie_Entete_Pied_Settings::get( 'baseline', (string) get_bloginfo( 'description' ) ),
 			'contact'  => self::contact_details(),
 			'columns'  => $columns,
-			'legal'    => self::legal_links(),
+			'legal'    => $legal,
 			'lang'     => Icademie_Entete_Pied_Settings::get( 'langue_longue', 'Français · €' ),
 			'payments' => Icademie_Entete_Pied_Settings::get( 'paiements' ),
 			'year'     => wp_date( 'Y' ),

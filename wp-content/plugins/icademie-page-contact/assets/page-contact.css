@@ -451,6 +451,23 @@
 	line-height: 20px;
 }
 
+/* Limite du message dans l'étiquette (Opquast 74), en casse normale. */
+.icademie-contact .icademie-contact__label-hint {
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+}
+
+.icademie-contact__counter {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.icademie-contact__counter.is-near {
+	color: #8a5a00;
+	font-weight: 700;
+}
+
 .icademie-contact__hint--warning {
 	color: #8a5a00;
 	font-weight: 700;

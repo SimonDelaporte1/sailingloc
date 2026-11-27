@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/includes/class-icademie-annonce-conditions.php';
 require_once __DIR__ . '/includes/class-icademie-annonce-reservation.php';
+require_once __DIR__ . '/includes/class-icademie-annonce-taxes.php';
 require_once __DIR__ . '/includes/class-icademie-annonce-ports.php';
 require_once __DIR__ . '/includes/class-icademie-annonce-view.php';
 
@@ -69,6 +70,7 @@ final class Icademie_Page_Annonce {
 
 		Icademie_Annonce_Conditions::init();
 		Icademie_Annonce_Reservation::init();
+		Icademie_Annonce_Taxes::init();
 		Icademie_Annonce_Ports::init();
 	}
 
@@ -257,7 +259,7 @@ final class Icademie_Page_Annonce {
 			<p class="icademie-annonce-bar__price">
 				<span class="icademie-annonce-bar__amount"><?php echo wp_kses_post( $data['booking']['price_html'] ); ?></span>
 				<?php if ( $data['booking']['per_day'] ) : ?>
-					<span class="icademie-annonce-bar__unit"><?php esc_html_e( '/ jour', 'icademie-page-annonce' ); ?></span>
+					<span class="icademie-annonce-bar__unit"><?php esc_html_e( 'TTC / jour', 'icademie-page-annonce' ); ?></span>
 				<?php endif; ?>
 				<span class="icademie-annonce-bar__dates" data-bar-dates></span>
 			</p>
@@ -478,6 +480,64 @@ final class Icademie_Page_Annonce {
 		}
 
 		return 'check';
+	}
+
+	/**
+	 * Abréviations des caractéristiques et des équipements, avec leur signification (Opquast 5).
+	 *
+	 * @return string[] Signification, par abréviation (casse exacte).
+	 */
+	public static function abbreviations() {
+		$abbreviations = array(
+			'GPS' => __( 'Global Positioning System', 'icademie-page-annonce' ),
+			'CV'  => __( 'chevaux vapeur', 'icademie-page-annonce' ),
+			'VHF' => __( 'Very high frequency', 'icademie-page-annonce' ),
+		);
+
+		/**
+		 * Abréviations expliquées sur la fiche (caractéristiques et équipements).
+		 *
+		 * @param string[] $abbreviations Signification, par abréviation (casse exacte).
+		 */
+		return (array) apply_filters( 'icademie_annonce_abreviations', $abbreviations );
+	}
+
+	/**
+	 * Texte échappé, chaque abréviation connue dans une balise <abbr> qui donne sa signification :
+	 * « 2 × 200 CV » → « 2 × 200 <abbr title="chevaux vapeur">CV</abbr> ».
+	 *
+	 * Mot entier seulement : « CV » n'est pas reconnu dans « CVC », ni « GPS » dans « GPSMAP ».
+	 *
+	 * @param string $text Texte brut.
+	 * @return string HTML.
+	 */
+	public static function with_abbreviations( $text ) {
+		$abbreviations = array_filter( self::abbreviations(), 'is_string' );
+		$html          = esc_html( $text );
+
+		if ( ! $abbreviations ) {
+			return $html;
+		}
+
+		$keys = array_map(
+			static function ( $abbreviation ) {
+				return preg_quote( esc_html( $abbreviation ), '/' );
+			},
+			array_keys( $abbreviations )
+		);
+
+		// Une seule passe : une signification insérée n'est jamais relue.
+		$result = preg_replace_callback(
+			'/(?<![\p{L}\p{N}])(' . implode( '|', $keys ) . ')(?![\p{L}\p{N}])/u',
+			static function ( $match ) use ( $abbreviations ) {
+				$short = html_entity_decode( $match[1], ENT_QUOTES, 'UTF-8' );
+
+				return isset( $abbreviations[ $short ] ) ? '<abbr title="' . esc_attr( $abbreviations[ $short ] ) . '">' . $match[1] . '</abbr>' : $match[0];
+			},
+			$html
+		);
+
+		return is_string( $result ) ? $result : $html;
 	}
 }
 

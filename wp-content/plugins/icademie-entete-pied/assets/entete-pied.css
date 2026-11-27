@@ -321,9 +321,62 @@
 }
 
 /* Bouton du menu : seulement quand le menu est rangé dans le panneau (tablette, smartphone, menu
-   trop long). */
+   trop long). Écrit avant le logo (smartphone) et après les boutons (tablette, ordinateur), pour
+   que l'ordre du clavier suive l'ordre visuel (Opquast 167). Libellé « Menu » visible (Opquast 159). */
 .icademie-entete .icademie-entete__menu-open {
 	display: none;
+	gap: 6px;
+	width: auto;
+	padding: 0 12px 0 10px;
+	font-family: inherit;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 20px;
+}
+
+/* Infobulle des boutons à icône (Opquast 159) : leur nom, au survol et au focus. */
+.icademie-entete .icademie-entete__icon-button,
+.icademie-entete .icademie-entete__propose,
+.icademie-entete .icademie-entete__account {
+	position: relative;
+}
+
+.icademie-entete :is(a, button):is(:hover, :focus-visible) > .icademie-entete__infobulle {
+	top: calc(100% + 8px);
+	left: 50%;
+	z-index: 60;
+	width: auto;
+	height: auto;
+	margin: 0;
+	padding: 6px 10px;
+	overflow: visible;
+	clip-path: none;
+	border-radius: 6px;
+	background: var(--ep-craie);
+	box-shadow: 0 2px 8px rgba(15, 34, 51, 0.25);
+	color: var(--ep-encre);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 18px;
+	text-transform: none;
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+/* Boutons du bord droit : infobulle alignée à droite (pas de débordement de la page). */
+.icademie-entete .icademie-entete__actions > :last-child:is(:hover, :focus-visible) > .icademie-entete__infobulle,
+.icademie-entete .icademie-entete__propose:is(:hover, :focus-visible) > .icademie-entete__infobulle,
+.icademie-entete .icademie-entete__menu-close:is(:hover, :focus-visible) > .icademie-entete__infobulle {
+	right: 0;
+	left: auto;
+	transform: none;
+}
+
+/* Espace réservé aux propriétaires (Opquast 143) : mention visible dans le panneau. */
+.icademie-entete__acces {
+	font-size: 13px;
+	font-weight: 400;
 }
 
 .icademie-entete .icademie-entete__search-open[aria-expanded="true"] {
@@ -703,9 +756,8 @@ html.icademie-entete-panneau {
 	display: none;
 }
 
-.icademie-entete.is-collapsed .icademie-entete__menu-open {
+.icademie-entete.is-collapsed .icademie-entete__menu-open--fin {
 	display: flex !important;
-	order: 10;
 }
 
 /* En-tête de la page de commande : logo et compte seulement. */
@@ -732,9 +784,8 @@ html.icademie-entete-panneau {
 		display: none !important;
 	}
 
-	.icademie-entete.has-js .icademie-entete__menu-open {
+	.icademie-entete.has-js .icademie-entete__menu-open--fin {
 		display: flex !important;
-		order: 10;
 	}
 
 	/* Compte : icône seule. */
@@ -759,6 +810,25 @@ html.icademie-entete-panneau {
 		overflow: hidden;
 		clip-path: inset(50%);
 		white-space: nowrap;
+	}
+
+	/* Compte réduit à son icône : libellé en infobulle (Opquast 159). */
+	.icademie-entete .icademie-entete__account:is(:hover, :focus-visible) > .icademie-entete__account-label {
+		top: calc(100% + 8px);
+		right: 0;
+		z-index: 60;
+		width: auto;
+		height: auto;
+		padding: 6px 10px;
+		overflow: visible;
+		clip-path: none;
+		border-radius: 6px;
+		background: var(--ep-craie);
+		box-shadow: 0 2px 8px rgba(15, 34, 51, 0.25);
+		color: var(--ep-encre);
+		font-size: 13px;
+		line-height: 18px;
+		pointer-events: none;
 	}
 
 	.icademie-entete__search .icademie-entete__search-form {
@@ -823,8 +893,12 @@ html.icademie-entete-panneau {
 		padding: 0 16px;
 	}
 
-	.icademie-entete.has-js .icademie-entete__menu-open {
-		order: -1;
+	.icademie-entete.has-js .icademie-entete__menu-open--fin {
+		display: none !important;
+	}
+
+	.icademie-entete.has-js .icademie-entete__menu-open--debut {
+		display: flex !important;
 	}
 
 	.icademie-entete .icademie-entete__logo {
@@ -1025,6 +1099,16 @@ html.icademie-entete-panneau {
 	text-decoration: underline;
 }
 
+/* Espace réservé aux propriétaires (Opquast 143) : cadenas et « (connexion requise) ». */
+.icademie-pied__acces {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 4px;
+	font-size: 13px;
+	white-space: nowrap;
+}
+
 /* Barre du bas. */
 .icademie-pied__bottom {
 	display: flex;
@@ -1146,11 +1230,13 @@ html.icademie-entete-panneau {
 	}
 }
 
+/* Impression : sans les blocs de navigation (Opquast 196). */
 @media print {
 	.icademie-entete__search,
 	.icademie-entete__actions,
 	.icademie-entete__nav,
-	.icademie-entete__menu-open {
+	.icademie-entete__menu-open,
+	.icademie-pied {
 		display: none !important;
 	}
 }

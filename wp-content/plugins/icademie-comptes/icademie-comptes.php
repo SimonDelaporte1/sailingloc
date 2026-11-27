@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       SailingLoc – Comptes clients
- * Description:       Comptes clients d'après l'audit Opquast : messages neutres qui ne révèlent jamais si une adresse a un compte (connexion, inscription, mot de passe perdu), liste des comptes fermée aux visiteurs (API REST, archives d'auteur) ; adresse e-mail confirmée avant la première connexion ; page « Mes données personnelles » du compte client pour télécharger ses données et supprimer son compte.
+ * Description:       Comptes clients d'après l'audit Opquast : messages neutres qui ne révèlent jamais si une adresse a un compte (connexion, inscription, mot de passe perdu), liste des comptes fermée aux visiteurs (API REST, archives d'auteur) ; adresse e-mail confirmée avant la première connexion ; page « Mes données personnelles » du compte client pour télécharger ses données (taille du fichier indiquée) et supprimer son compte ; mots de passe signalés sensibles à la casse et « Connexion sécurisée (HTTPS) » sous les boutons de connexion, d'inscription et de commande.
  * Version:           1.0.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
@@ -16,6 +16,7 @@ defined( 'ABSPATH' ) || exit;
 require_once __DIR__ . '/includes/class-icademie-comptes-messages.php';
 require_once __DIR__ . '/includes/class-icademie-comptes-confirmation.php';
 require_once __DIR__ . '/includes/class-icademie-comptes-donnees.php';
+require_once __DIR__ . '/includes/class-icademie-comptes-saisie.php';
 
 /**
  * Extension « Comptes clients ».
@@ -39,6 +40,7 @@ final class Icademie_Comptes {
 		Icademie_Comptes_Messages::init();
 		Icademie_Comptes_Confirmation::init();
 		Icademie_Comptes_Donnees::init();
+		Icademie_Comptes_Saisie::init();
 
 		// Après l'ajout des points d'accès de WooCommerce (init, priorité 10).
 		add_action( 'init', array( __CLASS__, 'maybe_flush' ), 99 );

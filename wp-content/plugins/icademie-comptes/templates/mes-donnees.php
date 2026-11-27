@@ -4,7 +4,8 @@
  *
  * @package Icademie_Comptes
  *
- * @var array $data « url », « errors » (par champ), « blockers » (HTML échappé), « nonces », « field ».
+ * @var array $data « url », « errors » (par champ), « blockers » (HTML échappé), « nonces » (action et nom
+ *                   du champ de sécurité de chaque formulaire), « field », « size » (taille du fichier).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -28,9 +29,10 @@ $icademie_listed = array_intersect_key( $icademie_errors, $icademie_fields );
 		<?php endif; ?>
 
 		<form method="post" action="<?php echo esc_url( $data['url'] ); ?>">
-			<?php wp_nonce_field( $data['nonces']['export'] ); ?>
+			<?php wp_nonce_field( $data['nonces']['export'][0], $data['nonces']['export'][1] ); ?>
 			<input type="hidden" name="<?php echo esc_attr( $data['field'] ); ?>" value="export">
-			<button type="submit" class="woocommerce-Button button"><?php esc_html_e( 'Télécharger mes données (fichier JSON)', 'icademie-comptes' ); ?></button>
+			<?php /* translators: %s: taille du fichier (« environ 0,6 Ko »). */ ?>
+			<button type="submit" class="woocommerce-Button button"><?php echo esc_html( sprintf( __( 'Télécharger mes données (fichier JSON, %s)', 'icademie-comptes' ), $data['size'] ) ); ?></button>
 		</form>
 	</section>
 
@@ -80,7 +82,7 @@ $icademie_listed = array_intersect_key( $icademie_errors, $icademie_fields );
 					</div>
 				<?php endif; ?>
 
-				<?php wp_nonce_field( $data['nonces']['suppression'] ); ?>
+				<?php wp_nonce_field( $data['nonces']['suppression'][0], $data['nonces']['suppression'][1] ); ?>
 				<input type="hidden" name="<?php echo esc_attr( $data['field'] ); ?>" value="suppression">
 
 				<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide<?php echo isset( $icademie_errors['mot_de_passe'] ) ? ' woocommerce-invalid' : ''; ?>">

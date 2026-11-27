@@ -86,6 +86,11 @@
 	color: var(--ic-primary-dark);
 }
 
+/* Liens déjà visités du texte du propriétaire (Opquast 141). */
+.icademie-annonce .icademie-annonce__description-text a:visited {
+	color: #5b3f8c;
+}
+
 .icademie-annonce :where(a, button, input, select, textarea, [tabindex]):focus-visible,
 .icademie-annonce-bar :where(button):focus-visible {
 	outline: 2px solid var(--ic-primary);
@@ -258,7 +263,9 @@ html.icademie-annonce-barre body {
 }
 
 .icademie-annonce__crumbs li + li::before {
+	/* Séparateur décoratif : texte de remplacement vide, non lu par les lecteurs d'écran (Opquast 189). */
 	content: "›";
+	content: "›" / "";
 	margin: 0 8px;
 	color: var(--ic-muted);
 }
@@ -606,6 +613,7 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce__error::before {
 	content: "⚠ ";
+	content: "⚠ " / "";
 }
 
 .icademie-annonce__lines {
@@ -636,6 +644,38 @@ html.icademie-annonce-barre body {
 	border-top: 1px solid var(--ic-border);
 	color: var(--ic-text);
 	font-weight: 700;
+}
+
+/* TVA comprise et total hors taxes, sous le total TTC (Opquast 56). */
+.icademie-annonce__line--tax {
+	color: var(--ic-muted);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-annonce__line--total + .icademie-annonce__line--tax {
+	margin-top: -2px;
+}
+
+/* Informations à préparer avant de réserver (Opquast 86). */
+.icademie-annonce__prepare {
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: var(--ic-box);
+	color: var(--ic-muted);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-annonce .icademie-annonce__prepare-title {
+	color: var(--ic-text);
+	font-weight: 700;
+}
+
+.icademie-annonce .icademie-annonce__prepare-list {
+	margin-top: 2px;
+	padding-left: 1.1em;
+	list-style: disc;
 }
 
 .icademie-annonce__hint,
@@ -832,11 +872,13 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce .icademie-annonce__expand::after {
 	content: "→";
+	content: "→" / "";
 	text-decoration: none;
 }
 
 .icademie-annonce .icademie-annonce__expand[aria-expanded="true"]::after {
 	content: "↑";
+	content: "↑" / "";
 }
 
 /* Zone 9 : disponibilités, calendrier sur 2 mois. */
@@ -1247,6 +1289,21 @@ html.icademie-annonce-barre body {
 
 .icademie-annonce.has-js .is-collapsed .icademie-annonce__review:nth-child(n+3) {
 	display: none;
+}
+
+/* « Signaler cet avis » (Opquast 11) : discret, en bas de l'avis. */
+.icademie-annonce__review-report {
+	margin-top: auto;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-annonce .icademie-annonce__review-report a {
+	color: var(--ic-muted);
+}
+
+.icademie-annonce .icademie-annonce__review-report a:hover {
+	color: var(--ic-primary-dark);
 }
 
 .icademie-annonce__review-head {
@@ -2277,5 +2334,45 @@ html.icademie-annonce-barre body {
 	.icademie-annonce *::after {
 		scroll-behavior: auto !important;
 		transition: none !important;
+	}
+}
+
+/* Impression : la fiche sans les blocs de navigation ni le module de réservation (Opquast 196). */
+@media print {
+	.icademie-annonce__breadcrumb,
+	.icademie-annonce__booking,
+	.icademie-annonce__share,
+	.icademie-annonce__gallery-all,
+	.icademie-annonce__gallery-counter,
+	.icademie-annonce__expand,
+	.icademie-annonce__link-button,
+	.icademie-annonce__map-button,
+	.icademie-annonce__review-form,
+	.icademie-annonce__review-report,
+	.icademie-annonce__similar-nav,
+	.icademie-annonce__dots,
+	.icademie-annonce__dialog,
+	.icademie-annonce-bar {
+		display: none !important;
+	}
+
+	/* Description, équipements et avis repliés par le script : imprimés en entier. */
+	.icademie-annonce .icademie-annonce__description-text {
+		max-height: none !important;
+		overflow: visible !important;
+		-webkit-mask-image: none !important;
+		mask-image: none !important;
+	}
+
+	.icademie-annonce.has-js .is-collapsed .icademie-annonce__equipment {
+		display: flex !important;
+	}
+
+	.icademie-annonce.has-js .is-collapsed .icademie-annonce__review {
+		display: block !important;
+	}
+
+	.icademie-annonce__layout {
+		display: block !important;
 	}
 }

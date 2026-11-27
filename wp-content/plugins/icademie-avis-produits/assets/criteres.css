@@ -209,3 +209,121 @@
 		transition: none;
 	}
 }
+
+/* Aperçu de l'avis avant publication (Opquast 10). */
+.icademie-avis-apercu {
+	margin: 1.25em 0;
+	padding: 1em 1.25em;
+	border: 1.5px solid #1d5a80;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.icademie-avis-apercu__titre {
+	margin: 0 0 0.35em;
+	font-size: 1.125em;
+	font-weight: 700;
+}
+
+.icademie-avis-apercu__titre:focus {
+	outline: none;
+}
+
+.icademie-avis-apercu__titre:focus-visible {
+	outline: 2px solid #1d5a80;
+	outline-offset: 2px;
+}
+
+.icademie-avis-apercu__intro {
+	margin: 0 0 0.75em;
+	font-size: 0.9375em;
+	opacity: 0.85;
+}
+
+.icademie-avis-apercu__liste {
+	margin: 0 0 0.75em;
+}
+
+.icademie-avis-apercu__ligne {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 0.5em;
+	padding: 0.3em 0;
+	border-top: 1px solid rgba(15, 34, 51, 0.12);
+}
+
+.icademie-avis-apercu__ligne dt {
+	font-weight: 700;
+}
+
+.icademie-avis-apercu__ligne dt::after {
+	content: " :";
+}
+
+.icademie-avis-apercu__ligne dd {
+	margin: 0;
+}
+
+.icademie-avis-apercu__texte-titre {
+	margin: 0 0 0.25em;
+	font-weight: 700;
+}
+
+.icademie-avis-apercu__texte {
+	margin: 0 0 1em;
+	padding: 0.75em 1em;
+	border: 0;
+	border-left: 4px solid #1d5a80;
+	border-radius: 0 8px 8px 0;
+	background: #f7f5f0;
+	font-style: normal;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.icademie-avis-apercu__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 0;
+}
+
+.icademie-avis-apercu__actions button {
+	min-height: 44px;
+	padding: 0 18px;
+	border-radius: 8px;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.icademie-avis-apercu .icademie-avis-apercu__modifier {
+	border: 1.5px solid #1d5a80;
+	background: #fff;
+	color: #1d5a80;
+}
+
+.icademie-avis-apercu .icademie-avis-apercu__publier {
+	border: 1.5px solid #1d5a80;
+	background: #1d5a80;
+	color: #fff;
+}
+
+.icademie-avis-apercu .icademie-avis-apercu__modifier:hover {
+	background: #e4eef3;
+}
+
+.icademie-avis-apercu .icademie-avis-apercu__publier:hover {
+	border-color: #164766;
+	background: #164766;
+}
+
+.icademie-avis-apercu__actions button:focus-visible {
+	outline: 2px solid #1d5a80;
+	outline-offset: 2px;
+}
+
+.icademie-avis-apercu__publier:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}

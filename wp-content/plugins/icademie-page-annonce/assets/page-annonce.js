@@ -353,8 +353,9 @@
 	}
 
 	/**
-	 * Zone 5 : module de réservation. Le total (prix × jours, frais de service, caution affichée mais
-	 * non comptée) se met à jour avec les dates ; des dates déjà réservées sont refusées avant l'envoi.
+	 * Zone 5 : module de réservation. Le total TTC (prix × jours, frais de service, caution affichée
+	 * mais non comptée), la TVA comprise et le total HT se mettent à jour avec les dates ; des dates
+	 * déjà réservées sont refusées avant l'envoi.
 	 *
 	 * @return {Object|null} Dates choisies et mise à jour, pour le calendrier.
 	 */
@@ -372,6 +373,7 @@
 		const today = startInput.min;
 		const price = Number( form.dataset.price ) || 0;
 		const rate = Number( form.dataset.feeRate ) || 0;
+		const vatRate = Number( form.dataset.vatRate ) || 0;
 		const format = JSON.parse( form.dataset.format || '{}' );
 		const error = form.querySelector( '[data-dates-error]' );
 		const hint = form.querySelector( '[data-lines-hint]' );
@@ -380,6 +382,8 @@
 		const rental = form.querySelector( '[data-line-rental]' );
 		const fee = form.querySelector( '[data-line-fee]' );
 		const total = form.querySelector( '[data-line-total]' );
+		const tax = form.querySelector( '[data-line-tax]' );
+		const net = form.querySelector( '[data-line-net]' );
 		const barDates = document.querySelector( '[data-bar-dates]' );
 		const listeners = [];
 		let announceTimer = 0;
@@ -447,6 +451,14 @@
 				total.textContent = money( rentalAmount + feeAmount );
 				hint.hidden = true;
 
+				// Détail de la TVA comprise dans le total (même calcul que le serveur).
+				const netAmount = round( ( rentalAmount + feeAmount ) / ( 1 + vatRate ) );
+
+				if ( tax && net ) {
+					tax.textContent = money( round( rentalAmount + feeAmount - netAmount ) );
+					net.textContent = money( netAmount );
+				}
+
 				if ( barDates ) {
 					barDates.textContent = shortDate.format( parseDate( start ) ) + ' – ' + shortDate.format( parseDate( end ) ) + ' · ' + money( rentalAmount + feeAmount );
 				}
@@ -461,6 +473,11 @@
 				fee.textContent = '—';
 				total.textContent = '—';
 				hint.hidden = false;
+
+				if ( tax && net ) {
+					tax.textContent = '—';
+					net.textContent = '—';
+				}
 
 				if ( barDates ) {
 					barDates.textContent = '';

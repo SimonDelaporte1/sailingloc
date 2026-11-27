@@ -92,6 +92,32 @@
 	font-size: 15px;
 }
 
+/* Mot de passe sensible à la casse (Opquast 73), sous le champ. */
+.icademie-comptes__casse {
+	clear: both;
+	font-size: 14px;
+}
+
+/* Connexion sécurisée (Opquast 27), sous le bouton du formulaire. */
+.icademie-comptes-securise {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 12px 0 0;
+	color: var(--ih-varech, #2e6b4f);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.icademie-comptes-securise__icone {
+	flex: none;
+}
+
+/* Sous le bloc de validation de la commande (même largeur que lui : « alignwide »). */
+.icademie-comptes-securise-commande {
+	margin-top: 8px;
+}
+
 @media (max-width: 600px) {
 	.icademie-comptes__section {
 		padding: 16px;

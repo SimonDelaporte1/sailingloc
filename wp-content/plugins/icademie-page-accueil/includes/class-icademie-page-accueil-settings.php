@@ -156,6 +156,11 @@ final class Icademie_Page_Accueil_Settings {
 						'type'    => 'text',
 						'default' => __( 'Garanti sans spam. Désinscription possible à tout moment, en un clic.', 'icademie-page-accueil' ),
 					),
+					'newsletter_desinscription_url' => array(
+						'label'       => __( 'Adresse de la page de désinscription (facultatif)', 'icademie-page-accueil' ),
+						'type'        => 'url',
+						'description' => __( 'Page de gestion des abonnements de votre outil d\'envoi (HubSpot), si elle a une adresse publique. Elle est proposée sous la page Newsletter, à côté du formulaire « Me désinscrire » (demande transmise par e-mail au destinataire des messages de la page Contact). Vide : le formulaire seul.', 'icademie-page-accueil' ),
+					),
 				),
 			),
 		);

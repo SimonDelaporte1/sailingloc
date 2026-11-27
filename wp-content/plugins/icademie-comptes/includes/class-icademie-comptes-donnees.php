@@ -33,6 +33,10 @@ final class Icademie_Comptes_Donnees {
 	const NONCE_EXPORT = 'icademie-comptes-export';
 	const NONCE_DELETE = 'icademie-comptes-suppression';
 
+	/** Nom du champ de sécurité de chaque formulaire : un identifiant par formulaire (Opquast 236). */
+	const NONCE_FIELD_EXPORT = 'icademie_comptes_jeton_export';
+	const NONCE_FIELD_DELETE = 'icademie_comptes_jeton_suppression';
+
 	/** Paramètre de l'adresse affichée après la suppression. */
 	const DELETED_ARG = 'compte-supprime';
 
@@ -147,7 +151,8 @@ final class Icademie_Comptes_Donnees {
 		}
 
 		$action = sanitize_key( wp_unslash( $_POST[ self::ACTION_FIELD ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$nonce  = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$field  = 'export' === $action ? self::NONCE_FIELD_EXPORT : self::NONCE_FIELD_DELETE;
+		$nonce  = isset( $_POST[ $field ] ) && is_string( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$user   = wp_get_current_user();
 
 		if ( 'export' === $action ) {
@@ -179,7 +184,7 @@ final class Icademie_Comptes_Donnees {
 	 * @param WP_User $user Compte.
 	 */
 	private static function export( WP_User $user ) {
-		$data     = self::collect( $user );
+		$json     = self::export_json( $user );
 		$filename = 'sailingloc-mes-donnees-' . current_datetime()->format( 'Y-m-d' ) . '.json';
 
 		nocache_headers();
@@ -187,8 +192,39 @@ final class Icademie_Comptes_Donnees {
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
 		header( 'X-Content-Type-Options: nosniff' );
 
-		echo wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Fichier JSON.
+		echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Fichier JSON.
 		exit;
+	}
+
+	/**
+	 * Contenu du fichier JSON des données du compte.
+	 *
+	 * @param WP_User $user Compte.
+	 * @return string
+	 */
+	private static function export_json( WP_User $user ) {
+		return (string) wp_json_encode( self::collect( $user ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+	}
+
+	/**
+	 * Taille du fichier à télécharger, à côté du bouton (Opquast 148) : « environ 0,6 Ko ».
+	 *
+	 * Calculée sur le fichier tel qu'il serait téléchargé maintenant ; la date du téléchargement
+	 * qu'il contient peut la faire varier de quelques octets.
+	 *
+	 * @param WP_User $user Compte.
+	 * @return string
+	 */
+	public static function export_size_text( WP_User $user ) {
+		$bytes = strlen( self::export_json( $user ) );
+
+		if ( $bytes >= MB_IN_BYTES ) {
+			/* translators: %s: taille en mégaoctets (« 1,2 »). */
+			return sprintf( __( 'environ %s Mo', 'icademie-comptes' ), number_format_i18n( $bytes / MB_IN_BYTES, 1 ) );
+		}
+
+		/* translators: %s: taille en kilooctets (« 0,6 »). */
+		return sprintf( __( 'environ %s Ko', 'icademie-comptes' ), number_format_i18n( max( 0.1, $bytes / KB_IN_BYTES ), 1 ) );
 	}
 
 	/**
@@ -554,10 +590,11 @@ final class Icademie_Comptes_Donnees {
 			'errors'   => self::$errors,
 			'blockers' => self::blockers( $user ),
 			'nonces'   => array(
-				'export'      => self::NONCE_EXPORT,
-				'suppression' => self::NONCE_DELETE,
+				'export'      => array( self::NONCE_EXPORT, self::NONCE_FIELD_EXPORT ),
+				'suppression' => array( self::NONCE_DELETE, self::NONCE_FIELD_DELETE ),
 			),
 			'field'    => self::ACTION_FIELD,
+			'size'     => self::export_size_text( $user ),
 		);
 
 		include dirname( __DIR__ ) . '/templates/mes-donnees.php';

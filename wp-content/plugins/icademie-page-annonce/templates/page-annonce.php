@@ -35,6 +35,7 @@ if ( '' !== $booking['start'] && '' !== $booking['end'] && $booking['end'] >= $b
 
 $rental = $days ? round( $booking['price'] * $days, $decimals ) : 0;
 $fee    = $days ? round( $rental * $booking['fee_rate'], $decimals ) : 0;
+$taxes  = Icademie_Annonce_Taxes::split( $rental + $fee );
 $dash   = '—';
 
 /* translators: %s: prix par jour. */
@@ -150,8 +151,14 @@ $star      = call_user_func( $icon, 'star', 16 );
 				<ul class="icademie-annonce__gallery-list" data-photos-track>
 					<?php foreach ( $data['photos'] as $index => $photo ) : ?>
 						<li class="icademie-annonce__gallery-item">
-							<?php /* translators: 1: numéro de la photo, 2: nombre de photos. */ ?>
-							<a class="icademie-annonce__gallery-link" href="<?php echo esc_url( $photo['full'] ); ?>" data-photo="<?php echo (int) $index; ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Agrandir la photo %1$s sur %2$s', 'icademie-page-annonce' ), number_format_i18n( $index + 1 ), number_format_i18n( $photo_count ) ) ); ?>">
+							<?php
+							$photo_name = '' !== $photo['label']
+								/* translators: 1: numéro de la photo, 2: nombre de photos, 3: description de la photo (« Intérieur du bateau »). */
+								? sprintf( __( 'Agrandir la photo %1$s sur %2$s : %3$s', 'icademie-page-annonce' ), number_format_i18n( $index + 1 ), number_format_i18n( $photo_count ), $photo['label'] )
+								/* translators: 1: numéro de la photo, 2: nombre de photos. */
+								: sprintf( __( 'Agrandir la photo %1$s sur %2$s', 'icademie-page-annonce' ), number_format_i18n( $index + 1 ), number_format_i18n( $photo_count ) );
+							?>
+							<a class="icademie-annonce__gallery-link" href="<?php echo esc_url( $photo['full'] ); ?>" data-photo="<?php echo (int) $index; ?>" aria-label="<?php echo esc_attr( $photo_name ); ?>">
 								<?php echo $photo['grid']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Image produite par WordPress. ?>
 							</a>
 						</li>
@@ -190,9 +197,7 @@ $star      = call_user_func( $icon, 'star', 16 );
 				?>
 				<p class="icademie-annonce__price">
 					<span class="icademie-annonce__price-amount"><?php echo wp_kses_post( $booking['price_html'] ); ?></span>
-					<?php if ( $booking['per_day'] ) : ?>
-						<span class="icademie-annonce__price-unit"><?php esc_html_e( '/ jour', 'icademie-page-annonce' ); ?></span>
-					<?php endif; ?>
+					<span class="icademie-annonce__price-unit"><?php echo $booking['per_day'] ? esc_html__( 'TTC / jour', 'icademie-page-annonce' ) : esc_html__( 'TTC', 'icademie-page-annonce' ); ?></span>
 				</p>
 				<?php
 				$price_html = (string) ob_get_clean();
@@ -202,14 +207,15 @@ $star      = call_user_func( $icon, 'star', 16 );
 					<form class="cart icademie-annonce__booking-form" action="<?php echo esc_url( $data['url'] ); ?>" method="post" enctype="multipart/form-data" data-booking-form
 						data-price="<?php echo esc_attr( wc_format_decimal( $booking['price'] ) ); ?>"
 						data-fee-rate="<?php echo esc_attr( (string) $booking['fee_rate'] ); ?>"
+						data-vat-rate="<?php echo esc_attr( (string) Icademie_Annonce_Taxes::vat_rate() ); ?>"
 						data-format="<?php echo esc_attr( wp_json_encode( $booking['price_format'] ) ); ?>"
 						data-label-empty="<?php echo esc_attr( $rental_label_empty ); ?>"
 						data-label-one="<?php echo esc_attr( sprintf( $rental_label_one, wp_strip_all_tags( $booking['price_html'] ) ) ); ?>"
 						data-label-many="<?php echo esc_attr( sprintf( $rental_label_format, wp_strip_all_tags( $booking['price_html'] ), '%s' ) ); ?>"
 						<?php /* translators: 1: montant total, 2: nombre de jours. */ ?>
-						data-announce="<?php echo esc_attr__( 'Total : %1$s pour %2$s jours.', 'icademie-page-annonce' ); ?>"
+						data-announce="<?php echo esc_attr__( 'Total TTC : %1$s pour %2$s jours.', 'icademie-page-annonce' ); ?>"
 						<?php /* translators: %s: montant total. */ ?>
-						data-announce-one="<?php echo esc_attr__( 'Total : %s pour 1 jour.', 'icademie-page-annonce' ); ?>"
+						data-announce-one="<?php echo esc_attr__( 'Total TTC : %s pour 1 jour.', 'icademie-page-annonce' ); ?>"
 						data-error-booked="<?php echo esc_attr__( 'Ces dates comprennent des jours déjà réservés. Choisissez d\'autres dates dans le calendrier des disponibilités.', 'icademie-page-annonce' ); ?>"
 						data-error-order="<?php echo esc_attr__( 'La date de retour doit être le jour du départ ou après.', 'icademie-page-annonce' ); ?>">
 						<div class="icademie-annonce__booking-main">
@@ -258,9 +264,18 @@ $star      = call_user_func( $icon, 'star', 16 );
 										<dd><?php echo esc_html( $booking['deposit_text'] ); ?></dd>
 									</div>
 								<?php endif; ?>
+								<?php $tax_labels = Icademie_Annonce_Taxes::labels(); ?>
 								<div class="icademie-annonce__line icademie-annonce__line--total">
-									<dt><?php esc_html_e( 'Total', 'icademie-page-annonce' ); ?></dt>
+									<dt><?php echo esc_html( $tax_labels['total'] ); ?></dt>
 									<dd data-line-total><?php echo $days ? wp_kses_post( wc_price( $rental + $fee ) ) : esc_html( $dash ); ?></dd>
+								</div>
+								<div class="icademie-annonce__line icademie-annonce__line--tax">
+									<dt><?php echo esc_html( $tax_labels['tax'] ); ?></dt>
+									<dd data-line-tax><?php echo $days ? wp_kses_post( wc_price( $taxes['tax'] ) ) : esc_html( $dash ); ?></dd>
+								</div>
+								<div class="icademie-annonce__line icademie-annonce__line--tax">
+									<dt><?php echo esc_html( $tax_labels['net'] ); ?></dt>
+									<dd data-line-net><?php echo $days ? wp_kses_post( wc_price( $taxes['net'] ) ) : esc_html( $dash ); ?></dd>
 								</div>
 							</dl>
 							<p class="icademie-annonce__hint" data-lines-hint<?php echo $days ? ' hidden' : ''; ?>><?php esc_html_e( 'Choisissez vos dates : le total se calcule selon le nombre de jours.', 'icademie-page-annonce' ); ?></p>
@@ -273,6 +288,18 @@ $star      = call_user_func( $icon, 'star', 16 );
 						</button>
 						<?php if ( $booking['rental'] ) : ?>
 							<p class="icademie-annonce__note"><?php esc_html_e( 'Récapitulatif et paiement à l\'étape suivante.', 'icademie-page-annonce' ); ?></p>
+							<?php /* Opquast 86 : informations demandées pendant la réservation, annoncées avant de commencer. */ ?>
+							<div class="icademie-annonce__prepare">
+								<p class="icademie-annonce__prepare-title"><?php esc_html_e( 'À préparer pour réserver :', 'icademie-page-annonce' ); ?></p>
+								<ul class="icademie-annonce__prepare-list">
+									<li><?php esc_html_e( 'vos coordonnées (nom, e-mail, téléphone) et votre adresse de facturation ;', 'icademie-page-annonce' ); ?></li>
+									<li><?php echo $booking['deposit'] ? esc_html__( 'une carte bancaire, pour le paiement et l\'empreinte de la caution ;', 'icademie-page-annonce' ) : esc_html__( 'une carte bancaire, pour le paiement ;', 'icademie-page-annonce' ); ?></li>
+									<?php if ( '' !== $booking['licence'] ) : ?>
+										<?php /* translators: %s: condition de permis (« Permis côtier requis »). */ ?>
+										<li><?php echo esc_html( sprintf( __( 'pour ce bateau : %s.', 'icademie-page-annonce' ), $booking['licence'] ) ); ?></li>
+									<?php endif; ?>
+								</ul>
+							</div>
 						<?php endif; ?>
 						</div>
 					</form>
@@ -293,7 +320,7 @@ $star      = call_user_func( $icon, 'star', 16 );
 					<?php foreach ( $data['specs'] as $spec ) : ?>
 						<div class="icademie-annonce__spec">
 							<dt><span class="icademie-annonce__spec-icon"><?php echo call_user_func( $icon, $spec['icon'], 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?></span><?php echo esc_html( $spec['label'] ); ?></dt>
-							<dd><?php echo esc_html( $spec['value'] ); ?></dd>
+							<dd><?php echo Icademie_Page_Annonce::with_abbreviations( $spec['value'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Texte échappé, abréviations ajoutées. ?></dd>
 						</div>
 					<?php endforeach; ?>
 				</dl>
@@ -326,7 +353,7 @@ $star      = call_user_func( $icon, 'star', 16 );
 					<?php foreach ( $data['equipments'] as $equipment ) : ?>
 						<li class="icademie-annonce__equipment<?php echo Icademie_Page_Annonce::is_eco_equipment( $equipment ) ? ' icademie-annonce__equipment--eco' : ''; ?>">
 							<span class="icademie-annonce__equipment-icon"><?php echo call_user_func( $icon, Icademie_Page_Annonce::equipment_icon( $equipment ), 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?></span>
-							<?php echo esc_html( $equipment ); ?>
+							<?php echo Icademie_Page_Annonce::with_abbreviations( $equipment ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Texte échappé, abréviations ajoutées. ?>
 						</li>
 					<?php endforeach; ?>
 				</ul>
@@ -489,6 +516,16 @@ $star      = call_user_func( $icon, 'star', 16 );
 								<?php endif; ?>
 								<div class="icademie-annonce__review-text"><?php echo wp_kses_post( $review['text'] ); ?></div>
 								<?php echo $review['notes']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Notes détaillées échappées par l'extension des avis. ?>
+								<?php if ( '' !== $review['report_url'] && ! $review['pending'] ) : ?>
+									<?php /* Opquast 11 : signaler un abus, depuis le formulaire de contact (objet et message préremplis). */ ?>
+									<p class="icademie-annonce__review-report">
+										<a href="<?php echo esc_url( $review['report_url'] ); ?>" rel="nofollow">
+											<?php esc_html_e( 'Signaler cet avis', 'icademie-page-annonce' ); ?>
+											<?php /* translators: %s: prénom de l'auteur de l'avis. */ ?>
+											<span class="icademie-annonce__sr"><?php echo esc_html( sprintf( __( 'de %s', 'icademie-page-annonce' ), $review['name'] ) ); ?></span>
+										</a>
+									</p>
+								<?php endif; ?>
 							</article>
 						</li>
 					<?php endforeach; ?>

@@ -57,6 +57,9 @@ final class Icademie_Page_Contact_Form {
 	const MESSAGE_MIN     = 10;
 	const MESSAGE_MAX     = 5000;
 
+	/** Objet des signalements (avis, contenus abusifs). */
+	const REPORT_SUBJECT = 'signalement';
+
 	/**
 	 * Nom ou prénom : lettres (tous alphabets, accents compris), espaces, apostrophes, traits
 	 * d'union et points. Ni chiffres, ni « @ », ni adresse web.
@@ -120,6 +123,7 @@ final class Icademie_Page_Contact_Form {
 				'assurance-caution' => __( 'Assurance et caution', 'icademie-page-contact' ),
 				'bateau'            => __( 'Question sur un bateau ou un propriétaire', 'icademie-page-contact' ),
 				'compte'            => __( 'Mon compte', 'icademie-page-contact' ),
+				'signalement'       => self::report_label(),
 				'autre'             => __( 'Autre question', 'icademie-page-contact' ),
 			),
 			'proprietaire' => array(
@@ -129,6 +133,7 @@ final class Icademie_Page_Contact_Form {
 				'assurance-proprietaire' => __( 'Assurance propriétaire', 'icademie-page-contact' ),
 				'commission'             => __( 'Tarifs et commission', 'icademie-page-contact' ),
 				'compte'                 => __( 'Mon compte', 'icademie-page-contact' ),
+				'signalement'            => self::report_label(),
 				'autre'                  => __( 'Autre question', 'icademie-page-contact' ),
 			),
 			'autre'        => array(
@@ -136,8 +141,83 @@ final class Icademie_Page_Contact_Form {
 				'presse'      => __( 'Presse', 'icademie-page-contact' ),
 				'site'        => __( 'Signaler un problème sur le site', 'icademie-page-contact' ),
 				'donnees'     => __( 'Données personnelles (RGPD)', 'icademie-page-contact' ),
+				'signalement' => self::report_label(),
 				'autre'       => __( 'Autre demande', 'icademie-page-contact' ),
 			),
+		);
+	}
+
+	/**
+	 * Objet « Signalement », proposé à tous les profils (Opquast 11 : signaler un abus).
+	 *
+	 * @return string
+	 */
+	private static function report_label() {
+		return __( 'Signalement d\'un avis ou d\'un contenu abusif', 'icademie-page-contact' );
+	}
+
+	/**
+	 * Adresse du formulaire de contact pour signaler un avis : objet « Signalement » choisi et message
+	 * prérempli avec l'annonce et l'avis concernés (lien « Signaler cet avis » de la fiche annonce).
+	 *
+	 * @param WP_Comment|int $comment Avis.
+	 * @return string Adresse, ou vide sans page Contact publiée.
+	 */
+	public static function report_url( $comment ) {
+		$comment = get_comment( $comment );
+		$page_id = (int) Icademie_Page_Contact::find_contact_page();
+
+		if ( ! $comment instanceof WP_Comment || ! $page_id || 'publish' !== get_post_status( $page_id ) ) {
+			return '';
+		}
+
+		return add_query_arg(
+			array(
+				'objet' => self::REPORT_SUBJECT,
+				'avis'  => (int) $comment->comment_ID,
+			),
+			get_permalink( $page_id )
+		) . '#' . self::ANCHOR;
+	}
+
+	/**
+	 * Message prérempli d'un signalement : titre de l'annonce, auteur et date de l'avis, adresse.
+	 *
+	 * Seulement pour un avis publié d'un contenu public : le lien ne révèle rien d'autre.
+	 *
+	 * @param int $comment_id Avis.
+	 * @return string Message, ou vide.
+	 */
+	private static function report_message( $comment_id ) {
+		$comment = get_comment( $comment_id );
+
+		if ( ! $comment instanceof WP_Comment || '1' !== (string) $comment->comment_approved ) {
+			return '';
+		}
+
+		$post = get_post( (int) $comment->comment_post_ID );
+
+		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status || ! is_post_type_viewable( $post->post_type ) || post_password_required( $post ) ) {
+			return '';
+		}
+
+		// Prénom, comme sur la fiche : celui du compte, sinon le premier mot du nom de l'avis.
+		$author = $comment->user_id ? trim( (string) get_user_meta( (int) $comment->user_id, 'first_name', true ) ) : '';
+		$words  = preg_split( '/\s+/u', trim( wp_strip_all_tags( $comment->comment_author ) ), -1, PREG_SPLIT_NO_EMPTY );
+
+		if ( '' === $author ) {
+			$author = $words ? $words[0] : __( 'un locataire', 'icademie-page-contact' );
+		}
+		$date   = wp_date( 'j F Y', (int) strtotime( $comment->comment_date_gmt . ' UTC' ) );
+		$title  = html_entity_decode( wp_strip_all_tags( get_the_title( $post ) ), ENT_QUOTES, 'UTF-8' );
+
+		return sprintf(
+			/* translators: 1: titre de l'annonce, 2: prénom de l'auteur de l'avis, 3: date de l'avis, 4: adresse de l'avis. */
+			__( "Je signale un avis sur l'annonce « %1\$s » : avis de %2\$s du %3\$s (%4\$s).\n\nMotif du signalement : ", 'icademie-page-contact' ),
+			$title,
+			$author,
+			$date,
+			get_permalink( $post ) . '#comment-' . (int) $comment->comment_ID
 		);
 	}
 
@@ -300,6 +380,11 @@ final class Icademie_Page_Contact_Form {
 				'reservationMax'    => self::RESERVATION_MAX,
 				'messageMin'        => self::MESSAGE_MIN,
 				'messageMax'        => self::MESSAGE_MAX,
+				/* translators: %s: nombre de caractères restants. */
+				'counterLeft'       => __( 'Il vous reste %s caractères.', 'icademie-page-contact' ),
+				'counterOne'        => __( 'Il vous reste 1 caractère.', 'icademie-page-contact' ),
+				/* translators: %s: nombre maximal de caractères (« 5 000 »). */
+				'counterFull'       => sprintf( __( 'Limite de %s caractères atteinte.', 'icademie-page-contact' ), number_format_i18n( self::MESSAGE_MAX ) ),
 				'maxSize'           => self::max_file_size(),
 				'extensions'        => array( 'jpg', 'jpeg', 'jpe', 'png', 'webp', 'pdf' ),
 				'summaryOne'        => __( 'Le formulaire contient une erreur :', 'icademie-page-contact' ),
@@ -321,6 +406,7 @@ final class Icademie_Page_Contact_Form {
 	 * visiteur connecté (profil « Propriétaire » pour un vendeur WC Vendors).
 	 *
 	 * Un lien peut aussi présélectionner le profil et l'objet : …/contact/?profil=proprietaire&objet=annonce
+	 * Signalement d'un avis : …/contact/?objet=signalement&avis=123 (message prérempli).
 	 *
 	 * @return array
 	 */
@@ -366,6 +452,14 @@ final class Icademie_Page_Contact_Form {
 
 		if ( isset( self::subjects()[ $values['profil'] ][ $subject ] ) ) {
 			$values['objet'] = $subject;
+		}
+
+		// Lien « Signaler cet avis » : message prérempli avec l'annonce et l'avis.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Simple préremplissage.
+		$review = isset( $_GET['avis'] ) && is_string( $_GET['avis'] ) ? absint( $_GET['avis'] ) : 0;
+
+		if ( self::REPORT_SUBJECT === $values['objet'] && $review ) {
+			$values['message'] = self::report_message( $review );
 		}
 
 		return $values;
@@ -781,7 +875,7 @@ final class Icademie_Page_Contact_Form {
 			$lines[] = sprintf( __( 'Un problème pendant une location ? Appelez notre ligne d\'assistance au %s.', 'icademie-page-contact' ), $assistance );
 		}
 
-		$lines[] = __( 'Urgence en mer : composez le 196 (CROSS) ou appelez sur le canal 16 de la VHF.', 'icademie-page-contact' );
+		$lines[] = __( 'Urgence en mer : composez le 196 (<abbr title="Centre régional opérationnel de surveillance et de sauvetage">CROSS</abbr>) ou appelez sur le canal 16 de la <abbr title="Very high frequency">VHF</abbr>.', 'icademie-page-contact' );
 		$lines[] = '';
 		/* translators: %s: nom du site. */
 		$lines[] = sprintf( __( 'L\'équipe %s', 'icademie-page-contact' ), $site );

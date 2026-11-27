@@ -23,7 +23,7 @@ $uid = wp_unique_id( 'icademie-habillage-assistance-' );
 				<?php esc_html_e( 'Un problème à bord ou au port :', 'icademie-habillage' ); ?>
 				<a href="<?php echo esc_url( $data['contact'] ); ?>"><?php esc_html_e( 'contactez l\'équipe', 'icademie-habillage' ); ?></a>.
 			<?php endif; ?>
-			<strong><?php esc_html_e( 'Urgence en mer : 196 (CROSS) ou VHF canal 16.', 'icademie-habillage' ); ?></strong>
+			<strong><?php echo wp_kses( __( 'Urgence en mer : 196 (<abbr title="Centre régional opérationnel de surveillance et de sauvetage">CROSS</abbr>) ou <abbr title="Very high frequency">VHF</abbr> canal 16.', 'icademie-habillage' ), array( 'abbr' => array( 'title' => true ) ) ); ?></strong>
 		</p>
 	</div>
 	<?php if ( '' !== $data['number'] && ! $data['short'] ) : ?>

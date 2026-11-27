@@ -328,7 +328,17 @@ $rating_format = __( '%s sur 5', 'icademie-page-accueil' );
 				<?php if ( '' !== $owner['propose'] || '' !== $owner['estimate'] ) : ?>
 					<div class="icademie-accueil__owner-actions">
 						<?php if ( '' !== $owner['propose'] ) : ?>
-							<a class="icademie-accueil__button" href="<?php echo esc_url( $owner['propose'] ); ?>"><?php esc_html_e( 'Proposer mon bateau', 'icademie-page-accueil' ); ?></a>
+							<?php
+							// Opquast 143 : lien vers l'espace réservé aux propriétaires (« connexion requise »).
+							$propose_note = method_exists( 'Icademie_Entete_Pied_View', 'access_note' ) ? Icademie_Entete_Pied_View::access_note( $owner['propose'] ) : '';
+							?>
+							<a class="icademie-accueil__button" href="<?php echo esc_url( $owner['propose'] ); ?>">
+								<?php esc_html_e( 'Proposer mon bateau', 'icademie-page-accueil' ); ?>
+								<?php if ( '' !== $propose_note ) : ?>
+									<?php echo Icademie_Page_Accueil::icon( 'lock', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG fixe. ?>
+									<span class="icademie-accueil__acces"><?php echo esc_html( '(' . $propose_note . ')' ); ?></span>
+								<?php endif; ?>
+							</a>
 						<?php endif; ?>
 						<?php if ( '' !== $owner['estimate'] ) : ?>
 							<a class="icademie-accueil__button icademie-accueil__button--secondary" href="<?php echo esc_url( $owner['estimate'] ); ?>"><?php esc_html_e( 'Estimer mes revenus', 'icademie-page-accueil' ); ?></a>

@@ -182,6 +182,41 @@
 			rgpd: () => ( control( 'rgpd' ).checked ? '' : messages.rgpd ),
 		};
 
+		/* Compteur de caractères du message (même décompte que la vérification). */
+
+		const counter = form.querySelector( '[data-counter]' );
+
+		if ( counter ) {
+			const counterValue = counter.querySelector( '[data-counter-value]' );
+			const counterStatus = counter.querySelector( '[data-counter-status]' );
+			const counterLocale = document.documentElement.lang || 'fr-FR';
+			let counterTimer = 0;
+
+			const updateCounter = () => {
+				const count = length( control( 'message' ).value );
+				const left = config.messageMax - count;
+
+				counterValue.textContent = count.toLocaleString( counterLocale );
+				counter.classList.toggle( 'is-near', left <= 500 );
+
+				// Près de la limite seulement, une fois la saisie arrêtée : pas d'annonce à chaque touche.
+				window.clearTimeout( counterTimer );
+				counterTimer = window.setTimeout( () => {
+					if ( left > 500 ) {
+						counterStatus.textContent = '';
+					} else if ( left <= 0 ) {
+						counterStatus.textContent = config.counterFull;
+					} else {
+						counterStatus.textContent = 1 === left ? config.counterOne : config.counterLeft.replace( '%s', left.toLocaleString( counterLocale ) );
+					}
+				}, 800 );
+			};
+
+			counter.hidden = false;
+			control( 'message' ).addEventListener( 'input', updateCounter );
+			updateCounter();
+		}
+
 		/**
 		 * Affiche (ou retire) le message d'erreur d'un champ et met à jour son état ARIA.
 		 *

@@ -266,10 +266,13 @@ final class Icademie_Annonce_View {
 	/**
 	 * Zone 4 : photos (principale, puis galerie).
 	 *
-	 * @param WC_Product $product Bateau.
-	 * Dans la grille, les images sont dans des liens « Agrandir la photo n sur N » : texte alternatif vide.
+	 * Dans la grille, les images sont dans des liens « Agrandir la photo n sur N : <description> » :
+	 * la description (texte alternatif de la médiathèque, sinon légende) est dans le nom du lien,
+	 * l'image a un texte alternatif vide pour ne pas la lire deux fois (Opquast 118).
 	 *
-	 * @return array[] « grid » (image de la grille), « full » (adresse de la grande image), « large » (image de la visionneuse).
+	 * @param WC_Product $product Bateau.
+	 * @return array[] « grid » (image de la grille), « full » (adresse de la grande image), « large »
+	 *                 (image de la visionneuse), « label » (description, vide si la photo n'en a pas).
 	 */
 	private static function photos( $product ) {
 		$ids = array_values( array_unique( array_filter( array_merge( array( (int) $product->get_image_id() ), array_map( 'intval', $product->get_gallery_image_ids() ) ) ) ) );
@@ -288,8 +291,14 @@ final class Icademie_Annonce_View {
 			}
 
 			$first = 0 === $index;
+			$label = trim( wp_strip_all_tags( (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true ) ) );
+
+			if ( '' === $label ) {
+				$label = trim( wp_strip_all_tags( (string) wp_get_attachment_caption( $image_id ) ) );
+			}
 
 			$photos[] = array(
+				'label' => $label,
 				'grid'  => wp_get_attachment_image(
 					$image_id,
 					$first ? 'large' : 'medium_large',
@@ -338,7 +347,9 @@ final class Icademie_Annonce_View {
 		$passengers = isset( $_POST[ Icademie_Annonce_Reservation::FIELD_PASSENGERS ] ) ? absint( $_POST[ Icademie_Annonce_Reservation::FIELD_PASSENGERS ] ) : 0;
 		// phpcs:enable
 
-		$max = Icademie_Annonce_Reservation::max_passengers( $product );
+		$max        = Icademie_Annonce_Reservation::max_passengers( $product );
+		$conditions = Icademie_Annonce_Conditions::values( $product->get_id() );
+		$licence    = isset( $conditions['permis'] ) && in_array( $conditions['permis']['value'], array( 'cotier', 'fluvial', 'hauturier', 'experience' ), true ) ? $conditions['permis']['text'] : '';
 
 		return array(
 			'available'     => $product->is_purchasable() && $product->is_in_stock() && $price > 0,
@@ -349,6 +360,7 @@ final class Icademie_Annonce_View {
 			'deposit'       => $deposit,
 			'deposit_text'  => null === $deposit ? '' : ( 0 === $deposit ? __( 'Sans caution', 'icademie-page-annonce' ) : Icademie_Annonce_Conditions::amount_text( $deposit ) ),
 			'fee_rate'      => Icademie_Annonce_Reservation::fee_rate(),
+			'licence'       => $licence,
 			'max'           => $max,
 			'passengers'    => $passengers ? min( $passengers, $max ? $max : $passengers ) : min( 2, max( 1, $max ) ),
 			'today'         => $today,
@@ -571,16 +583,18 @@ final class Icademie_Annonce_View {
 		$initials = $initial( $name ) . ( count( $words ) > 1 ? $initial( end( $words ) ) : '' );
 
 		return array(
-			'id'       => (int) $comment->comment_ID,
-			'name'     => $name,
-			'initials' => $initials,
-			'date'     => wp_date( 'j F Y', (int) strtotime( $comment->comment_date_gmt . ' UTC' ) ),
-			'datetime' => gmdate( 'Y-m-d', (int) strtotime( $comment->comment_date_gmt . ' UTC' ) ),
-			'rating'   => (int) get_comment_meta( $comment->comment_ID, 'rating', true ),
-			'text'     => (string) apply_filters( 'comment_text', get_comment_text( $comment ), $comment, array() ),
-			'notes'    => class_exists( 'Icademie_Avis_Criteres' ) ? Icademie_Avis_Criteres::review_html( (int) $comment->comment_ID ) : '',
-			'pending'  => '0' === (string) $comment->comment_approved,
-			'verified' => '1' === (string) get_comment_meta( $comment->comment_ID, 'verified', true ),
+			'id'         => (int) $comment->comment_ID,
+			'name'       => $name,
+			'initials'   => $initials,
+			'date'       => wp_date( 'j F Y', (int) strtotime( $comment->comment_date_gmt . ' UTC' ) ),
+			'datetime'   => gmdate( 'Y-m-d', (int) strtotime( $comment->comment_date_gmt . ' UTC' ) ),
+			'rating'     => (int) get_comment_meta( $comment->comment_ID, 'rating', true ),
+			'text'       => (string) apply_filters( 'comment_text', get_comment_text( $comment ), $comment, array() ),
+			'notes'      => class_exists( 'Icademie_Avis_Criteres' ) ? Icademie_Avis_Criteres::review_html( (int) $comment->comment_ID ) : '',
+			'pending'    => '0' === (string) $comment->comment_approved,
+			'verified'   => '1' === (string) get_comment_meta( $comment->comment_ID, 'verified', true ),
+			// Lien « Signaler cet avis » : formulaire de contact de l'extension « Page contact ».
+			'report_url' => method_exists( 'Icademie_Page_Contact_Form', 'report_url' ) ? Icademie_Page_Contact_Form::report_url( $comment ) : '',
 		);
 	}
 
