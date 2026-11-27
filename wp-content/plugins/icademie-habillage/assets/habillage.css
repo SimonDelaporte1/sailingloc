@@ -3115,6 +3115,47 @@ body.icademie-habillage-page .select2-results__option--highlighted[data-selected
 	gap: 12px;
 }
 
+/* Recherche des propriétaires (modèle de l'extension) : étiquette visible au-dessus du champ
+   (Opquast 69), recherche toujours affichée, y compris sur smartphone où WC Vendors la cache.
+   Boutons « grille » et « liste » alignés sur le champ, pas sur l'étiquette. */
+.icademie-habillage .wcv-vendor-list-filter.icademie-vendeurs__filtre {
+	align-items: flex-end;
+}
+
+.icademie-habillage .wcv-vendor-list-filter .wcv-vendor-list-search {
+	position: static;
+	display: block;
+	width: auto;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	transform: none;
+}
+
+.icademie-habillage .wcv-vendor-list-filter .wcv-vendor-list-search form {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+}
+
+.icademie-habillage .wcv-vendor-list-filter .icademie-vendeurs__etiquette {
+	flex-basis: 100%;
+	color: var(--ih-encre);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	line-height: 16px;
+	text-transform: uppercase;
+}
+
+.icademie-habillage .wcv-vendor-list-filter .icademie-vendeurs__champ {
+	flex: 1 1 200px;
+	min-width: 0;
+	margin: 0;
+}
+
 .icademie-habillage .wcv-vendor-list-switch {
 	display: flex;
 	gap: 4px;
@@ -3469,7 +3510,12 @@ body.icademie-habillage-page .select2-results__option--highlighted[data-selected
 		background: #fff;
 	}
 
-	.icademie-habillage :is(.icademie-habillage__ariane, .icademie-habillage__etapes, .icademie-habillage__lies, .icademie-habillage__commentaires, .woocommerce-MyAccount-navigation) {
-		display: none;
+	/*
+	 * Blocs de navigation, pas imprimés (Opquast 196) : fil d'Ariane, étapes, pagination des
+	 * articles, menus du compte et du tableau de bord des propriétaires, recherche des
+	 * propriétaires.
+	 */
+	.icademie-habillage :is(.icademie-habillage__ariane, .icademie-habillage__etapes, .icademie-habillage__pagination, .icademie-habillage__lies, .icademie-habillage__commentaires, .woocommerce-MyAccount-navigation, .wcv-navigation, .wcv-dashboard-navigation, .wcv-vendor-list-search) {
+		display: none !important;
 	}
 }

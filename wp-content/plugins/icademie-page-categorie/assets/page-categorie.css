@@ -2133,3 +2133,32 @@ html.icademie-categorie-panneau {
 		display: none !important;
 	}
 }
+
+/*
+ * Impression (Opquast 196) : l'en-tête de la page, les bateaux, le contenu éditorial et les
+ * questions fréquentes, sans les blocs de navigation (fil d'Ariane, pagination, « Afficher plus »,
+ * « Voir aussi ») ni les commandes de la liste (recherche, filtres, tri, photos suivantes).
+ */
+@media print {
+
+	.icademie-categorie :is(.icademie-categorie__breadcrumb, .icademie-categorie__text-search, .icademie-categorie__search, .icademie-categorie__sidebar, .icademie-categorie__dialog, .icademie-categorie__filters-open, .icademie-categorie__clear, .icademie-categorie__sort, .icademie-categorie__pagination, .icademie-categorie__more-bar, .icademie-categorie__more-link, .icademie-categorie__readmore, .icademie-categorie__links, .icademie-categorie__photo-nav, .icademie-categorie__photo-dots) {
+		display: none !important;
+	}
+
+	/* Sans la colonne des filtres, les bateaux prennent toute la largeur. */
+	.icademie-categorie__listing.has-filters {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* Texte replié sur smartphone et réponses des questions fermées : imprimés en entier. */
+	.icademie-categorie.has-js .icademie-categorie__prose.is-collapsible:not(.is-expanded) {
+		max-height: none !important;
+		overflow: visible !important;
+		-webkit-mask-image: none !important;
+		mask-image: none !important;
+	}
+
+	.icademie-categorie__faq-item::details-content {
+		content-visibility: visible;
+	}
+}

@@ -31,3 +31,4 @@ wp-content/debug.log
 # Dépendances (à réinstaller plutôt qu'à versionner)
 vendor/
 node_modules/
+testmail.php

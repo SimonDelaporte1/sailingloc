@@ -7,6 +7,10 @@
  * Remplacés au moment de la traduction (filtre « gettext_{domaine} ») : rien n'est modifié dans les
  * extensions ni dans les contenus, et les mises à jour de leurs traductions n'y changent rien.
  *
+ * Liens « politique de confidentialité » et « conditions générales » des textes de WooCommerce
+ * (inscription, validation de commande classique) : ils s'ouvrent dans un nouvel onglet (la saisie
+ * en cours n'est pas perdue), désormais annoncé « (nouvel onglet) » (Opquast 146).
+ *
  * @package Icademie_Habillage
  */
 
@@ -23,6 +27,51 @@ final class Icademie_Habillage_Textes {
 	public static function init() {
 		add_filter( 'gettext_woocommerce', array( __CLASS__, 'woocommerce' ), 10, 2 );
 		add_filter( 'gettext_wc-vendors', array( __CLASS__, 'wc_vendors' ), 10, 2 );
+		add_filter( 'woocommerce_get_privacy_policy_text', array( __CLASS__, 'policy_links' ) );
+		add_filter( 'woocommerce_get_terms_and_conditions_checkbox_text', array( __CLASS__, 'policy_links' ) );
+	}
+
+	/**
+	 * Liens des pages légales dans les textes de WooCommerce : même lien que WooCommerce (classe,
+	 * nouvel onglet), avec « (nouvel onglet) » pour les lecteurs d'écran.
+	 *
+	 * Les marqueurs « [privacy_policy] » et « [terms] » sont remplacés avant que WooCommerce ne le
+	 * fasse lui-même (wc_replace_policy_page_link_placeholders(), sans filtre). Sans page
+	 * réglée, le marqueur est laissé à WooCommerce (texte sans lien).
+	 *
+	 * @param string $text Texte avec les marqueurs.
+	 * @return string
+	 */
+	public static function policy_links( $text ) {
+		if ( ! is_string( $text ) || ( false === strpos( $text, '[privacy_policy]' ) && false === strpos( $text, '[terms]' ) ) ) {
+			return $text;
+		}
+
+		$links = array(
+			// Libellés de WooCommerce, avec leur traduction.
+			'[privacy_policy]' => array( function_exists( 'wc_privacy_policy_page_id' ) ? (int) wc_privacy_policy_page_id() : 0, 'woocommerce-privacy-policy-link', translate( 'privacy policy', 'woocommerce' ) ),
+			'[terms]'          => array( function_exists( 'wc_terms_and_conditions_page_id' ) ? (int) wc_terms_and_conditions_page_id() : 0, 'woocommerce-terms-and-conditions-link', translate( 'terms and conditions', 'woocommerce' ) ),
+		);
+
+		foreach ( $links as $placeholder => $link ) {
+			if ( ! $link[0] || false === strpos( $text, $placeholder ) ) {
+				continue;
+			}
+
+			$text = str_replace(
+				$placeholder,
+				sprintf(
+					'<a href="%1$s" class="%2$s" target="_blank">%3$s<span class="screen-reader-text"> %4$s</span></a>',
+					esc_url( get_permalink( $link[0] ) ),
+					esc_attr( $link[1] ),
+					esc_html( $link[2] ),
+					esc_html__( '(nouvel onglet)', 'icademie-habillage' )
+				),
+				$text
+			);
+		}
+
+		return $text;
 	}
 
 	/**

@@ -1230,13 +1230,33 @@ html.icademie-entete-panneau {
 	}
 }
 
-/* Impression : sans les blocs de navigation (Opquast 196). */
+/*
+ * Impression : sans les blocs de navigation (Opquast 196). Feuille chargée sur toutes les pages :
+ * elle retire aussi ceux qui peuvent être posés partout, les blocs « Fil d'Ariane » de WordPress
+ * et de WooCommerce (dans le contenu du panier, par exemple), la pagination des listes de
+ * WooCommerce, de WC Vendors et des blocs de WordPress, et le bandeau de cookies (Cookiebot), ses
+ * fenêtres et son bouton : fixés à l'écran, ils étaient imprimés par-dessus le contenu de chaque
+ * page. Le bouton « Menu », affiché d'office quand le menu ne tient pas dans la barre, est visé
+ * avec la même précision que les règles qui l'affichent.
+ */
 @media print {
 	.icademie-entete__search,
 	.icademie-entete__actions,
 	.icademie-entete__nav,
 	.icademie-entete__menu-open,
-	.icademie-pied {
+	.icademie-entete.has-js .icademie-entete__menu-open,
+	.icademie-entete.is-collapsed .icademie-entete__menu-open,
+	.icademie-entete__panel,
+	.icademie-pied,
+	.wp-block-breadcrumbs,
+	.woocommerce-breadcrumb,
+	.wp-block-woocommerce-breadcrumbs,
+	.woocommerce-pagination,
+	.wp-block-query-pagination,
+	.wp-block-comments-pagination,
+	#CybotCookiebotDialog,
+	#CybotCookiebotDialogBodyUnderlay,
+	#CookiebotWidget {
 		display: none !important;
 	}
 }

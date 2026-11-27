@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       SailingLoc – Habillage des pages
- * Description:       Habillage d'après la charte graphique SailingLoc des pages qui n'ont pas de maquette : pages de contenu et articles (fil d'Ariane, titre, typographie de lecture, tableaux, citations, formulaires), listes d'articles, page introuvable et accès refusé (erreur 403), compte client (« Mes locations » avec le bandeau d'assistance, adresses, détails du compte, connexion), tableau de bord et liste des propriétaires (WC Vendors), et tunnel de réservation (panier, validation, confirmation, avec les étapes). Modèles de page propres à l'extension, entre l'en-tête et le pied de page du site.
+ * Description:       Habillage d'après la charte graphique SailingLoc des pages qui n'ont pas de maquette : pages de contenu et articles (fil d'Ariane, titre, typographie de lecture, tableaux, citations, formulaires), listes d'articles, page introuvable et accès refusé (erreur 403), compte client (« Mes locations » avec le bandeau d'assistance, adresses, détails du compte, connexion), tableau de bord et liste des propriétaires (WC Vendors, avec une recherche étiquetée en français et utilisable au clavier), et tunnel de réservation (panier, validation, confirmation, avec les étapes). Liens vides des contenus (sans texte ni image, laissés par l'éditeur) retirés à l'affichage. Modèles de page propres à l'extension, entre l'en-tête et le pied de page du site.
  * Version:           1.2.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
@@ -17,6 +17,8 @@ require_once __DIR__ . '/includes/class-icademie-habillage-templates.php';
 require_once __DIR__ . '/includes/class-icademie-habillage-blocks.php';
 require_once __DIR__ . '/includes/class-icademie-habillage-compte.php';
 require_once __DIR__ . '/includes/class-icademie-habillage-textes.php';
+require_once __DIR__ . '/includes/class-icademie-habillage-vendeurs.php';
+require_once __DIR__ . '/includes/class-icademie-habillage-liens.php';
 
 /**
  * Extension « Habillage des pages ».
@@ -37,6 +39,8 @@ final class Icademie_Habillage {
 		Icademie_Habillage_Blocks::init();
 		Icademie_Habillage_Compte::init();
 		Icademie_Habillage_Textes::init();
+		Icademie_Habillage_Vendeurs::init();
+		Icademie_Habillage_Liens::init();
 
 		add_action( 'init', array( __CLASS__, 'register_assets' ) );
 		// Tard : après les feuilles de WooCommerce, de WC Vendors et du thème.

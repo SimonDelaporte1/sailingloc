@@ -17,6 +17,7 @@
 	/* Couleurs de la charte (nom du jeton en commentaire). */
 	--ic-primary: #1d5a80; /* manche : action */
 	--ic-primary-dark: #164766; /* manche-strong : survol */
+	--ic-visited: #5b3f8c; /* liens déjà visités (Opquast 141) : 7,6:1 sur craie, 8,3:1 sur blanc */
 	--ic-primary-light: #e4eef3; /* ecume */
 	--ic-navy: #0f2233; /* encre */
 	--ic-text: #0f2233; /* encre */
@@ -79,6 +80,18 @@
 }
 
 .icademie-contact :where(a):hover {
+	color: var(--ic-primary-dark);
+}
+
+/* Liens de texte déjà visités (Opquast 141), comme sur les autres pages : violet ; le survol garde
+   le bleu foncé. Pas les cartes de l'aide rapide, les boutons ni les liens d'appel. */
+.icademie-contact .icademie-contact__map-link:visited,
+.icademie-contact .icademie-contact__consent-note a:visited {
+	color: var(--ic-visited);
+}
+
+.icademie-contact .icademie-contact__map-link:visited:hover,
+.icademie-contact .icademie-contact__consent-note a:visited:hover {
 	color: var(--ic-primary-dark);
 }
 
@@ -1195,6 +1208,8 @@
 		box-shadow: none;
 	}
 
+	/* Fil d'Ariane : un bloc de navigation, pas imprimé (Opquast 196). */
+	.icademie-contact__breadcrumb,
 	.icademie-contact__help,
 	.icademie-contact__map,
 	.icademie-contact__form {

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       SailingLoc – Sécurité et performances
- * Description:       Corrections de l'audit Opquast côté serveur : versions de WordPress et des extensions retirées du code des pages et des flux (Opquast 213) ; champs anti-spam de WP Armour masqués aux lecteurs d'écran et retirés de la navigation au clavier, avec des identifiants uniques (Opquast 165, 167, 236) ; focus visible sur le bouton de fermeture des fenêtres de Themify Popup (Opquast 165) ; feuilles de styles et scripts des extensions SailingLoc et du thème, et scripts de WP Armour et de WC Vendors, servis minifiés quand leur version « .min » est à jour (Opquast 229, 230). Les en-têtes de sécurité (dont la politique de sécurité du contenu qui limite les scripts tiers aux services utilisés, Opquast 214) et la page d'erreur 403 sont réglés dans le fichier .htaccess à la racine du site.
+ * Description:       Corrections de l'audit Opquast côté serveur : versions de WordPress et des extensions retirées du code des pages et des flux (Opquast 213) ; champs anti-spam de WP Armour masqués aux lecteurs d'écran et retirés de la navigation au clavier, avec des identifiants uniques (Opquast 165, 167, 236) ; fenêtres de Themify Popup : focus visible et nom en français du bouton de fermeture, texte assez contrasté, pas imprimées par-dessus la page (Opquast 132, 162, 165, 182, 196) ; « (nouvel onglet) » ajouté aux liens qui s'ouvrent dans un autre onglet sans le dire, y compris ceux du bandeau de cookies et du bloc de commande (Opquast 146) ; feuilles de styles et scripts des extensions SailingLoc et du thème, et scripts de WP Armour et de WC Vendors, servis minifiés quand leur version « .min » est à jour (Opquast 229, 230). Les en-têtes de sécurité (dont la politique de sécurité du contenu qui limite les scripts tiers aux services utilisés, Opquast 214) et la page d'erreur 403 sont réglés dans le fichier .htaccess à la racine du site.
  * Version:           1.0.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
@@ -22,6 +22,9 @@ final class Icademie_Securite {
 
 	/** Script qui corrige les champs anti-spam. */
 	const ANTI_SPAM_HANDLE = 'icademie-securite-anti-spam';
+
+	/** Script qui signale les liens ouverts dans un nouvel onglet. */
+	const NEW_TAB_HANDLE = 'icademie-securite-nouvel-onglet';
 
 	/** Poignée du script de WP Armour (« honeypot »). */
 	const WPA_HANDLE = 'wpascript';
@@ -58,13 +61,43 @@ final class Icademie_Securite {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_anti_spam' ), 100 );
 		add_action( 'login_enqueue_scripts', array( __CLASS__, 'enqueue_anti_spam' ), 100 );
 
+		// Liens ouverts dans un nouvel onglet sans le dire (bandeau de cookies, bloc de commande…).
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_new_tab' ) );
+
 		// Fichiers minifiés.
 		add_filter( 'style_loader_src', array( __CLASS__, 'minified_src' ), 20 );
 		add_filter( 'script_loader_src', array( __CLASS__, 'minified_src' ), 20 );
 
-		// Fenêtres de Themify Popup : focus visible sur le bouton de fermeture. Themify Popup déclare
-		// sa feuille de styles dans le pied de page (wp_footer, priorité 1), imprimée ensuite.
-		add_action( 'wp_footer', array( __CLASS__, 'popup_focus' ), 2 );
+		// Fenêtres de Themify Popup : focus visible et nom en français du bouton de fermeture,
+		// contraste du texte, impression sans la fenêtre. Themify Popup déclare sa feuille de
+		// styles et son script dans le pied de page (wp_footer, priorité 1), imprimés ensuite.
+		add_action( 'wp_footer', array( __CLASS__, 'popup_styles' ), 2 );
+		add_action( 'wp_footer', array( __CLASS__, 'popup_close_label' ), 2 );
+	}
+
+	// ------------------------------------------------------------------------------------------
+	// Liens ouverts dans un nouvel onglet.
+	// ------------------------------------------------------------------------------------------
+
+	/**
+	 * Script qui ajoute « (nouvel onglet) » au nom des liens qui s'ouvrent dans un autre onglet
+	 * sans le dire (Opquast 146), y compris ceux qu'écrivent des services tiers après le chargement
+	 * de la page (bandeau Cookiebot, conditions du bloc de commande de WooCommerce). Les liens des
+	 * extensions SailingLoc l'annoncent déjà : le script n'y touche pas.
+	 */
+	public static function enqueue_new_tab() {
+		wp_enqueue_script(
+			self::NEW_TAB_HANDLE,
+			plugins_url( 'assets/nouvel-onglet.js', __FILE__ ),
+			array(),
+			self::VERSION,
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
+		);
+
+		wp_localize_script( self::NEW_TAB_HANDLE, 'icademieNouvelOnglet', array( 'text' => __( '(nouvel onglet)', 'icademie-securite' ) ) );
 	}
 
 	// ------------------------------------------------------------------------------------------
@@ -72,10 +105,22 @@ final class Icademie_Securite {
 	// ------------------------------------------------------------------------------------------
 
 	/**
-	 * Le bouton « × » des fenêtres de Themify Popup n'a pas d'indicateur de focus (« outline: none »
-	 * de sa feuille de styles) : contour blanc et bleu, visible sur tous les fonds (Opquast 165).
+	 * Styles ajoutés à la feuille de Themify Popup (chargée seulement sur les pages qui affichent
+	 * une fenêtre) :
+	 *
+	 * - le bouton « × » n'a pas d'indicateur de focus (« outline: none » de sa feuille de styles) :
+	 *   contour blanc et bleu, visible sur tous les fonds (Opquast 165) ;
+	 * - le texte de la fenêtre d'exemple de Themify Popup (« .welcome-popup », reprise pour la
+	 *   fenêtre d'information de l'accueil) est gris #777 sur blanc, contraste 4,48:1, sous le
+	 *   minimum de 4,5:1 (Opquast 182) : encre secondaire de la charte, #4a5866 (7,3:1). Cette
+	 *   couleur est écrite dans le CSS personnalisé de la fenêtre, enregistré en base et visé par
+	 *   l'identifiant de la fenêtre (« #themify-popup-80 .welcome-popup ») : la règle est
+	 *   « !important ». Titres (noir), liens et boutons (violet #755ebb, 5,2:1) inchangés ;
+	 * - à l'impression, une fenêtre ouverte (celle de l'accueil s'ouvre à la première visite) et
+	 *   son voile, fixés à l'écran, étaient imprimés par-dessus le contenu de chaque page : ils ne
+	 *   sont plus imprimés (Opquast 196).
 	 */
-	public static function popup_focus() {
+	public static function popup_styles() {
 		if ( ! wp_style_is( self::POPUP_HANDLE, 'registered' ) ) {
 			return;
 		}
@@ -83,6 +128,8 @@ final class Icademie_Securite {
 		wp_add_inline_style(
 			self::POPUP_HANDLE,
 			'button.themify-popup-close:focus-visible,.mfp-wrap button.mfp-close:focus-visible{outline:3px solid #fff!important;outline-offset:2px;box-shadow:0 0 0 6px #1d5a80!important}'
+			. '.themify-popup .welcome-popup{color:#4a5866!important}'
+			. '@media print{.mfp-bg,.mfp-wrap,.themify-popup{display:none!important}}'
 		);
 	}
 
@@ -105,6 +152,49 @@ final class Icademie_Securite {
 			self::ANTI_SPAM_HANDLE,
 			'icademieAntiSpam',
 			array( 'label' => __( 'Ne pas modifier ce champ (protection contre les messages indésirables)', 'icademie-securite' ) )
+		);
+	}
+
+	/**
+	 * Bouton de fermeture des fenêtres de Themify Popup : nom explicite en français (Opquast 162)
+	 * et infobulle en français (Opquast 132). Selon le style choisi pour chaque fenêtre :
+	 *
+	 * - « classic » et « fullscreen » (celui du site) : bouton « × » de Magnific Popup, d'infobulle
+	 *   « Close (Esc) » et de seul nom « × ». Magnific est chargé par Themify Popup seulement à
+	 *   l'ouverture d'une fenêtre ($.getScript) : à chaque ouverture (événement « mfpOpen » sur
+	 *   document), le script donne au bouton son nom et son infobulle ; la touche Échap n'est
+	 *   mentionnée que si elle ferme bien la fenêtre (réglage de chaque fenêtre) ;
+	 * - « slide-out » (panneau dans un coin de la page) : bouton créé par Themify Popup à
+	 *   l'affichage du panneau, de seul nom « x » (texte décalé hors de l'écran, croix dessinée en
+	 *   CSS). Le script le nomme dès qu'il est ajouté. Échap ne ferme pas ces panneaux.
+	 *
+	 * Les boutons de fermeture qui ont un texte (« Non merci »…, écrits dans le contenu d'une
+	 * fenêtre) le gardent pour nom.
+	 */
+	public static function popup_close_label() {
+		if ( ! wp_script_is( self::POPUP_HANDLE, 'registered' ) ) {
+			return;
+		}
+
+		$labels = array(
+			'name'   => __( 'Fermer la fenêtre', 'icademie-securite' ),
+			'escape' => __( 'Fermer (touche Échap)', 'icademie-securite' ),
+			'close'  => __( 'Fermer', 'icademie-securite' ),
+		);
+
+		wp_add_inline_script(
+			self::POPUP_HANDLE,
+			'(function($){var l=' . wp_json_encode( $labels ) . ';'
+			. 'function name(b,t){b.setAttribute("aria-label",l.name);b.setAttribute("title",t);}'
+			// Styles « classic » et « fullscreen » : bouton de Magnific Popup.
+			. 'function f(){var m=$.magnificPopup,esc=!!(m&&m.instance&&m.instance.st&&m.instance.st.enableEscapeKey);'
+			. 'document.querySelectorAll(".mfp-wrap .mfp-close").forEach(function(b){name(b,esc?l.escape:l.close);});}'
+			. 'if($){$(document).on("mfpOpen",function(){setTimeout(f,0);});if($.magnificPopup){$.magnificPopup.defaults.tClose=l.close;}}'
+			// Style « slide-out » : bouton ajouté au panneau quand il s'affiche.
+			. 'function s(p){var b=p.querySelector(":scope > button.themify-popup-close");if(b&&!b.hasAttribute("aria-label")&&/^[\sx×]*$/i.test(b.textContent)){name(b,l.close);}}'
+			. 'document.querySelectorAll(".themify-popup[data-style=slide-out]").forEach(function(p){s(p);'
+			. 'if(window.MutationObserver){new MutationObserver(function(){s(p);}).observe(p,{childList:true});}});'
+			. '}(window.jQuery));'
 		);
 	}
 

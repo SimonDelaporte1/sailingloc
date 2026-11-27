@@ -17,6 +17,7 @@
 	/* Couleurs de la charte (nom du jeton en commentaire). */
 	--ia-primary: #1d5a80; /* manche : action */
 	--ia-primary-dark: #164766; /* manche-strong : survol */
+	--ia-visited: #5b3f8c; /* liens déjà visités (Opquast 141) : 7,4 à 8,3:1 sur craie, blanc et écume */
 	--ia-primary-light: #e4eef3; /* ecume */
 	--ia-primary-border: #b7cddb;
 	--ia-text: #0f2233; /* encre */
@@ -396,7 +397,15 @@
 	font-weight: 700;
 }
 
-.icademie-accueil .icademie-accueil__section-link:hover {
+/* Liens de texte déjà visités (Opquast 141), comme sur les autres pages : violet ; le survol garde
+   le bleu foncé. Pas les cartes, puces et boutons (navigation). */
+.icademie-accueil .icademie-accueil__section-link:visited,
+.icademie-accueil .icademie-accueil__newsletter-text a:visited {
+	color: var(--ia-visited);
+}
+
+.icademie-accueil .icademie-accueil__section-link:hover,
+.icademie-accueil .icademie-accueil__newsletter-text a:visited:hover {
 	color: var(--ia-primary-dark);
 }
 
